@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Левый край обложки растворяется в фоне -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="0"
+        android:centerColor="#990B0E13"
+        android:centerX="0.35"
+        android:endColor="#000B0E13"
+        android:startColor="@color/bg" />
+</shape>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:keepScreenOn="true">
+
+    <FrameLayout
+        android:id="@+id/playback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.media3.ui.SubtitleView
+        android:id="@+id/subtitles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Пока нет кадра: название и серия на чёрном фоне -->
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:indeterminateTint="@color/accent" />
+
+        <TextView
+            android:id="@+id/loading_title"
+            style="@style/HeroTitle"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/loading_info"
+            style="@style/Meta"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- «S2:E8 · Серия 8» при смене серии -->
+    <TextView
+        android:id="@+id/osd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/osd_bg"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/text"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- Следующая серия в конце текущей -->
+    <LinearLayout
+        android:id="@+id/next_up"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/screen_padding"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/osd_bg"
+        android:orientation="vertical"
+        android:padding="18dp"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/SectionLabel"
+            android:text="@string/next_up" />
+
+        <TextView
+            android:id="@+id/next_up_title"
+            style="@style/HeroTitle"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:textSize="20sp" />
+
+        <ProgressBar
+            android:id="@+id/next_up_progress"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="12dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/progress_thin" />
+
+        <TextView
+            android:id="@+id/next_up_countdown"
+            style="@style/Meta"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text" />
+
+        <TextView
+            style="@style/ActionButton.Primary"
+            android:layout_width="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/osd_button_bg"
+            android:gravity="center"
+            android:minWidth="0dp"
+            android:text="@string/next_up_play"
+            android:textColor="@color/text_on_focus" />
+
+        <TextView
+            style="@style/Meta"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="@string/next_up_hint"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E6000000"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.2"
+        android:text="@string/player_error"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <include layout="@layout/view_episodes_panel" />
+
+    <include layout="@layout/view_choice_panel" />
+</FrameLayout>

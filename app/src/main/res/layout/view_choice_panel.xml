@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Боковая панель выбора: озвучка, качество, субтитры -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choice_panel"
+    android:layout_width="@dimen/panel_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:background="@drawable/panel_bg"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:paddingStart="48dp"
+    android:paddingTop="40dp"
+    android:paddingEnd="32dp"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/choice_title"
+        style="@style/PageTitle"
+        android:textSize="22sp" />
+
+    <androidx.leanback.widget.VerticalGridView
+        android:id="@+id/choice_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="40dp" />
+</LinearLayout>

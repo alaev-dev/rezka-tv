@@ -1,0 +1,14 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:30.000
+https://static.test/t/1.jpg#xywh=0,0,160,90
+
+00:00:30.000 --> 00:01:00.000
+https://static.test/t/1.jpg#xywh=160,0,160,90
+
+01:00:00.000 --> 01:00:30.000
+/t/2.jpg#xywh=0,90,160,90
+
+broken
+00:02:00.000 --> 00:02:30.000
+https://static.test/t/3.jpg#nothing

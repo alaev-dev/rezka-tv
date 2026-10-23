@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Кнопки плеера: leanback ставит activated всем кнопкам выбранного ряда, поэтому только фокус -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="@color/text" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="#33FFFFFF" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</selector>

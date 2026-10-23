@@ -1,0 +1,76 @@
+{
+  "statusCode": 0,
+  "hasMore": true,
+  "itemList": [
+    {
+      "id": "1001",
+      "desc": "Первый ролик #test",
+      "digged": false,
+      "isAd": false,
+      "author": { "uniqueId": "first.user", "nickname": "Первый" },
+      "music": { "playUrl": "https://music.example/1001.mp3?expire=2000000000" },
+      "video": {
+        "duration": 15,
+        "codecType": "h264",
+        "cover": "https://img.example/1001.jpg?x-expires=1900000000",
+        "playAddr": "https://cdn-a.example/video/tos/1001-540-h264?expire=1800000000&tk=tt_chain_token",
+        "PlayAddrStruct": {
+          "UrlList": [
+            "https://cdn-a.example/video/tos/1001-540-h264?expire=1800000000&tk=tt_chain_token",
+            "https://cdn-b.example/video/tos/1001-540-h264?expire=1800000000&tk=tt_chain_token"
+          ]
+        },
+        "bitrateInfo": [
+          { "CodecType": "h265_hvc1", "Bitrate": 900000, "PlayAddr": { "Width": 720, "Height": 1280, "UrlList": ["https://cdn-a.example/video/tos/1001-720-h265?expire=1800000000"] } },
+          { "CodecType": "h264", "Bitrate": 3000000, "PlayAddr": { "Width": 2160, "Height": 3840, "UrlList": ["https://cdn-a.example/video/tos/1001-2160-h264?expire=1800000000"] } },
+          { "CodecType": "h264", "Bitrate": 500000, "PlayAddr": { "Width": 576, "Height": 1024, "UrlList": [
+            "https://cdn-a.example/video/tos/1001-540-h264?expire=1800000000&tk=tt_chain_token",
+            "https://cdn-b.example/video/tos/1001-540-h264?expire=1800000000&tk=tt_chain_token"
+          ] } },
+          { "CodecType": "h264", "Bitrate": 1000000, "PlayAddr": { "Width": 720, "Height": 1280, "UrlList": [
+            "https://cdn-a.example/video/tos/1001-720-h264?expire=1800000000",
+            "https://cdn-b.example/video/tos/1001-720-h264?expire=1800000000"
+          ] } }
+        ]
+      }
+    },
+    {
+      "id": "1002",
+      "desc": "",
+      "digged": true,
+      "isAd": true,
+      "author": { "uniqueId": "only.hevc", "nickname": "" },
+      "video": {
+        "duration": 30,
+        "codecType": "h265_hvc1",
+        "playAddr": "https://cdn-a.example/video/tos/1002-default-h265?expire=1800000100",
+        "bitrateInfo": [
+          { "CodecType": "h265_hvc1", "Bitrate": 700000, "PlayAddr": { "Height": 1024, "UrlList": ["https://cdn-a.example/video/tos/1002-540-h265?expire=1800000100"] } }
+        ]
+      }
+    },
+    {
+      "id": "1003",
+      "desc": "Фото под музыку",
+      "author": { "uniqueId": "photo.user", "nickname": "Фото" },
+      "music": { "playUrl": "https://music.example/1003.mp3?expire=1800000200" },
+      "imagePost": {
+        "images": [
+          { "imageURL": { "urlList": ["https://img.example/1003-a.jpg", "https://img-b.example/1003-a.jpg"] } },
+          { "imageURL": { "urlList": ["https://img.example/1003-b.jpg"] } }
+        ]
+      },
+      "video": { "duration": 0, "cover": "https://img.example/1003-cover.jpg" }
+    },
+    {
+      "desc": "без id — пропускаем",
+      "video": { "playAddr": "https://cdn-a.example/video/tos/none?expire=1800000000" }
+    },
+    {
+      "id": "1005",
+      "desc": "Нечего играть",
+      "author": { "uniqueId": "empty" },
+      "video": { "duration": 10 }
+    }
+  ]
+}

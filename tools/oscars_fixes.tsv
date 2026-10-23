@@ -1,0 +1,45 @@
+# Поправки к номинантам «Оскара» из Wikidata: там нет части номинантов последних лет и есть лишние.
+# Столбцы через табуляцию: действие, номер церемонии, категория, название (как в IMDb), год фильма.
+# «+» — номинант, «*» — победитель, «-» — убрать (год можно не указывать).
+# Категории: picture — лучший фильм, animated — анимационный, international — международный.
++	98	picture	Bugonia	2025
++	98	picture	F1	2025
++	98	picture	Frankenstein	2025
++	98	picture	Hamnet	2025
++	98	picture	Marty Supreme	2025
++	98	picture	Sinners	2025
++	98	picture	Train Dreams	2025
+-	98	international	The Secret Agent	1996
++	97	picture	Conclave	2024
++	97	picture	Dune: Part Two	2024
++	97	picture	A Complete Unknown	2024
++	97	picture	Wicked	2024
+-	97	international	Flow	2014
+-	97	international	Kneecap
++	96	picture	American Fiction	2023
++	96	picture	The Holdovers	2023
++	96	picture	Killers of the Flower Moon	2023
++	96	picture	Maestro	2023
++	96	international	The Teachers' Lounge	2023
++	95	international	Argentina, 1985	2022
++	95	international	EO	2022
++	95	international	The Quiet Girl	2022
+-	94	picture	Daniels
++	94	international	The Hand of God	2021
++	94	international	Lunana: A Yak in the Classroom	2019
++	94	international	The Worst Person in the World	2021
++	94	international	Flee	2021
++	93	international	The Man Who Sold His Skin	2020
++	93	animated	A Shaun the Sheep Movie: Farmageddon	2019
+-	92	animated	A Shaun the Sheep Movie: Farmageddon
+-	92	international	Shindisi
++	92	international	Corpus Christi	2019
++	92	international	Honeyland	2019
++	92	international	Les Misérables	2019
++	92	international	Pain and Glory	2019
++	91	international	Capernaum	2018
++	91	international	Cold War	2018
++	91	international	Shoplifters	2018
++	79	picture	Little Miss Sunshine	2006
+-	70	international	Women
++	49	international	Jacob the Liar	1974

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.RezkaTv" parent="@android:style/Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.RezkaTv</item>
+    </style>
+
+    <!-- Короткий fade вместо «съезжающих» окон: на слабом GPU так плавнее -->
+    <style name="Animation.RezkaTv" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <style name="Theme.RezkaTv.Web">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <!-- Плеер: leanback-фрагменты берут размеры и цвета из Theme.Leanback -->
+    <style name="Theme.RezkaTv.Player" parent="@style/Theme.Leanback">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.RezkaTv</item>
+        <item name="browsePaddingStart">@dimen/screen_padding</item>
+        <item name="browsePaddingEnd">@dimen/screen_padding</item>
+        <item name="playbackProgressPrimaryColor">@color/accent</item>
+        <item name="playbackControlsIconHighlightColor">@color/accent</item>
+        <item name="playbackControlsTimeStyle">@style/PlayerTime</item>
+        <item name="playbackControlsAutoHideTimeout">5000</item>
+        <item name="detailsDescriptionTitleStyle">@style/PlayerTitle</item>
+        <item name="detailsDescriptionSubtitleStyle">@style/PlayerSubtitle</item>
+    </style>
+
+    <style name="PlayerTitle" parent="@style/Widget.Leanback.DetailsDescriptionTitleStyle">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="PlayerSubtitle" parent="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_dim</item>
+    </style>
+
+    <style name="PlayerTime" parent="@style/Widget.Leanback.PlaybackControlsTimeStyle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="Theme.RezkaTv.Settings" parent="@style/Theme.Leanback">
+        <item name="android:windowBackground">@color/scrim</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.RezkaTv</item>
+    </style>
+
+    <!-- Тот же янтарный акцент, что и во всём приложении, вместо синего по умолчанию -->
+    <style name="PreferenceThemeOverlay.RezkaTv" parent="@style/PreferenceThemeOverlayLeanback">
+        <item name="android:colorAccent">@color/accent</item>
+    </style>
+
+    <!-- rezka -->
+
+    <style name="HeroTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#99000000</item>
+        <item name="android:shadowRadius">8</item>
+    </style>
+
+    <style name="Meta">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/text_dim</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Meta.Accent">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Description">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+        <item name="android:textColor">#E6FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:minWidth">220dp</item>
+        <item name="android:background">@drawable/button_bg</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:drawableTint">@color/chip_text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ActionButton.Primary">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Chip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:background">@drawable/chip_bg</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="PageTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SectionLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_dim</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+</resources>

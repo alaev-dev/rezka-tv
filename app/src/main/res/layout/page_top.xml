@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «Рейтинг»: как раздел-сетка, плюс строка фильтров -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/top_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="32dp"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/content_padding">
+
+        <TextView
+            style="@style/PageTitle"
+            android:layout_marginEnd="28dp"
+            android:text="@string/nav_top" />
+
+        <LinearLayout
+            android:id="@+id/top_buckets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/top_filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/content_padding"
+        android:paddingEnd="@dimen/content_padding">
+
+        <TextView
+            android:id="@+id/top_decade"
+            style="@style/Chip" />
+
+        <TextView
+            android:id="@+id/top_genre"
+            style="@style/Chip" />
+
+        <TextView
+            android:id="@+id/top_hide_watched"
+            style="@style/Chip"
+            android:text="@string/hide_watched" />
+
+        <TextView
+            android:id="@+id/top_count"
+            style="@style/Meta"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/top_info"
+        style="@style/Meta"
+        android:layout_marginStart="@dimen/content_padding"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="@dimen/content_padding"
+        android:textColor="@color/text" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- focusOutFront: вверх с первого ряда — к фильтрам -->
+        <androidx.leanback.widget.VerticalGridView
+            android:id="@+id/top_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/content_padding"
+            android:paddingTop="16dp"
+            android:paddingEnd="@dimen/content_padding"
+            android:paddingBottom="24dp"
+            app:focusOutFront="true" />
+
+        <TextView
+            android:id="@+id/top_status"
+            style="@style/Meta"
+            android:layout_gravity="center"
+            android:layout_marginBottom="60dp"
+            android:gravity="center"
+            android:maxLines="3"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

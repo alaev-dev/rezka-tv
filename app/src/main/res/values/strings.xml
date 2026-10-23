@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Rezka TV</string>
+    <string name="settings">Настройки</string>
+    <string name="continue_position">%1$s из %2$s</string>
+    <string name="load_error">Не удалось открыть %1$s\n%2$s\n\nOK — повторить</string>
+
+    <!-- Общее -->
+    <string name="loading">Загрузка…</string>
+    <string name="load_failed">Не удалось загрузить. Проверьте интернет</string>
+    <string name="login_required">Войдите в аккаунт rezka</string>
+    <string name="nothing_here">Здесь пока пусто</string>
+
+    <!-- Меню слева -->
+    <string name="nav_search">Поиск</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_series">Сериалы</string>
+    <string name="nav_films">Фильмы</string>
+    <string name="nav_cartoons">Мультфильмы</string>
+    <string name="nav_anime">Аниме</string>
+    <string name="nav_favorites">Закладки</string>
+    <string name="nav_top">Рейтинг</string>
+    <string name="nav_oscar">Оскар</string>
+    <string name="nav_settings">Настройки</string>
+
+    <!-- Поиск -->
+    <string name="search">Поиск</string>
+    <string name="search_hint">Наберите название</string>
+    <string name="nothing_found">Ничего не найдено</string>
+
+    <!-- Страница тайтла -->
+    <string name="on_site">Открыть на сайте</string>
+    <string name="play">Смотреть</string>
+    <string name="resume">Продолжить</string>
+    <string name="play_episode">Смотреть · %1$s</string>
+    <string name="resume_episode">Продолжить · %1$s</string>
+    <string name="next_episode_button">Следующая: %1$s</string>
+    <string name="episodes_button">Сезоны и серии</string>
+    <string name="translator_button">Озвучка: %1$s</string>
+    <string name="remaining_min">осталось %1$d мин</string>
+    <string name="translators">Озвучка</string>
+    <string name="season_n">Сезон %1$d</string>
+    <string name="now_playing">Сейчас</string>
+
+    <string name="mark_watched">Отметить просмотренным</string>
+    <string name="unmark_watched">Снять отметку «Просмотрено»</string>
+
+    <!-- Рейтинг и Оскар -->
+    <string name="top_missing">Рейтинг ещё не собран — запустите tools/build_lists.py</string>
+    <string name="oscars_missing">Списка «Оскара» нет в сборке — запустите tools/build_lists.py</string>
+    <string name="hide_watched">Скрыть просмотренные</string>
+    <string name="filter_decade">Годы: %1$s</string>
+    <string name="filter_genre">Жанр: %1$s</string>
+    <string name="filter_all">все</string>
+    <string name="all_years">Все годы</string>
+    <string name="all_genres">Все жанры</string>
+    <string name="decades">Годы</string>
+    <string name="genres">Жанр</string>
+    <string name="top_count">%1$s · посмотрено %2$d</string>
+    <string name="top_count_filtered">%1$d из %2$d · посмотрено %3$d</string>
+    <string name="lists_hint">OK — открыть  ·  удерживайте OK — отметить просмотренным</string>
+    <string name="watched">Просмотрено</string>
+    <string name="started">Начато</string>
+    <string name="winner">Победитель</string>
+    <string name="not_on_rezka">Нет на rezka</string>
+    <string name="not_on_rezka_search">Нет на rezka — OK: поиск по названию</string>
+    <string name="oscar_progress">Посмотрено %1$d из %2$d</string>
+    <string name="oscar_progress_missing">Посмотрено %1$d из %2$d · ещё %3$d нет на rezka</string>
+    <string name="oscar_year">%1$d · %2$d из %3$d</string>
+    <string name="oscar_year_done">%1$d · ✓ %2$d из %3$d</string>
+    <string name="oscar_ceremony_progress">посмотрено %1$d из %2$d</string>
+    <string name="oscar_ceremony_missing">ещё %1$d нет на rezka</string>
+
+    <!-- Плеер -->
+    <string name="action_prev">Предыдущая серия</string>
+    <string name="action_next">Следующая серия</string>
+    <string name="action_episodes">Серии</string>
+    <string name="action_translator">Озвучка</string>
+    <string name="action_quality">Качество</string>
+    <string name="action_subtitles">Субтитры</string>
+    <string name="action_settings">Настройки</string>
+    <string name="quality_auto">Авто</string>
+    <string name="quality_auto_current">Авто (%1$s)</string>
+    <string name="subtitles_off">Выключены</string>
+    <string name="next_up">Следующая серия</string>
+    <string name="next_up_in">Начнётся через %1$d с</string>
+    <string name="next_up_play">▶  Смотреть</string>
+    <string name="next_up_hint">OK — смотреть, Назад — остаться</string>
+    <string name="player_error">Не удалось воспроизвести.\nOK — повторить, Назад — выйти</string>
+    <string name="no_streams">Поток недоступен в приложении — открываю плеер сайта</string>
+    <string name="resumed_other_device_episode">Продолжаем с %1$s — смотрели на другом устройстве</string>
+    <string name="resumed_other_device_translator">Озвучка «%1$s» — выбрана на другом устройстве</string>
+    <string name="first_episode">Это первая серия</string>
+    <string name="last_episode">Это последняя серия</string>
+
+    <!-- Настройки -->
+    <string name="pref_playback">Воспроизведение</string>
+    <string name="pref_quality">Качество по умолчанию</string>
+    <string name="pref_autoplay">Автовоспроизведение следующей серии</string>
+    <string name="pref_autoplay_summary">Отсчёт 10 секунд в конце серии</string>
+    <string name="pref_seek_step">Шаг перемотки</string>
+    <string name="pref_interface">Интерфейс</string>
+    <string name="pref_lite">Облегчённый режим</string>
+    <string name="pref_lite_summary">Без большой обложки и с меньшим числом рядов</string>
+    <string name="pref_site">Сайт</string>
+    <string name="pref_mirror">Зеркало</string>
+    <string name="pref_login">Войти</string>
+    <string name="pref_logout">Выйти из аккаунта</string>
+    <string name="logged_in">Вход выполнен. Можно войти в другой аккаунт: QR-код для телефона</string>
+    <string name="logged_out">Вход не выполнен. QR-код для телефона или вход на телевизоре</string>
+    <string name="logout_done">Вы вышли из аккаунта</string>
+    <string name="open_site">Открыть сайт целиком</string>
+    <string name="pref_clear_cache">Очистить кэш</string>
+    <string name="pref_clear_cache_summary">Сохранённые страницы и картинки</string>
+    <string name="cache_cleared">Кэш очищен</string>
+    <string name="pref_version">Версия</string>
+
+    <!-- Вход с телефона -->
+    <string name="login_title">Вход в rezka</string>
+    <string name="login_instructions">Наведите камеру телефона на код и введите email и пароль на телефоне. Телефон должен быть в той же Wi-Fi сети, что и телевизор.</string>
+    <string name="login_or_open">Или откройте в браузере телефона:</string>
+    <string name="login_qr_description">QR-код для входа с телефона</string>
+    <string name="login_on_tv">Войти на телевизоре</string>
+    <string name="login_new_code">Новый код</string>
+    <string name="login_status_waiting">Ждём телефон…</string>
+    <string name="login_status_connected">Телефон подключился</string>
+    <string name="login_status_checking">Проверяем…</string>
+    <string name="login_status_done">Готово, вы вошли</string>
+    <string name="login_status_expired">Код устарел. Нажмите «Новый код»</string>
+    <string name="login_status_too_many">%1$s. Попытки закончились — нажмите «Новый код»</string>
+    <string name="login_status_no_network">Телевизор не в локальной сети. Войдите на телевизоре</string>
+    <string name="login_status_no_port">Не удалось открыть порт для телефона. Войдите на телевизоре</string>
+</resources>

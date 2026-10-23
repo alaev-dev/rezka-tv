@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.leanback.widget.BrowseFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <!-- Обложка выбранного тайтла справа сверху, растворяется в фоне -->
+    <FrameLayout
+        android:id="@+id/hero_art_box"
+        android:layout_width="@dimen/hero_art_width"
+        android:layout_height="@dimen/hero_art_height"
+        android:layout_gravity="top|end">
+
+        <ImageView
+            android:id="@+id/hero_art"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/fade_left" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/fade_bottom" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/rail_width">
+
+        <FrameLayout
+            android:id="@+id/home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="@dimen/hero_text_width"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/content_padding"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/hero_title"
+                    style="@style/HeroTitle" />
+
+                <TextView
+                    android:id="@+id/hero_meta"
+                    style="@style/Meta"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/hero_extra"
+                    style="@style/Meta.Accent"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/hero_description"
+                    style="@style/Description"
+                    android:layout_marginTop="10dp"
+                    android:maxLines="3" />
+            </LinearLayout>
+
+            <androidx.leanback.widget.VerticalGridView
+                android:id="@+id/rows"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/rows_top"
+                android:clipChildren="false"
+                android:clipToPadding="false" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/grid_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="32dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/content_padding">
+
+                <TextView
+                    android:id="@+id/grid_title"
+                    style="@style/PageTitle"
+                    android:layout_marginEnd="28dp" />
+
+                <LinearLayout
+                    android:id="@+id/sort_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/grid_info"
+                style="@style/Meta"
+                android:layout_marginStart="@dimen/content_padding"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="@dimen/content_padding"
+                android:textColor="@color/text" />
+
+            <!-- focusOutFront: вверх с первого ряда — к сортировке -->
+            <androidx.leanback.widget.VerticalGridView
+                android:id="@+id/grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/content_padding"
+                android:paddingTop="16dp"
+                android:paddingEnd="@dimen/content_padding"
+                android:paddingBottom="24dp"
+                app:focusOutFront="true" />
+        </LinearLayout>
+
+        <include layout="@layout/page_top" />
+
+        <include layout="@layout/page_oscar" />
+
+        <TextView
+            android:id="@+id/status"
+            style="@style/Meta"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/loading" />
+    </FrameLayout>
+
+    <View
+        android:id="@+id/rail_scrim"
+        android:layout_width="520dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/rail_scrim"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/rail"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/rail_bg"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
+
+    <TextClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="22dp"
+        android:format12Hour="HH:mm"
+        android:format24Hour="HH:mm"
+        android:shadowColor="#000000"
+        android:shadowRadius="6"
+        android:textColor="@color/text"
+        android:textSize="20sp" />
+
+    <!-- Выбор десятилетия и жанра в «Рейтинге» -->
+    <include layout="@layout/view_choice_panel" />
+</androidx.leanback.widget.BrowseFrameLayout>

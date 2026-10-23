@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сезоны слева, серии выбранного сезона справа; текущая серия отмечена -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/episodes_panel"
+    android:layout_width="560dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:background="@drawable/panel_bg"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:paddingStart="56dp"
+    android:paddingTop="40dp"
+    android:paddingEnd="32dp"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/episodes_title"
+        style="@style/PageTitle"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="22sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <androidx.leanback.widget.VerticalGridView
+            android:id="@+id/season_list"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="40dp" />
+
+        <androidx.leanback.widget.VerticalGridView
+            android:id="@+id/episode_list"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="40dp" />
+    </LinearLayout>
+</LinearLayout>

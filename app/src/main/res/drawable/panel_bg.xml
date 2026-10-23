@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Боковая панель справа: плотная, с мягким краем слева -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="180"
+        android:centerColor="#F2161B23"
+        android:centerX="0.85"
+        android:endColor="#00161B23"
+        android:startColor="#FA161B23" />
+</shape>

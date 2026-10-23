@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:title="@string/settings">
+
+    <PreferenceCategory app:title="@string/pref_playback">
+
+        <ListPreference
+            app:defaultValue="auto"
+            app:entries="@array/quality_titles"
+            app:entryValues="@array/quality_values"
+            app:key="quality"
+            app:title="@string/pref_quality"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="autoplay_next"
+            app:summary="@string/pref_autoplay_summary"
+            app:title="@string/pref_autoplay" />
+
+        <ListPreference
+            app:defaultValue="10"
+            app:entries="@array/seek_titles"
+            app:entryValues="@array/seek_values"
+            app:key="seek_step"
+            app:title="@string/pref_seek_step"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_interface">
+
+        <SwitchPreference
+            app:defaultValue="false"
+            app:key="lite_mode"
+            app:summary="@string/pref_lite_summary"
+            app:title="@string/pref_lite" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_site">
+
+        <Preference
+            app:key="login"
+            app:title="@string/pref_login" />
+
+        <Preference
+            app:key="logout"
+            app:title="@string/pref_logout" />
+
+        <ListPreference
+            app:defaultValue="https://rezka.fi/"
+            app:entries="@array/mirror_titles"
+            app:entryValues="@array/mirror_values"
+            app:key="mirror"
+            app:title="@string/pref_mirror"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="open_site"
+            app:title="@string/open_site" />
+
+        <Preference
+            app:key="clear_cache"
+            app:summary="@string/pref_clear_cache_summary"
+            app:title="@string/pref_clear_cache" />
+
+        <Preference
+            app:key="version"
+            app:selectable="false"
+            app:title="@string/pref_version" />
+    </PreferenceCategory>
+</PreferenceScreen>

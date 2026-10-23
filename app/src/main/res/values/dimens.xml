@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Экран 960×540 dp -->
+    <dimen name="screen_padding">48dp</dimen>
+    <dimen name="rail_width">56dp</dimen>
+    <dimen name="rail_expanded_width">196dp</dimen>
+    <dimen name="content_padding">32dp</dimen>
+    <dimen name="hero_text_width">520dp</dimen>
+    <dimen name="hero_art_width">440dp</dimen>
+    <dimen name="hero_art_height">330dp</dimen>
+    <dimen name="rows_top">252dp</dimen>
+    <dimen name="card_width">112dp</dimen>
+    <dimen name="card_height">168dp</dimen>
+    <dimen name="card_spacing">14dp</dimen>
+    <!-- Насколько выбранная карточка (×1.08) вылезает за свои края -->
+    <dimen name="card_focus_overflow">6dp</dimen>
+    <dimen name="row_height">192dp</dimen>
+    <dimen name="chip_spacing">10dp</dimen>
+    <dimen name="panel_width">360dp</dimen>
+    <!-- QR-код читается с дивана -->
+    <dimen name="login_qr_size">280dp</dimen>
+
+    <!-- leanback раздвигает кнопки плеера по центрам иконок; у нас кнопки с текстом разной ширины,
+         отступы задаёт сама кнопка -->
+    <dimen name="lb_playback_controls_child_margin_default">0dp</dimen>
+    <dimen name="lb_control_icon_width">0dp</dimen>
+    <dimen name="player_icon">26dp</dimen>
+    <dimen name="player_icon_small">20dp</dimen>
+    <!-- Одно превью над полосой перемотки, 16:9 -->
+    <dimen name="player_thumb_width">240dp</dimen>
+    <dimen name="player_thumb_height">135dp</dimen>
+</resources>

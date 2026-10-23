@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строка в боковой панели: фокус — белая плашка, выбранная — акцентная полоса слева -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="@color/text" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <item android:state_activated="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@color/accent_dim" />
+                    <corners android:radius="6dp" />
+                </shape>
+            </item>
+            <item android:width="4dp" android:gravity="start">
+                <shape>
+                    <solid android:color="@color/accent" />
+                    <corners android:radius="2dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:drawable="@android:color/transparent" />
+</selector>

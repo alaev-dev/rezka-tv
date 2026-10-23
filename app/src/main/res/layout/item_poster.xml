@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Постер в «Рейтинге» и «Оскаре»: та же карточка, что item_card, плюс место, отметка и подпись -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/card_width"
+    android:layout_height="@dimen/card_height"
+    android:background="@drawable/card_bg"
+    android:focusable="true"
+    android:foreground="@drawable/card_focus">
+
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop" />
+
+    <!-- Фильма нет на rezka: постера нет, вместо него название -->
+    <TextView
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hyphenationFrequency="full"
+        android:maxLines="5"
+        android:padding="8dp"
+        android:textColor="@color/text_dim"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/rank_bg"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="1dp"
+        android:textColor="@color/text_on_focus"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/mark"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="5dp"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/badge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/badge_bg"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingHorizontal="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/text"
+        android:textSize="11sp" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="bottom"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_thin"
+        android:visibility="gone" />
+</FrameLayout>
