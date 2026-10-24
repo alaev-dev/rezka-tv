@@ -27,24 +27,25 @@ class PrSizeTest(unittest.TestCase):
         self.assertEqual([], violations(baseline), "журнал долга не входит в размер PR")
 
     def test_counts_added_and_deleted_lines(self):
-        parsed = parse_numstat("3\t4\tapp/A.kt\n")
+        parsed = parse_numstat("3\t4\tapp/A.kt\0")
         self.assertEqual([Change("app/A.kt", 7)], parsed, "строки — сумма добавленных и удалённых")
 
     def test_counts_binary_file_without_lines(self):
-        parsed = parse_numstat("-\t-\tapp/src/main/res/drawable/logo.png\n")
+        parsed = parse_numstat("-\t-\tapp/src/main/res/drawable/logo.png\0")
         self.assertEqual(0, parsed[0].lines, "двоичный файл засчитывается без строк")
 
-    def test_reads_target_of_braced_rename(self):
-        parsed = parse_numstat("0\t0\tapp/{old => core}/Parser.kt\n")
+    def test_reads_target_of_rename(self):
+        parsed = parse_numstat("0\t0\t\0app/old/Parser.kt\0app/core/Parser.kt\0")
         self.assertEqual("app/core/Parser.kt", parsed[0].path, "переименование засчитывается по новому пути")
 
-    def test_reads_target_of_rename_into_root(self):
-        parsed = parse_numstat("0\t0\tapp/{old => }/Parser.kt\n")
-        self.assertEqual("app/Parser.kt", parsed[0].path, "перенос в корень не оставляет двойного слеша")
+    def test_reads_record_after_rename(self):
+        parsed = parse_numstat("0\t0\t\0Old.kt\0New.kt\0" "2\t5\tNext.kt\0")
+        self.assertEqual(Change("Next.kt", 7), parsed[1], "запись после переименования читается целиком")
 
-    def test_reads_target_of_plain_rename(self):
-        parsed = parse_numstat("1\t0\tA.kt => B.kt\n")
-        self.assertEqual("B.kt", parsed[0].path, "простое переименование засчитывается по новому пути")
+    def test_counts_file_whose_name_only_looks_like_rename(self):
+        disguised = "app/src/main/Ж => quality/lint-baseline.xml"
+        row = f"211\t0\t{disguised}\0"
+        self.assertEqual(1, len(violations(parse_numstat(row))), "имя с « => » не превращает файл в журнал долга")
 
 
 if __name__ == "__main__":
