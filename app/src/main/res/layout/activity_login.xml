@@ -73,7 +73,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Белая подложка — это и тихая зона QR-кода для камеры -->
     <FrameLayout
         android:id="@+id/qr_card"
         android:layout_width="wrap_content"

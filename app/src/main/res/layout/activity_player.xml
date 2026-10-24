@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Пока нет кадра: название и серия на чёрном фоне -->
     <LinearLayout
         android:id="@+id/loading"
         android:layout_width="match_parent"
@@ -44,7 +43,6 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- «S2:E8 · Серия 8» при смене серии -->
     <TextView
         android:id="@+id/osd"
         android:layout_width="wrap_content"
@@ -60,7 +58,6 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
-    <!-- Следующая серия в конце текущей -->
     <LinearLayout
         android:id="@+id/next_up"
         android:layout_width="300dp"

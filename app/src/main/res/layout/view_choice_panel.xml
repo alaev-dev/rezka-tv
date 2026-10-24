@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Боковая панель выбора: озвучка, качество, субтитры -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/choice_panel"
     android:layout_width="@dimen/panel_width"

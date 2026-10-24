@@ -16,7 +16,6 @@
         android:textSize="17sp"
         android:textStyle="bold" />
 
-    <!-- focusOutFront: влево с первой карточки — в меню -->
     <androidx.leanback.widget.HorizontalGridView
         android:id="@+id/row_cards"
         android:layout_width="match_parent"

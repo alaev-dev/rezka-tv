@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Постер в «Рейтинге» и «Оскаре»: та же карточка, что item_card, плюс место, отметка и подпись -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/card_width"
     android:layout_height="@dimen/card_height"
@@ -14,7 +13,6 @@
         android:importantForAccessibility="no"
         android:scaleType="centerCrop" />
 
-    <!-- Фильма нет на rezka: постера нет, вместо него название -->
     <TextView
         android:id="@+id/placeholder"
         android:layout_width="match_parent"
