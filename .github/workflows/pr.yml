@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install ruff==0.17.2
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew verify
         env:
           PYTHON: python
