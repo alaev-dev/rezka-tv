@@ -36,11 +36,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::loginPageDetection
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::playLinks
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::seasonAndEpisodeFromBadge
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::seriesDetails
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::(файл)
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::autoIsBestRegularQualityForScreen
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::explicitChoiceOrNearestLower
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::fallsBackToLowestWhenNothingFits
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::seekStepMapping
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::failedResponseThrows
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::falseFieldsMeanNothing
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::qualitiesWithHlsFirstAndMirrors

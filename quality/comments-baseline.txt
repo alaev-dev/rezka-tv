@@ -7,7 +7,6 @@ app/src/main/java/dev/alaev/rezkatv/rezka/login/Qr.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt
-app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/WatchedStoreTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt
