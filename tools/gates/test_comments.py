@@ -55,6 +55,30 @@ class CommentsTest(unittest.TestCase):
         name = "h.yml"
         self.assertEqual(expected, gate.comment_lines(name, source), "решётка в кавычках — не комментарий")
 
+    def test_finds_python_comment_but_not_shebang(self):
+        source = "#!/usr/bin/env python3\nx = 1  # единица\n"
+        name = "i.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "шебанг не комментарий, решётка после кода — да")
+
+    def test_finds_python_function_docstring(self):
+        source = 'def f():\n    """Пояснение."""\n    return 4\n'
+        name = "j.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг функции считается комментарием")
+
+    def test_finds_python_module_docstring(self):
+        source = '"""Модуль."""\nimport os\n'
+        name = "k.py"
+        expected = [1]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг модуля считается комментарием")
+
+    def test_ignores_hash_inside_python_string(self):
+        source = 'tag = "#ёлка"\n'
+        name = "l.py"
+        expected = []
+        self.assertEqual(expected, gate.comment_lines(name, source), "решётка в строке Python — не комментарий")
+
     def test_skips_unknown_file_types(self):
         source = "// не код\n"
         expected = []

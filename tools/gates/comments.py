@@ -1,6 +1,9 @@
+import ast
+import io
 import re
 import subprocess
 import sys
+import tokenize
 from pathlib import Path
 
 LEDGER = "quality/comments-baseline.txt"
@@ -48,6 +51,20 @@ def hash_comments(text: str) -> list:
     return [n for n, row in enumerate(text.splitlines(), 1) if HASH.search(QUOTED.sub("", row))]
 
 
+
+def python_comments(text: str) -> list:
+    tokens = tokenize.generate_tokens(io.StringIO(text).readline)
+    found = [t.start[0] for t in tokens if t.type == tokenize.COMMENT and not t.string.startswith("#!")]
+    return sorted(found + docstring_lines(text))
+
+
+def docstring_lines(text: str) -> list:
+    tree = ast.parse(text)
+    scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+    nodes = [tree, *(n for n in ast.walk(tree) if isinstance(n, scopes))]
+    return [n.body[0].lineno for n in nodes if ast.get_docstring(n) is not None]
+
+
 SCANNERS = {
     ".kt": c_like_comments,
     ".kts": c_like_comments,
@@ -55,6 +72,7 @@ SCANNERS = {
     ".mjs": c_like_comments,
     ".js": c_like_comments,
     ".xml": xml_comments,
+    ".py": python_comments,
     ".yml": hash_comments,
     ".yaml": hash_comments,
     ".toml": hash_comments,
