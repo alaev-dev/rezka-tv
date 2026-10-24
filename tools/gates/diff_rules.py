@@ -25,8 +25,8 @@ def reformatted_only(before: str, after: str) -> bool:
 
 def untested_change(before: dict, after: dict) -> list:
     changed = sorted(set(before) | set(after))
-    code = [p for p in changed if CODE.match(p) and not reformatted_only(before.get(p, ""), after.get(p, ""))]
-    tests = [path for path in changed if TESTS.match(path)]
+    meaningful = [p for p in changed if not reformatted_only(before.get(p, ""), after.get(p, ""))]
+    code, tests = [p for p in meaningful if CODE.match(p)], [p for p in meaningful if TESTS.match(p)]
     return [f"код меняется без тестов: {', '.join(code)}"] if code and not tests else []
 
 

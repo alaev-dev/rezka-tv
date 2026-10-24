@@ -61,3 +61,9 @@ class DiffRulesTest(unittest.TestCase):
         before, after = {"README.md": "a\n", "app/src/main/res/a.xml": "<a/>\n"}, {"README.md": "b\n"}
         expected = []
         self.assertEqual(expected, gate.untested_change(before, after), "ресурсы и документация тестов не требуют")
+
+    def test_reports_code_change_with_only_reformatted_test(self):
+        code, test = "app/src/main/java/A.kt", "app/src/test/java/ATest.kt"
+        before, after = {code: "val a = 1\n", test: "val b = 1\n"}, {code: "val a = 2\n", test: "val  b = 1\n"}
+        expected = [f"код меняется без тестов: {code}"]
+        self.assertEqual(expected, gate.untested_change(before, after), "пробелы в тесте не считаются тестом")
