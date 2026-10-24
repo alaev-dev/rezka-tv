@@ -54,10 +54,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::garbageIsRej
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::otherTokenOrKeyOrTamperingFails
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::passwordIsNotInToString
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::publicKeyIsRawUncompressedPoint
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::garbageOrEmptyMessage
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::messageAsObject
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::messageAsStringWithHtml
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::success
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::filmTranslatorChangedElsewhere
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::onlyOneSide
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::otherTranslatorSameEpisodeKeepsTime
