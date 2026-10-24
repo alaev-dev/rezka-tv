@@ -1,28 +1,44 @@
 package dev.alaev.rezkatv.rezka.login
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.Test
 
 class LoginResultTest {
 
     @Test
-    fun success() = assertEquals(LoginResult(true, ""), LoginResult.parse("""{"success":true}"""))
-
-    @Test
-    fun messageAsObject() {
-        val json = """{"success":false,"message":{"email":"Введен неверный email или пароль"}}"""
-        assertEquals(LoginResult(false, "Введен неверный email или пароль"), LoginResult.parse(json))
+    fun readsSuccessfulLogin() {
+        val expected = LoginResult(true, "")
+        val json = """{"success":true}"""
+        assertThat("успешный вход без сообщения", LoginResult.parse(json), equalTo(expected))
     }
 
     @Test
-    fun messageAsStringWithHtml() {
+    fun readsErrorMessageFromObject() {
+        val message = "Введен неверный email или пароль"
+        val expected = LoginResult(false, message)
+        val json = """{"success":false,"message":{"email":"$message"}}"""
+        assertThat("сообщение внутри объекта по полям", LoginResult.parse(json), equalTo(expected))
+    }
+
+    @Test
+    fun stripsHtmlFromErrorMessage() {
+        val expected = LoginResult(false, "Аккаунт заблокирован до завтра")
         val json = """{"success":false,"message":"<b>Аккаунт</b> заблокирован<br>до завтра"}"""
-        assertEquals(LoginResult(false, "Аккаунт заблокирован до завтра"), LoginResult.parse(json))
+        assertThat("теги убраны, <br> стал пробелом", LoginResult.parse(json), equalTo(expected))
     }
 
     @Test
-    fun garbageOrEmptyMessage() {
-        assertEquals(LoginResult(false, LoginResult.DEFAULT_ERROR), LoginResult.parse("<html>502</html>"))
-        assertEquals(LoginResult(false, LoginResult.DEFAULT_ERROR), LoginResult.parse("""{"success":false}"""))
+    fun reportsDefaultErrorForNonJsonResponse() {
+        val expected = LoginResult(false, LoginResult.DEFAULT_ERROR)
+        val html = "<html>502</html>"
+        assertThat("страница ошибки вместо JSON", LoginResult.parse(html), equalTo(expected))
+    }
+
+    @Test
+    fun reportsDefaultErrorWhenMessageIsMissing() {
+        val expected = LoginResult(false, LoginResult.DEFAULT_ERROR)
+        val json = """{"success":false}"""
+        assertThat("отказ без сообщения", LoginResult.parse(json), equalTo(expected))
     }
 }
