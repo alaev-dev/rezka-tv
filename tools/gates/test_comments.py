@@ -145,10 +145,10 @@ class CommentsTest(unittest.TestCase):
 
     def test_reports_unparsable_python_file(self):
         broken = Path(tempfile.mkdtemp(prefix="comments-")) / "broken.py"
-        broken.write_text("def f(:\n", encoding="utf-8")
-        paths = [str(broken)]
-        with self.assertRaises(gate.UnparsableSource, msg="битый Python — понятная ошибка, а не трассировка"):
-            gate.scan(paths)
+        broken.write_text("x = 1\ndef f(:\n", encoding="utf-8")
+        nothing = set()
+        expected = [(str(broken), 2, "файл Python не разбирается: исправьте синтаксис")]
+        self.assertEqual(expected, gate.report([str(broken)], nothing, nothing), "битый Python — нарушение со строкой")
 
     def test_reports_every_comment_outside_ledger(self):
         found = {"app/K.kt": [12, 40]}

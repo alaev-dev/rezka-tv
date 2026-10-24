@@ -63,9 +63,10 @@ def is_shebang(token: tokenize.TokenInfo) -> bool:
 
 
 def python_comments(text: str) -> list:
+    docstrings = docstring_lines(text)
     tokens = tokenize.generate_tokens(io.StringIO(text).readline)
     found = [t.start[0] for t in tokens if t.type == tokenize.COMMENT and not is_shebang(t)]
-    return sorted(found + docstring_lines(text))
+    return sorted(found + docstrings)
 
 
 def docstring_lines(text: str) -> list:
@@ -131,6 +132,13 @@ def annotation(path: str, line: int, message: str) -> str:
     return f"::error file={path},line={line},title=Комментарий::{message}"
 
 
+def report(paths: list, ledger: set, changed: set) -> list:
+    try:
+        return violations(scan(paths), ledger, changed)
+    except UnparsableSource as error:
+        return [(error.path, error.line, "файл Python не разбирается: исправьте синтаксис")]
+
+
 def git_paths(*args: str) -> list:
     output = subprocess.run(["git", *args, "-z"], check=True, capture_output=True, text=True).stdout
     return [path for path in output.split("\0") if path]
@@ -139,10 +147,7 @@ def git_paths(*args: str) -> list:
 def main(base: str) -> int:
     ledger = parse_ledger(Path(LEDGER).read_text(encoding="utf-8")) if Path(LEDGER).exists() else set()
     changed = set(git_paths("diff", "--name-only", f"{base}...HEAD"))
-    try:
-        found = violations(scan(git_paths("ls-files")), ledger, changed)
-    except UnparsableSource as error:
-        found = [(error.path, error.line, "файл Python не разбирается: исправьте синтаксис")]
+    found = report(git_paths("ls-files"), ledger, changed)
     for violation in found:
         print(annotation(*violation))
     return 1 if found else 0
