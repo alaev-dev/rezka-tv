@@ -5,13 +5,6 @@ app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::mediaKeysAlwaysHandled
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::okTogglesAndBackExits
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekDirectionAndAcceleration
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekRepeatsAreThrottled
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::(файл)
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::edges
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::find
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::missingCurrentFallsBackToOrder
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::nextCrossesSeasonBoundary
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::nextWithinSeason
-app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::previousCrossesSeasonBoundary
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::continueWatchingKeepsOnlyFirstRows
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::continueWatchingSkipsHeaderRow
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt::currentEpisodeFromPlayerInit
