@@ -29,8 +29,10 @@ IMDB_DATASETS = "https://datasets.imdbws.com/"
 IMDB_MAX_AGE_DAYS = 30
 WDQS = "https://query.wikidata.org/sparql"
 REZKA = "https://rezka.fi/"
-BROWSER_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-              "(KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36")
+BROWSER_UA = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+)
 BOT_UA = "RezkaTvListsBuilder/1.0 (personal Android TV app; tools/build_lists.py)"
 REZKA_INTERVAL_S = 2.0
 
@@ -76,12 +78,32 @@ GROUPS = (
 )
 
 GENRES_RU = {
-    "Action": "Боевик", "Adventure": "Приключения", "Animation": "Анимация", "Biography": "Биография",
-    "Comedy": "Комедия", "Crime": "Криминал", "Documentary": "Документальный", "Drama": "Драма",
-    "Family": "Семейный", "Fantasy": "Фэнтези", "Film-Noir": "Нуар", "History": "История", "Horror": "Ужасы",
-    "Music": "Музыка", "Musical": "Мюзикл", "Mystery": "Детектив", "Romance": "Мелодрама",
-    "Sci-Fi": "Фантастика", "Sport": "Спорт", "Thriller": "Триллер", "War": "Военный", "Western": "Вестерн",
-    "Game-Show": "Игровое шоу", "Reality-TV": "Реалити-шоу", "Talk-Show": "Ток-шоу", "News": "Новости",
+    "Action": "Боевик",
+    "Adventure": "Приключения",
+    "Animation": "Анимация",
+    "Biography": "Биография",
+    "Comedy": "Комедия",
+    "Crime": "Криминал",
+    "Documentary": "Документальный",
+    "Drama": "Драма",
+    "Family": "Семейный",
+    "Fantasy": "Фэнтези",
+    "Film-Noir": "Нуар",
+    "History": "История",
+    "Horror": "Ужасы",
+    "Music": "Музыка",
+    "Musical": "Мюзикл",
+    "Mystery": "Детектив",
+    "Romance": "Мелодрама",
+    "Sci-Fi": "Фантастика",
+    "Sport": "Спорт",
+    "Thriller": "Триллер",
+    "War": "Военный",
+    "Western": "Вестерн",
+    "Game-Show": "Игровое шоу",
+    "Reality-TV": "Реалити-шоу",
+    "Talk-Show": "Ток-шоу",
+    "News": "Новости",
 }
 
 OSCAR_AWARDS = {"Q102427": "picture", "Q106800": "animated", "Q105304": "international"}
@@ -133,8 +155,9 @@ def kind_ok(kind: str, category) -> bool:
 
 def similar_title(expected: str, rezka_title: str) -> bool:
     expected = normalize_title(expected)
-    return any(difflib.SequenceMatcher(None, expected, normalize_title(p)).ratio() >= 0.5
-               for p in rezka_title.split(" / "))
+    return any(
+        difflib.SequenceMatcher(None, expected, normalize_title(p)).ratio() >= 0.5 for p in rezka_title.split(" / ")
+    )
 
 
 def wikidata_label(label):
@@ -168,11 +191,17 @@ def parse_search(html: str) -> list:
         m_img = re.search(r'<img src="([^"]+)"', block)
         url = unescape(m_url.group(1))
         sub = unescape(strip_tags(m_link.group(2)))
-        cards.append({
-            "id": m_id.group(1), "url": url, "title": unescape(strip_tags(m_link.group(1))),
-            "poster": unescape(m_img.group(1)) if m_img else "", "sub": sub,
-            "year": first_year(sub), "category": url_category(url),
-        })
+        cards.append(
+            {
+                "id": m_id.group(1),
+                "url": url,
+                "title": unescape(strip_tags(m_link.group(1))),
+                "poster": unescape(m_img.group(1)) if m_img else "",
+                "sub": sub,
+                "year": first_year(sub),
+                "category": url_category(url),
+            }
+        )
     return cards
 
 
@@ -347,10 +376,14 @@ def load_imdb(cache: Path, min_votes: int, wanted: set) -> dict:
                 continue
             rating, votes = ratings.get(p[0], (0.0, 0))
             titles[p[0]] = {
-                "imdb": p[0], "type": p[1], "title": p[2], "orig": p[3],
+                "imdb": p[0],
+                "type": p[1],
+                "title": p[2],
+                "orig": p[3],
                 "year": int(p[5]) if p[5].isdigit() else None,
                 "genres": [] if p[8] == "\\N" else p[8].split(","),
-                "rating": rating, "votes": votes,
+                "rating": rating,
+                "votes": votes,
             }
     return titles
 
@@ -358,8 +391,11 @@ def load_imdb(cache: Path, min_votes: int, wanted: set) -> dict:
 def candidates(titles: dict) -> dict:
     out = {}
     for g in GROUPS:
-        items = [t for t in titles.values()
-                 if t["type"] in g.types and ("Animation" in t["genres"]) == g.animated and t["votes"] >= g.min_votes]
+        items = [
+            t
+            for t in titles.values()
+            if t["type"] in g.types and ("Animation" in t["genres"]) == g.animated and t["votes"] >= g.min_votes
+        ]
         if not items:
             out[g.name] = []
             continue
@@ -403,8 +439,11 @@ def build_top(matcher: Matcher, titles: dict, out: Path, sample):
                     buckets[bucket][card["id"]] = {**item, "rezka": rezka_entry(card)}
             processed += 1
             if processed % 25 == 0:
-                log(f"  {processed}: " + ", ".join(f"{b} {len(buckets[b])}" for b in BUCKETS)
-                    + f"; не найдено {len(unmatched)}; запросов {matcher.http.requests}")
+                log(
+                    f"  {processed}: "
+                    + ", ".join(f"{b} {len(buckets[b])}" for b in BUCKETS)
+                    + f"; не найдено {len(unmatched)}; запросов {matcher.http.requests}"
+                )
             if processed % 100 == 0:
                 write_top(buckets, out)
         if not progressed:
@@ -418,15 +457,26 @@ def build_top(matcher: Matcher, titles: dict, out: Path, sample):
 
 
 def write_top(buckets: dict, out: Path):
-    data = {"source": "IMDb non-commercial datasets — только для личного использования",
-            "generated": date.today().isoformat(), "buckets": {}}
+    data = {
+        "source": "IMDb non-commercial datasets — только для личного использования",
+        "generated": date.today().isoformat(),
+        "buckets": {},
+    }
     for b in BUCKETS:
         items = sorted(buckets[b].values(), key=lambda t: -t["score"])[:BUCKET_SIZE]
-        data["buckets"][b] = [{
-            "rank": i + 1, "imdb": t["imdb"], "rating": t["rating"], "votes": t["votes"], "year": t["year"],
-            "genres": [GENRES_RU[g] for g in t["genres"] if g in GENRES_RU and g != "Animation"],
-            "orig": t["title"], **t["rezka"],
-        } for i, t in enumerate(items)]
+        data["buckets"][b] = [
+            {
+                "rank": i + 1,
+                "imdb": t["imdb"],
+                "rating": t["rating"],
+                "votes": t["votes"],
+                "year": t["year"],
+                "genres": [GENRES_RU[g] for g in t["genres"] if g in GENRES_RU and g != "Animation"],
+                "orig": t["title"],
+                **t["rezka"],
+            }
+            for i, t in enumerate(items)
+        ]
     write_json(out, data)
 
 
@@ -455,8 +505,9 @@ def fetch_oscars(cache: Path, offline: bool, refresh: bool) -> list:
         sys.exit("Нет ответа Wikidata в кэше: запустите без --offline")
     query = OSCAR_QUERY % " ".join("wd:" + q for q in OSCAR_AWARDS)
     url = WDQS + "?format=json&query=" + urllib.parse.quote(query)
-    req = urllib.request.Request(url, headers={
-        "User-Agent": BOT_UA, "Accept": "application/sparql-results+json", "Accept-Encoding": "gzip"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": BOT_UA, "Accept": "application/sparql-results+json", "Accept-Encoding": "gzip"}
+    )
     for attempt in range(5):
         try:
             with urllib.request.urlopen(req, timeout=180) as resp:
@@ -493,8 +544,9 @@ def oscar_nominations(rows: list) -> dict:
             n = ceremony_number(year + 1 if film_year else year)
         if n is None or n < 1:
             continue
-        film = out.setdefault((n, category), {}).setdefault(qid, {
-            "qid": qid, "imdb": None, "ru": None, "en": None, "year": first_pub.get(r["film"]), "won": False})
+        film = out.setdefault((n, category), {}).setdefault(
+            qid, {"qid": qid, "imdb": None, "ru": None, "en": None, "year": first_pub.get(r["film"]), "won": False}
+        )
         film["won"] = film["won"] or r["won"] == "1"
         film["imdb"] = film["imdb"] or (r.get("imdb") if re.fullmatch(r"tt\d+", r.get("imdb", "")) else None)
         film["ru"] = film["ru"] or wikidata_label(r.get("ru"))
@@ -535,8 +587,14 @@ def apply_fixes(noms: dict, fixes: list, titles: dict):
         t = max(found, key=lambda x: x["votes"])
         film = next((f for f in films.values() if f["imdb"] == t["imdb"]), None)
         if film is None:
-            film = films[t["imdb"]] = {"qid": t["imdb"], "imdb": t["imdb"], "ru": None, "en": t["title"],
-                                       "year": t["year"], "won": False}
+            film = films[t["imdb"]] = {
+                "qid": t["imdb"],
+                "imdb": t["imdb"],
+                "ru": None,
+                "en": t["title"],
+                "year": t["year"],
+                "won": False,
+            }
         film["won"] = film["won"] or action == "*"
 
 
@@ -576,22 +634,30 @@ def build_oscars(matcher: Matcher, rows: list, titles: dict, fixes: list, out: P
     data = {
         "source": "Wikidata (CC0)",
         "generated": date.today().isoformat(),
-        "ceremonies": [{
-            "n": n, "year": ceremony_year(n), "films": ceremony_films(n),
-            "nominees": {c: cats[c] for c in OSCAR_AWARDS.values() if c in cats},
-        } for n, cats in sorted(ceremonies.items(), reverse=True)],
+        "ceremonies": [
+            {
+                "n": n,
+                "year": ceremony_year(n),
+                "films": ceremony_films(n),
+                "nominees": {c: cats[c] for c in OSCAR_AWARDS.values() if c in cats},
+            }
+            for n, cats in sorted(ceremonies.items(), reverse=True)
+        ],
     }
     write_json(out, data)
     for c in OSCAR_AWARDS.values():
         items = [e for cats in ceremonies.values() for e in cats.get(c, [])]
-        log(f"Оскар, {c}: церемоний {sum(1 for cats in ceremonies.values() if c in cats)}, номинаций {len(items)}, "
-            f"нет на rezka {sum(1 for e in items if 'id' not in e)}")
+        log(
+            f"Оскар, {c}: церемоний {sum(1 for cats in ceremonies.values() if c in cats)}, номинаций {len(items)}, "
+            f"нет на rezka {sum(1 for e in items if 'id' not in e)}"
+        )
     return [(k, v) for k, v in cache.items() if v is None]
 
 
 def to_json(v, depth: int = 0) -> str:
     def nested(x):
         return isinstance(x, dict) or (isinstance(x, list) and any(isinstance(y, (dict, list)) for y in x))
+
     pad = " " * (depth + 1)
     if isinstance(v, dict) and any(nested(x) for x in v.values()):
         inner = ",\n".join(pad + json.dumps(k, ensure_ascii=False) + ": " + to_json(x, depth + 1) for k, x in v.items())
@@ -610,8 +676,12 @@ def write_json(path: Path, data):
 
 def main():
     ap = argparse.ArgumentParser(description=USAGE, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--cookies", type=Path, default=os.environ.get("REZKA_COOKIES"),
-                    help="cookies rezka в формате Netscape (или переменная REZKA_COOKIES)")
+    ap.add_argument(
+        "--cookies",
+        type=Path,
+        default=os.environ.get("REZKA_COOKIES"),
+        help="cookies rezka в формате Netscape (или переменная REZKA_COOKIES)",
+    )
     ap.add_argument("--cache", type=Path, default=DEFAULT_CACHE, help=f"кэш (по умолчанию {DEFAULT_CACHE})")
     ap.add_argument("--only", choices=("top", "oscars"), help="собрать только один список")
     ap.add_argument("--offline", action="store_true", help="не ходить в сеть, только кэш")
@@ -634,7 +704,7 @@ def main():
             report.append(("oscar", key, titles.get(key, {}).get("title", "")))
     if args.only != "oscars":
         for group, item in build_top(matcher, titles, args.out / "top.json", args.sample):
-            report.append((group, item["imdb"], f'{item["title"]} ({item["year"]})'))
+            report.append((group, item["imdb"], f"{item['title']} ({item['year']})"))
     path = args.cache / "unmatched.tsv"
     path.write_text("".join("\t".join(map(str, r)) + "\n" for r in report), encoding="utf-8")
     log(f"Не найдено на rezka: {len(report)} (список: {path}); запросов к rezka: {http_.requests}")

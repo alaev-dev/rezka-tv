@@ -10,6 +10,10 @@ val ruff by tasks.registering(Exec::class) {
     commandLine(python, "-m", "ruff", "check", "tools")
 }
 
+val ruffFormat by tasks.registering(Exec::class) {
+    commandLine(python, "-m", "ruff", "format", "--check", "tools")
+}
+
 val toolsTests by tasks.registering(Exec::class) {
     commandLine(python, "-m", "unittest", "discover", "-s", "tools", "-q")
 }
@@ -25,5 +29,5 @@ val commentsGate by tasks.registering(Exec::class) {
 tasks.register("verify") {
     group = "verification"
     description = "Быстрый эшелон проверок: одна команда для CI и для любой машины."
-    dependsOn(ruff, toolsTests, prSize, commentsGate, ":app:testDebugUnitTest", ":app:lintDebug")
+    dependsOn(ruff, ruffFormat, toolsTests, prSize, commentsGate, ":app:testDebugUnitTest", ":app:lintDebug")
 }
