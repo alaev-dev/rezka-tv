@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <!-- Большая обложка справа во всю высоту, левый край и низ растворяются в фоне -->
     <FrameLayout
         android:layout_width="500dp"
         android:layout_height="match_parent"

@@ -5,7 +5,6 @@
     android:background="@color/bg"
     android:orientation="horizontal">
 
-    <!-- Своя клавиатура: системная клавиатура TCL неудобна с пульта -->
     <LinearLayout
         android:layout_width="372dp"
         android:layout_height="match_parent"

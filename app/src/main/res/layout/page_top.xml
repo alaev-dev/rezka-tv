@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- «Рейтинг»: как раздел-сетка, плюс строка фильтров -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_page"
@@ -69,7 +68,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- focusOutFront: вверх с первого ряда — к фильтрам -->
         <androidx.leanback.widget.VerticalGridView
             android:id="@+id/top_grid"
             android:layout_width="match_parent"

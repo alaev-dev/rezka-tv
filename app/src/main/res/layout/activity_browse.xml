@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <!-- Обложка выбранного тайтла справа сверху, растворяется в фоне -->
     <FrameLayout
         android:id="@+id/hero_art_box"
         android:layout_width="@dimen/hero_art_width"
@@ -114,7 +113,6 @@
                 android:layout_marginEnd="@dimen/content_padding"
                 android:textColor="@color/text" />
 
-            <!-- focusOutFront: вверх с первого ряда — к сортировке -->
             <androidx.leanback.widget.VerticalGridView
                 android:id="@+id/grid"
                 android:layout_width="match_parent"
@@ -169,6 +167,5 @@
         android:textColor="@color/text"
         android:textSize="20sp" />
 
-    <!-- Выбор десятилетия и жанра в «Рейтинге» -->
     <include layout="@layout/view_choice_panel" />
 </androidx.leanback.widget.BrowseFrameLayout>
