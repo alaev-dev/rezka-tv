@@ -136,3 +136,18 @@ class PythonDisciplineTest(unittest.TestCase):
         expected = "тест длиннее 12 строк: 13"
         body = "        a = 1\n" * 12 + "        self.assertTrue(a, 'да')\n"
         self.assertIn(expected, messages(body), "тест не длиннее 12 строк")
+
+    def test_reports_python_constant_mistaken_for_message(self):
+        expected = "нужно сообщение последним аргументом assert"
+        body = "        self.assertEqual(f(), 'x')\n"
+        self.assertIn(expected, messages(body), "второй аргумент assertEqual — не сообщение")
+
+    def test_accepts_python_message_keyword(self):
+        expected = []
+        body = "        self.assertEqual(want, f(), msg='совпадает')\n"
+        self.assertEqual(expected, messages(body), "сообщение через msg= принимается")
+
+    def test_reports_two_python_asserts(self):
+        expected = "assert в тесте: 2, нужен ровно один"
+        body = "        self.assertTrue(f(), 'да')\n        self.assertTrue(g(), 'да')\n"
+        self.assertIn(expected, messages(body), "один assert на тест")

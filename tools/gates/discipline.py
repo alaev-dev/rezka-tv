@@ -14,6 +14,7 @@ LITERAL = re.compile(r"\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])'|\b\d[\d_]*(\.\d+)?[LlFf
 FIXTURE = re.compile(r"@(Before|After)(Each|All|Class)?\b")
 FIELD = re.compile(r"^( {4})?(private |internal )?(const |lateinit )?(val|var) |^\s*companion object\b", re.MULTILINE)
 TOKEN = re.compile(r'"""[\s\S]*?"""|"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\])\'|[(){}]')
+UNARY_ASSERTS = {"assertTrue", "assertFalse", "assertIsNone", "assertIsNotNone"}
 WORD = re.compile(r"[A-Z]?[a-z0-9]+")
 
 
@@ -73,6 +74,10 @@ def problems(path: str, text: str) -> dict:
     return {key: messages for key, messages in found.items() if messages}
 
 
+def is_text(node: ast.AST) -> bool:
+    return isinstance(node, ast.JoinedStr) or (isinstance(node, ast.Constant) and isinstance(node.value, str))
+
+
 def is_literal(node: ast.AST) -> bool:
     parts = getattr(node, "elts", None) or [*getattr(node, "keys", []), *getattr(node, "values", [])]
     containers = (ast.List, ast.Tuple, ast.Set, ast.Dict)
@@ -86,10 +91,11 @@ def python_assert_problems(test: ast.FunctionDef) -> list:
     call, last = calls[0], test.body[-1]
     problems = [] if isinstance(last, ast.Expr) and last.value is call else ["assert должен быть последним"]
     keyword = [k.value for k in call.keywords if k.arg == "msg"]
-    message = keyword or call.args[-1:]
-    if not message or not isinstance(message[0], (ast.Constant, ast.JoinedStr)):
+    arity = 1 if call.func.attr in UNARY_ASSERTS else 2
+    message = keyword or call.args[arity : arity + 1]
+    if not message or not is_text(message[0]):
         return problems + ["нужно сообщение последним аргументом assert"]
-    checked = call.args if keyword else call.args[:-1]
+    checked = call.args[:arity]
     return problems + (["литерал в assert: вынесите значение в переменную"] if any(map(is_literal, checked)) else [])
 
 
