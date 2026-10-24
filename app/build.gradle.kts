@@ -85,7 +85,7 @@ dependencies {
     implementation("androidx.media3:media3-ui-leanback:$media3")
     implementation("androidx.media3:media3-ui:$media3")
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("org.jsoup:jsoup:1.18.1")
+    implementation("org.jsoup:jsoup:1.23.2")
     implementation("com.google.zxing:core:3.5.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     testImplementation("junit:junit:4.13.2")
