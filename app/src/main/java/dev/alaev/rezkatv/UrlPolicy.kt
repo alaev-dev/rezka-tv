@@ -3,10 +3,6 @@ package dev.alaev.rezkatv
 import java.net.URI
 import java.net.URISyntaxException
 
-/**
- * Что пускать в WebView: основная страница не уходит с сайта (рекламные редиректы режутся),
- * запросы к рекламным и счётчиковым доменам блокируются.
- */
 class UrlPolicy(siteHost: String) {
 
     private val site = siteHost.lowercase().removePrefix("www.")

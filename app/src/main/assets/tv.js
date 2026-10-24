@@ -1,6 +1,3 @@
-// Встраивается в каждую страницу rezka: заметный фокус для пульта и режим плеера на весь экран.
-// Нативная часть (RezkaActivity) шлёт сюда команды через __tv.cmd(name, arg).
-// window.__tvAutoplay = true (режим плеера): сразу разворачиваем плеер и запускаем видео.
 (function () {
   if (window.__tv) return;
   var AUTOPLAY_TIMEOUT_MS = 30000;
@@ -40,7 +37,6 @@
   }
 
   function enter(video) {
-    // Немые и маленькие видео (превью, реклама) не разворачиваем
     if (fsBox || video.muted || video.clientWidth < 300) return;
     fsBox = playerBox(video);
     fsBox.classList.add('tv-fs');
@@ -71,7 +67,6 @@
       el = document.createElement('div');
       el.id = 'tv-osd';
     }
-    // Внутри полноэкранного элемента, иначе его не видно
     var host = document.fullscreenElement || fsBox || document.body;
     if (el.parentNode !== host) host.appendChild(el);
     el.textContent = text;
@@ -85,12 +80,10 @@
   }
 
   function startPlayback(video) {
-    // Плеер сайта (Playerjs) — через его API, иначе напрямую
     if (window.CDNPlayer && typeof CDNPlayer.api === 'function') CDNPlayer.api('play');
     else if (video) video.play();
   }
 
-  // Плеер разворачивается сразу, видео запускаем, как только плеер готов
   function autoplay() {
     document.documentElement.classList.add('tv-autoplay');
     var started = Date.now();
@@ -112,7 +105,6 @@
     }, 500);
   }
 
-  // play не всплывает, ловим на фазе перехвата
   document.addEventListener('play', function (e) {
     if (e.target.tagName === 'VIDEO') enter(e.target);
   }, true);
@@ -143,7 +135,6 @@
           osd((arg > 0 ? '» ' : '« ') + position(video));
           break;
         case 'controls':
-          // Показать собственную панель плеера сайта
           video.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
           osd(position(video));
           break;

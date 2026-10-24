@@ -12,7 +12,6 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.RezkaTv">
 
-        <!-- Выход с главной убивает процесс и отдаёт системе память плеера, WebView и постеров -->
         <activity
             android:name=".rezka.BrowseActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|uiMode"

@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""Списки «Рейтинг» (IMDb) и «Оскар» (Wikidata) для клиента rezka.
-
-    python3 tools/build_lists.py --cookies rezka-cookies.txt            # всё
-    python3 tools/build_lists.py --cookies rezka-cookies.txt --only oscars
-    python3 tools/build_lists.py --offline                              # только из кэша, без сети
-
-Пишет app/src/main/assets/lists/top.json (в git не попадает: данные IMDb нельзя распространять)
-и app/src/main/assets/lists/oscars.json (Wikidata, CC0).
-
---cookies — cookies залогиненного аккаунта rezka в формате Netscape (экспорт из браузера или curl -c):
-без входа сайт не отдаёт ни поиск, ни страницы.
-
-Кэш (~/.cache/rezka-tv) переживает перезапуски: наборы данных IMDb, ответ Wikidata и все страницы rezka
-сохраняются, поэтому прерванный запуск продолжается с того же места, а повторный не ходит в сеть.
-К rezka — не чаще одного запроса в 2 секунды, по одному.
-"""
 from __future__ import annotations
 
 import argparse
@@ -51,8 +35,25 @@ BOT_UA = "RezkaTvListsBuilder/1.0 (personal Android TV app; tools/build_lists.py
 REZKA_INTERVAL_S = 2.0
 
 BUCKET_SIZE = 500
+USAGE = """\
+Списки «Рейтинг» (IMDb) и «Оскар» (Wikidata) для клиента rezka.
+
+    python3 tools/build_lists.py --cookies rezka-cookies.txt            # всё
+    python3 tools/build_lists.py --cookies rezka-cookies.txt --only oscars
+    python3 tools/build_lists.py --offline                              # только из кэша, без сети
+
+Пишет app/src/main/assets/lists/top.json (в git не попадает: данные IMDb нельзя распространять)
+и app/src/main/assets/lists/oscars.json (Wikidata, CC0).
+
+--cookies — cookies залогиненного аккаунта rezka в формате Netscape (экспорт из браузера или curl -c):
+без входа сайт не отдаёт ни поиск, ни страницы.
+
+Кэш (~/.cache/rezka-tv) переживает перезапуски: наборы данных IMDb, ответ Wikidata и все страницы rezka
+сохраняются, поэтому прерванный запуск продолжается с того же места, а повторный не ходит в сеть.
+К rezka — не чаще одного запроса в 2 секунды, по одному.
+"""
+
 BUCKETS = ("films", "series", "cartoons", "anime")
-# Раздел в адресе rezka → список
 CATEGORY_BUCKET = {"films": "films", "series": "series", "cartoons": "cartoons", "animation": "anime"}
 
 SERIES_TYPES = {"tvSeries", "tvMiniSeries"}
@@ -60,17 +61,13 @@ SERIES_TYPES = {"tvSeries", "tvMiniSeries"}
 
 @dataclass
 class Group:
-    """Кандидаты одного вида; min_votes — порог и одновременно m в байесовской формуле."""
     name: str
     types: set
     animated: bool
     min_votes: int
-    # Списки, ради которых перебираем группу: когда они заполнены, группа больше не нужна
     fills: tuple
 
 
-# Пороги подобраны так, чтобы в каждый список попадали известные тайтлы, а мультфильмов и аниме набиралось
-# на несколько сотен (с порогом фильмов их было бы втрое меньше)
 GROUPS = (
     Group("movies", {"movie"}, False, 25_000, ("films",)),
     Group("series", SERIES_TYPES, False, 10_000, ("series",)),
@@ -87,7 +84,6 @@ GENRES_RU = {
     "Game-Show": "Игровое шоу", "Reality-TV": "Реалити-шоу", "Talk-Show": "Ток-шоу", "News": "Новости",
 }
 
-# Награды на Wikidata: лучший фильм, анимационный, международный (до 2020 — «на иностранном языке»)
 OSCAR_AWARDS = {"Q102427": "picture", "Q106800": "animated", "Q105304": "international"}
 
 
@@ -95,15 +91,11 @@ def log(*args):
     print(*args, file=sys.stderr, flush=True)
 
 
-# ---------- Чистые функции (покрыты tools/test_build_lists.py) ----------
-
 def weighted_rating(rating: float, votes: int, m: int, mean: float) -> float:
-    """Байесовская оценка IMDb: у тайтлов с малым числом голосов рейтинг подтягивается к среднему."""
     return votes / (votes + m) * rating + m / (votes + m) * mean
 
 
 def normalize_title(title: str) -> str:
-    """Для сравнения названий: регистр, диакритика, пунктуация, «&», артикль в начале."""
     s = unicodedata.normalize("NFKD", title or "")
     s = "".join(ch for ch in s if not unicodedata.combining(ch)).casefold()
     s = s.replace("&", " and ").replace("’", "").replace("'", "")
@@ -127,13 +119,11 @@ def year_ok(card_year, year, tolerance: int = 1) -> bool:
 
 
 def url_category(url: str):
-    """«https://rezka.fi/films/drama/1167-….html» → «films»"""
     path = urllib.parse.urlparse(url).path.strip("/").split("/")
     return path[0] if path and path[0] in CATEGORY_BUCKET else None
 
 
 def kind_ok(kind: str, category) -> bool:
-    """Фильм не может оказаться сериалом и наоборот; мультфильмы и аниме бывают и тем и другим."""
     if category is None:
         return False
     if kind == "movie":
@@ -142,14 +132,12 @@ def kind_ok(kind: str, category) -> bool:
 
 
 def similar_title(expected: str, rezka_title: str) -> bool:
-    """Похоже ли название на rezka («Крёстный отец / The Godfather») на ожидаемое русское."""
     expected = normalize_title(expected)
     return any(difflib.SequenceMatcher(None, expected, normalize_title(p)).ratio() >= 0.5
                for p in rezka_title.split(" / "))
 
 
 def wikidata_label(label):
-    """«Ярмарка штата (фильм, 1933)» → «Ярмарка штата»: уточнение в скобках только мешает поиску."""
     return re.sub(r"\s*\((?=[^)]*(?:фильм|film|\b(?:18|19|20)\d\d\b))[^)]*\)$", "", label) if label else label
 
 
@@ -161,8 +149,6 @@ def titles_match(rezka_orig, titles) -> bool:
 
 
 def search_queries(*titles) -> list:
-    """Что искать: сначала сами названия (английское, оригинальное, русское), потом без диакритики
-    и без подзаголовка («Léon: The Professional» → «Léon»)."""
     names = [t.strip() for t in titles if t and t.strip()]
     out = []
     for q in names + [ascii_fold(t) for t in names] + [t.split(":")[0].strip() for t in names]:
@@ -172,7 +158,6 @@ def search_queries(*titles) -> list:
 
 
 def parse_search(html: str) -> list:
-    """Карточки поиска rezka: id, адрес, название, постер, «2010, США, Фантастика»."""
     cards = []
     for block in html.split('class="b-content__inline_item"')[1:]:
         m_id = re.search(r'data-id="(\d+)"', block)
@@ -192,7 +177,6 @@ def parse_search(html: str) -> list:
 
 
 def parse_title_page(html: str) -> dict:
-    """IMDb id из ссылки рейтинга (/help/<base64 адреса>/) и оригинальное название."""
     imdb = None
     m = re.search(r'b-post__info_rates imdb"><a href="/help/([^"/]+)/', html)
     if m:
@@ -211,7 +195,6 @@ def strip_tags(s: str) -> str:
 
 
 def ceremony_number(year: int) -> int:
-    """Номер церемонии по году её проведения; в 1930 их было две — берём первую (весеннюю)."""
     if year <= 1930:
         return year - 1928
     if year <= 1932:
@@ -226,11 +209,8 @@ def ceremony_year(n: int) -> int:
 
 
 def ceremony_films(n: int) -> str:
-    """За какие годы фильмы: до 6-й церемонии сезон шёл с августа по июль."""
     return f"{1926 + n}–{1927 + n}" if n <= 6 else str(1927 + n)
 
-
-# ---------- Сеть с кэшем ----------
 
 class Http:
     def __init__(self, cache: Path, cookies, offline: bool):
@@ -249,7 +229,6 @@ class Http:
         return self.cache / h[:2] / (h + ".html.gz")
 
     def get(self, url: str):
-        """Страница rezka; None — нет в кэше в режиме offline."""
         path = self._path(url)
         if path.exists():
             return gzip.decompress(path.read_bytes()).decode("utf-8")
@@ -277,7 +256,6 @@ class Http:
                 time.sleep(30 * (attempt + 1))
         else:
             raise RuntimeError(f"rezka не отвечает: {url}")
-        # Сайт отдаёт gzip, даже если его не просили
         if body[:2] == b"\x1f\x8b":
             body = gzip.decompress(body)
         html = body.decode("utf-8", "replace")
@@ -303,8 +281,6 @@ def download(url: str, path: Path, max_age_days: int):
     tmp.replace(path)
 
 
-# ---------- Сопоставление с rezka ----------
-
 class Matcher:
     def __init__(self, http_: Http):
         self.http = http_
@@ -318,8 +294,6 @@ class Matcher:
         return None if html is None else parse_title_page(html)
 
     def match(self, imdb, kind: str, year, titles: list, russian=None):
-        """Карточка rezka для тайтла или None. kind — movie/series, titles — варианты названия для сверки,
-        russian — русское название (из Wikidata), если известно."""
         for query in search_queries(*titles, russian):
             cards = self.search(query)
             if cards is None:
@@ -327,8 +301,6 @@ class Matcher:
             found = [c for c in cards if year_ok(c["year"], year) and kind_ok(kind, c["category"])]
             if not found:
                 continue
-            # Единственный подходящий по году и виду, и он первый в выдаче (а русское название, если известно,
-            # похоже) — без проверки страницы; иначе сверяемся с IMDb на странице тайтла
             single = found[0] if len(found) == 1 and cards[0] is found[0] else None
             if single and (not russian or similar_title(russian, single["title"])):
                 return single
@@ -344,7 +316,6 @@ class Matcher:
 
 
 def rezka_entry(card: dict) -> dict:
-    """Ссылка без домена: в приложении она дополняется текущим зеркалом."""
     return {
         "id": card["id"],
         "url": urllib.parse.urlparse(card["url"]).path,
@@ -353,10 +324,7 @@ def rezka_entry(card: dict) -> dict:
     }
 
 
-# ---------- IMDb ----------
-
 def load_imdb(cache: Path, min_votes: int, wanted: set) -> dict:
-    """tconst → тайтл (фильмы и сериалы, не для взрослых) с рейтингом; редкие — только из wanted."""
     d = cache / "imdb"
     for name in ("title.basics.tsv.gz", "title.ratings.tsv.gz"):
         download(IMDB_DATASETS + name, d / name, IMDB_MAX_AGE_DAYS)
@@ -388,7 +356,6 @@ def load_imdb(cache: Path, min_votes: int, wanted: set) -> dict:
 
 
 def candidates(titles: dict) -> dict:
-    """Группа → кандидаты по убыванию взвешенного рейтинга."""
     out = {}
     for g in GROUPS:
         items = [t for t in titles.values()
@@ -416,7 +383,6 @@ def build_top(matcher: Matcher, titles: dict, out: Path, sample):
     def full(names):
         return all(len(buckets[b]) >= BUCKET_SIZE for b in names)
 
-    # По очереди из каждой группы: прерванный запуск даёт ровные, пусть и короткие списки
     while True:
         progressed = False
         for g in GROUPS:
@@ -464,8 +430,6 @@ def write_top(buckets: dict, out: Path):
     write_json(out, data)
 
 
-# ---------- Оскар ----------
-
 OSCAR_QUERY = """
 SELECT ?award ?film ?ru ?en ?imdb ?won ?time ?ed ?pub WHERE {
   VALUES ?award { %s }
@@ -491,7 +455,6 @@ def fetch_oscars(cache: Path, offline: bool, refresh: bool) -> list:
         sys.exit("Нет ответа Wikidata в кэше: запустите без --offline")
     query = OSCAR_QUERY % " ".join("wd:" + q for q in OSCAR_AWARDS)
     url = WDQS + "?format=json&query=" + urllib.parse.quote(query)
-    # Без Accept-Encoding: gzip служба запросов сейчас режет клиента до запроса в минуту
     req = urllib.request.Request(url, headers={
         "User-Agent": BOT_UA, "Accept": "application/sparql-results+json", "Accept-Encoding": "gzip"})
     for attempt in range(5):
@@ -514,7 +477,6 @@ def fetch_oscars(cache: Path, offline: bool, refresh: bool) -> list:
 
 
 def oscar_nominations(rows: list) -> dict:
-    """(церемония, категория) → {qid: номинант}; победа перекрывает номинацию."""
     first_pub = {}
     for r in rows:
         pub = first_year(r.get("pub", "")[:4])
@@ -527,8 +489,6 @@ def oscar_nominations(rows: list) -> dict:
         n = int(r["ed"]) if r.get("ed", "").isdigit() else None
         if n is None and r.get("time"):
             year = int(r["time"][:4])
-            # Дата без церемонии: полная — это церемония или объявление номинантов, а «1 января» года выхода
-            # фильма — обычно год фильма, награждают за него на следующий год
             film_year = r["time"][5:10] == "01-01" and first_pub.get(r["film"]) == year
             n = ceremony_number(year + 1 if film_year else year)
         if n is None or n < 1:
@@ -543,7 +503,6 @@ def oscar_nominations(rows: list) -> dict:
 
 
 def load_fixes(path: Path) -> list:
-    """Строки oscars_fixes.tsv: (действие, церемония, категория, название, год или None)."""
     fixes = []
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
@@ -554,7 +513,6 @@ def load_fixes(path: Path) -> list:
 
 
 def apply_fixes(noms: dict, fixes: list, titles: dict):
-    """Дополнить и почистить номинантов; добавленные ищутся в IMDb по названию и году."""
     index = {}
     for t in titles.values():
         if t["type"] == "movie":
@@ -595,7 +553,7 @@ def build_oscars(matcher: Matcher, rows: list, titles: dict, fixes: list, out: P
             orig = t["title"] if t else (f["en"] or f["ru"] or "")
             year = (t["year"] if t and t["year"] else f["year"]) or int(ceremony_films(n)[:4])
             key = f["imdb"] or f["qid"]
-            if key in entries:  # два элемента Wikidata про один фильм
+            if key in entries:
                 entries[key]["won"] = entries[key]["won"] or f["won"]
                 continue
             if key not in cache:
@@ -612,7 +570,6 @@ def build_oscars(matcher: Matcher, rows: list, titles: dict, fixes: list, out: P
             entries[key] = entry
         if not entries:
             continue
-        # Победитель первым, дальше по алфавиту
         ceremonies.setdefault(n, {})[category] = sorted(entries.values(), key=lambda e: (not e["won"], e["title"]))
         if category == "picture" and n % 10 == 0:
             log(f"  Оскар: до церемонии {n}: найдено {found}, нет на rezka {missing}, запросов {matcher.http.requests}")
@@ -632,10 +589,7 @@ def build_oscars(matcher: Matcher, rows: list, titles: dict, fixes: list, out: P
     return [(k, v) for k, v in cache.items() if v is None]
 
 
-# ---------- Вывод ----------
-
 def to_json(v, depth: int = 0) -> str:
-    """JSON, где каждый тайтл — одна строка: читаемо в diff и без лишних отступов."""
     def nested(x):
         return isinstance(x, dict) or (isinstance(x, list) and any(isinstance(y, (dict, list)) for y in x))
     pad = " " * (depth + 1)
@@ -655,7 +609,7 @@ def write_json(path: Path, data):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description=USAGE, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cookies", type=Path, default=os.environ.get("REZKA_COOKIES"),
                     help="cookies rezka в формате Netscape (или переменная REZKA_COOKIES)")
     ap.add_argument("--cache", type=Path, default=DEFAULT_CACHE, help=f"кэш (по умолчанию {DEFAULT_CACHE})")
@@ -670,7 +624,6 @@ def main():
     matcher = Matcher(http_)
     rows = fetch_oscars(args.cache, args.offline, args.refresh_oscars) if args.only != "top" else []
     wanted = {r["imdb"] for r in rows if re.fullmatch(r"tt\d+", r.get("imdb", ""))}
-    # Порог ниже, чем у списков: номинантов из oscars_fixes.tsv ищем в IMDb по названию
     titles = load_imdb(args.cache, 1000, wanted)
     log(f"IMDb: {len(titles)} тайтлов")
 
