@@ -8,16 +8,6 @@ app/src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/PlayerGlue.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/SeekMath.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/ThumbnailSeekProvider.kt
-app/src/main/res/drawable/card_winner.xml
-app/src/main/res/drawable/fade_bottom.xml
-app/src/main/res/drawable/fade_left.xml
-app/src/main/res/drawable/list_item_bg.xml
-app/src/main/res/drawable/mark_started.xml
-app/src/main/res/drawable/mark_watched.xml
-app/src/main/res/drawable/panel_bg.xml
-app/src/main/res/drawable/player_action_bg.xml
-app/src/main/res/drawable/rail_bg.xml
-app/src/main/res/drawable/rail_scrim.xml
 app/src/main/res/drawable/rank_bg.xml
 app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt
