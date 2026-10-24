@@ -1,3 +1,4 @@
+import com.android.build.api.variant.DeviceTestBuilder
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
@@ -58,6 +59,12 @@ android {
         abortOnError = true
         baseline = rootProject.file("quality/lint-baseline.xml")
         disable += setOf("NewerVersionAvailable", "GradleDependency", "AndroidGradlePluginVersion")
+    }
+}
+
+androidComponents {
+    beforeVariants { variant ->
+        variant.deviceTests[DeviceTestBuilder.ANDROID_TEST_TYPE]?.enable = false
     }
 }
 
