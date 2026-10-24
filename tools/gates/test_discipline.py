@@ -67,6 +67,10 @@ class DisciplineTest(unittest.TestCase):
         text = "package dev.a\n\nclass FooTest {\n    @Test\n    fun parses() = assertEquals(1, f())\n}\n"
         self.assertEqual("parses", gate.test_bodies(text)[0][0], "тест-выражение тоже проверяется")
 
+    def test_reads_test_with_arguments_and_other_annotations(self):
+        text = "class FooTest {\n    @Test(expected = E::class) @Timeout(1)\n    fun failsOnBadInput() {\n    }\n}\n"
+        self.assertEqual("failsOnBadInput", gate.test_bodies(text)[0][0], "аннотации после @Test не прячут тест")
+
     def test_accepts_old_test_from_ledger(self):
         found = {f"{PATH}::format": ["имя"]}
         self.assertEqual([], gate.violations(found, {f"{PATH}::format"}), "старый тест из журнала допустим")
@@ -78,7 +82,3 @@ class DisciplineTest(unittest.TestCase):
     def test_reports_fixed_test_left_in_ledger(self):
         expected = [(f"{PATH}::format", f"тест в порядке: уберите {PATH}::format из {gate.LEDGER}")]
         self.assertEqual(expected, gate.violations({}, {f"{PATH}::format"}), "исправленный тест убирается")
-
-
-if __name__ == "__main__":
-    unittest.main()

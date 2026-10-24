@@ -5,8 +5,9 @@ from pathlib import Path
 
 LEDGER = "quality/tests-baseline.txt"
 MAX_LINES = 12
-FILE_SCOPE = "(файл)"
-TEST_FUN = re.compile(r"@Test\s+fun\s+(`[^`]+`|\w+)\s*\([^)]*\)\s*(?::\s*\w+\s*)?([{=])")
+TEST_FUN = re.compile(
+    r"@Test(?:\([^)]*\))?(?:\s*@\w+(?:\([^)]*\))?)*\s+fun\s+(`[^`]+`|\w+)\s*\([^)]*\)\s*(?::\s*\w+\s*)?([{=])"
+)
 ASSERT = re.compile(r"\b(assert\w*|fail)\s*\(")
 LITERAL = re.compile(r"\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])'|\b\d[\d_]*(\.\d+)?[LlFfDd]?\b|\b(true|false)\b")
 FIXTURE = re.compile(r"@(Before|After)(Each|All|Class)?\b")
@@ -74,7 +75,7 @@ def file_problems(text: str) -> list:
 
 def problems(path: str, text: str) -> dict:
     found = {f"{path}::{name}": body_problems(name, body) for name, body in test_bodies(text)}
-    found[f"{path}::{FILE_SCOPE}"] = file_problems(text)
+    found[f"{path}::(файл)"] = file_problems(text)
     return {key: messages for key, messages in found.items() if messages}
 
 

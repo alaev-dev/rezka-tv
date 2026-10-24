@@ -44,6 +44,7 @@ app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::autoIsBestRegularQual
 app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::explicitChoiceOrNearestLower
 app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::fallsBackToLowestWhenNothingFits
 app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt::seekStepMapping
+app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::failedResponseThrows
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::falseFieldsMeanNothing
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::qualitiesWithHlsFirstAndMirrors
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt::subtitlesWithLanguages
