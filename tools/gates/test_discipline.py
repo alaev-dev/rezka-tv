@@ -71,6 +71,10 @@ class DisciplineTest(unittest.TestCase):
         text = "class FooTest {\n    @Test(expected = E::class) @Timeout(1)\n    fun failsOnBadInput() {\n    }\n}\n"
         self.assertEqual("failsOnBadInput", gate.test_bodies(text)[0][0], "аннотации после @Test не прячут тест")
 
+    def test_skips_escaped_quote_inside_string(self):
+        body = '        val s = "a\\"}"\n        assertThat("строка", f(s), equalTo(b))\n'
+        self.assertEqual({}, gate.problems(PATH, kotlin(body)), "экранированная кавычка не сбивает скобки")
+
     def test_accepts_old_test_from_ledger(self):
         found = {f"{PATH}::format": ["имя"]}
         self.assertEqual([], gate.violations(found, {f"{PATH}::format"}), "старый тест из журнала допустим")

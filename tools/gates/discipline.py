@@ -12,21 +12,16 @@ ASSERT = re.compile(r"\b(assert\w*|fail)\s*\(")
 LITERAL = re.compile(r"\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])'|\b\d[\d_]*(\.\d+)?[LlFfDd]?\b|\b(true|false)\b")
 FIXTURE = re.compile(r"@(Before|After)(Each|All|Class)?\b")
 FIELD = re.compile(r"^( {4})?(private |internal )?(const |lateinit )?(val|var) |^\s*companion object\b", re.MULTILINE)
+TOKEN = re.compile(r'"""[\s\S]*?"""|"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\])\'|[(){}]')
 WORD = re.compile(r"[A-Z]?[a-z0-9]+")
 
 
 def closing(text: str, start: int, opening: str, close: str) -> int:
-    depth, i = 0, start
-    while i < len(text):
-        if text[i] == '"':
-            i = text.index('"', i + 1) if '"' in text[i + 1 :] else len(text)
-        elif text[i] == opening:
-            depth += 1
-        elif text[i] == close:
-            depth -= 1
-            if depth == 0:
-                return i
-        i += 1
+    depth = 0
+    for token in TOKEN.finditer(text, start):
+        depth += {opening: 1, close: -1}.get(token.group(), 0)
+        if depth == 0:
+            return token.start()
     return len(text)
 
 
