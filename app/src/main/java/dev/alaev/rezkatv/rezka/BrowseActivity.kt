@@ -17,7 +17,6 @@ import dev.alaev.rezkatv.rezka.lists.OscarPage
 import dev.alaev.rezkatv.rezka.lists.TitleMarks
 import dev.alaev.rezkatv.rezka.lists.TopPage
 
-/** Главная rezka: меню слева, справа — главная с рядами, раздел-сетка, «Рейтинг» или «Оскар». */
 class BrowseActivity : Activity() {
 
     private val scope = MainScope()
@@ -31,7 +30,6 @@ class BrowseActivity : Activity() {
     private lateinit var choice: ChoicePanel
     private lateinit var root: BrowseFrameLayout
 
-    // Что было при создании экрана: если в настройках поменяли — пересоздаём
     private var liteMode = false
     private var baseUrl = ""
 
@@ -52,14 +50,11 @@ class BrowseActivity : Activity() {
         val marks = TitleMarks(this, client)
         top = TopPage(this, client, scope, marks, choice)
         oscar = OscarPage(this, client, scope, marks)
-        // Списки разбираются в фоне, пока пользователь выбирает раздел в меню
         rail = NavRail(findViewById(R.id.rail), findViewById(R.id.rail_scrim), ::onSection) { ListsAssets.preload(this) }
 
         root.onFocusSearchListener = BrowseFrameLayout.OnFocusSearchListener { focused, direction ->
             when {
-                // Панель выбора открыта — фокус не уходит из неё на страницу под ней
                 choice.isShowing && (direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT) -> focused
-                // Влево с первой карточки — в меню, на текущий раздел (а не на ближайший пункт)
                 direction == View.FOCUS_LEFT && !rail.contains(focused) -> {
                     val next = FocusFinder.getInstance().findNextFocus(root, focused, direction)
                     if (next == null || rail.contains(next)) rail.selectedView() else null
@@ -77,23 +72,19 @@ class BrowseActivity : Activity() {
 
     override fun onRestart() {
         super.onRestart()
-        // Вернулись из плеера или после входа: прогресс в «Досмотреть» мог измениться
         if (home.isEmpty) home.load() else home.refresh(Shelf.CONTINUE)
-        // …и отметки «просмотрено» в списках
         if (top.isVisible) top.refresh()
         if (oscar.isVisible) oscar.refresh()
     }
 
     override fun onResume() {
         super.onResume()
-        // Настройки открываются поверх (прозрачной панелью), поэтому проверяем здесь, а не в onRestart
         if (settings.liteMode != liteMode || RezkaClient.baseUrl(this) != baseUrl) recreate()
     }
 
     override fun onDestroy() {
         scope.cancel()
         super.onDestroy()
-        // Выход из rezka: процесс :web больше не нужен, отдаём память системе
         if (isFinishing) Process.killProcess(Process.myPid())
     }
 

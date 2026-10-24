@@ -20,15 +20,10 @@ enum class Section(val label: Int, val icon: Int, val category: Category? = null
     SETTINGS(R.string.nav_settings, R.drawable.ic_settings),
 }
 
-/**
- * Меню слева, как у больших ТВ-приложений: свёрнуто — только иконки, при фокусе раскрывается
- * с подписями поверх затемнённого контента. Выбор — по OK.
- */
 class NavRail(
     private val container: LinearLayout,
     private val scrim: View,
     private val onSelect: (Section) -> Unit,
-    /** Меню раскрылось: пользователь, возможно, идёт в другой раздел */
     private val onExpand: () -> Unit = {},
 ) {
     private val items: Map<Section, View>
@@ -49,7 +44,6 @@ class NavRail(
             item.findViewById<TextView>(R.id.label).setText(section.label)
             item.contentDescription = container.context.getString(section.label)
             item.setOnClickListener { onSelect(section) }
-            // Раскрываем, пока фокус где-то внутри меню; проверка после смены фокуса между пунктами
             item.setOnFocusChangeListener { _, _ -> container.post { setExpanded(container.hasFocus()) } }
             container.addView(item)
             item
