@@ -19,6 +19,10 @@ val typos by tasks.registering(Exec::class) {
     commandLine(providers.environmentVariable("TYPOS").getOrElse("typos"), "--format", "brief")
 }
 
+val layoutGate by tasks.registering(Exec::class) {
+    commandLine(python, "tools/gates/layout.py")
+}
+
 val toolsTests by tasks.registering(Exec::class) {
     commandLine(python, "-m", "unittest", "discover", "-s", "tools", "-q")
 }
@@ -34,5 +38,5 @@ val commentsGate by tasks.registering(Exec::class) {
 tasks.register("verify") {
     group = "verification"
     description = "Быстрый эшелон проверок: одна команда для CI и для любой машины."
-    dependsOn(ruff, ruffFormat, typos, toolsTests, prSize, commentsGate, ":app:testDebugUnitTest", ":app:lintDebug", ":app:detekt")
+    dependsOn(ruff, ruffFormat, typos, toolsTests, prSize, commentsGate, layoutGate, ":app:testDebugUnitTest", ":app:lintDebug", ":app:detekt")
 }
