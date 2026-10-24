@@ -18,8 +18,12 @@ val prSize by tasks.registering(Exec::class) {
     commandLine(python, "tools/gates/pr_size.py", gateBase)
 }
 
+val commentsGate by tasks.registering(Exec::class) {
+    commandLine(python, "tools/gates/comments.py", gateBase)
+}
+
 tasks.register("verify") {
     group = "verification"
     description = "Быстрый эшелон проверок: одна команда для CI и для любой машины."
-    dependsOn(ruff, toolsTests, prSize, ":app:testDebugUnitTest", ":app:lintDebug")
+    dependsOn(ruff, toolsTests, prSize, commentsGate, ":app:testDebugUnitTest", ":app:lintDebug")
 }

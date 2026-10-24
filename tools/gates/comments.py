@@ -1,6 +1,9 @@
 import re
+import subprocess
+import sys
 from pathlib import Path
 
+LEDGER = "quality/comments-baseline.txt"
 HASH = re.compile(r"(^|\s)#")
 QUOTED = re.compile(r"\"(\\.|[^\"\\])*\"|'[^']*'")
 
@@ -74,3 +77,37 @@ def scan(paths: list) -> dict:
     readable = [p for p in paths if scanner_for(p) and Path(p).is_file()]
     found = {p: comment_lines(p, Path(p).read_text(encoding="utf-8", errors="replace")) for p in readable}
     return {p: lines for p, lines in found.items() if lines}
+
+
+def parse_ledger(text: str) -> set:
+    return {row.strip() for row in text.splitlines() if row.strip()}
+
+
+def violations(found: dict, ledger: set, changed: set) -> list:
+    fresh = [(p, n, "комментарий запрещён: удалите его") for p, lines in found.items() if p not in ledger for n in lines]
+    touched = [(p, lines[0], "файл правится: удалите в нём все комментарии и уберите его из журнала")
+               for p, lines in found.items() if p in ledger and p in changed]
+    stale = [(p, 1, f"комментариев нет: уберите файл из {LEDGER}") for p in sorted(ledger) if p not in found]
+    return sorted(fresh + touched) + stale
+
+
+def annotation(path: str, line: int, message: str) -> str:
+    return f"::error file={path},line={line},title=Комментарий::{message}"
+
+
+def git_paths(*args: str) -> list:
+    output = subprocess.run(["git", *args, "-z"], check=True, capture_output=True, text=True).stdout
+    return [path for path in output.split("\0") if path]
+
+
+def main(base: str) -> int:
+    ledger = parse_ledger(Path(LEDGER).read_text(encoding="utf-8")) if Path(LEDGER).exists() else set()
+    changed = set(git_paths("diff", "--name-only", f"{base}...HEAD"))
+    found = violations(scan(git_paths("ls-files")), ledger, changed)
+    for violation in found:
+        print(annotation(*violation))
+    return 1 if found else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "origin/main"))

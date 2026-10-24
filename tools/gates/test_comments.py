@@ -101,6 +101,42 @@ class CommentsTest(unittest.TestCase):
         expected = {str(broken): [1]}
         self.assertEqual(expected, gate.scan([str(broken)]), "файл не в UTF-8 сканируется, а не роняет проверку")
 
+    def test_reports_every_comment_outside_ledger(self):
+        found = {"app/K.kt": [12, 40]}
+        message = "комментарий запрещён: удалите его"
+        expected = [("app/K.kt", 12, message), ("app/K.kt", 40, message)]
+        nothing = set()
+        self.assertEqual(expected, gate.violations(found, nothing, nothing), "каждый новый комментарий отмечен")
+
+    def test_accepts_untouched_file_from_ledger(self):
+        found = {"app/L.kt": [3]}
+        ledger = {"app/L.kt"}
+        nothing = set()
+        expected = []
+        self.assertEqual(expected, gate.violations(found, ledger, nothing), "старый долг в нетронутом файле допустим")
+
+    def test_reports_changed_file_from_ledger(self):
+        found = {"app/M.kt": [8]}
+        ledger = {"app/M.kt"}
+        expected = [("app/M.kt", 8, "файл правится: удалите в нём все комментарии и уберите его из журнала")]
+        self.assertEqual(expected, gate.violations(found, ledger, ledger), "правка файла требует убрать в нём комментарии")
+
+    def test_reports_clean_file_left_in_ledger(self):
+        ledger = {"app/N.kt"}
+        expected = [("app/N.kt", 1, "комментариев нет: уберите файл из quality/comments-baseline.txt")]
+        clean, untouched = {}, set()
+        self.assertEqual(expected, gate.violations(clean, ledger, untouched), "журнал долга только сокращается")
+
+    def test_ignores_blank_lines_in_ledger(self):
+        text = "app/O.kt\n\n  \napp/P.kt  \n"
+        expected = {"app/O.kt", "app/P.kt"}
+        self.assertEqual(expected, gate.parse_ledger(text), "пустые строки журнала — не пути")
+
+    def test_formats_github_annotation(self):
+        path, line, message = "app/Q.kt", 77, "удалите"
+        expected = "::error file=app/Q.kt,line=77,title=Комментарий::удалите"
+        self.assertEqual(expected, gate.annotation(path, line, message), "аннотация указывает файл и строку")
+
 
 if __name__ == "__main__":
     unittest.main()
