@@ -55,6 +55,48 @@ class CommentsTest(unittest.TestCase):
         name = "h.yml"
         self.assertEqual(expected, gate.comment_lines(name, source), "решётка в кавычках — не комментарий")
 
+    def test_finds_python_comment_but_not_shebang(self):
+        source = "#!/usr/bin/env python3\nx = 1  # единица\n"
+        name = "i.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "шебанг не комментарий, решётка после кода — да")
+
+    def test_finds_hash_bang_comment_after_first_line(self):
+        source = "x = 1\n#!заметка\n"
+        name = "o.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "#! не в первой строке — комментарий")
+
+    def test_finds_python_function_docstring(self):
+        source = 'def f():\n    """Пояснение."""\n    return 4\n'
+        name = "j.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг функции считается комментарием")
+
+    def test_finds_python_class_docstring(self):
+        source = 'class Ёж:\n    """Класс."""\n    x = 1\n'
+        name = "m.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг класса считается комментарием")
+
+    def test_finds_python_async_function_docstring(self):
+        source = 'async def f():\n    """Асинхронно."""\n    return 5\n'
+        name = "n.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг async-функции считается комментарием")
+
+    def test_finds_python_module_docstring(self):
+        source = '"""Модуль."""\nimport os\n'
+        name = "k.py"
+        expected = [1]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг модуля считается комментарием")
+
+    def test_ignores_hash_inside_python_string(self):
+        source = 'tag = "#ёлка"\n'
+        name = "l.py"
+        expected = []
+        self.assertEqual(expected, gate.comment_lines(name, source), "решётка в строке Python — не комментарий")
+
     def test_skips_unknown_file_types(self):
         source = "// не код\n"
         expected = []
@@ -100,6 +142,13 @@ class CommentsTest(unittest.TestCase):
         broken.write_bytes(bytes([0xFF, 0xD8]) + "<!-- ё -->".encode())
         expected = {str(broken): [1]}
         self.assertEqual(expected, gate.scan([str(broken)]), "файл не в UTF-8 сканируется, а не роняет проверку")
+
+    def test_reports_unparsable_python_file(self):
+        broken = Path(tempfile.mkdtemp(prefix="comments-")) / "broken.py"
+        broken.write_text("x = 1\ndef f(:\n", encoding="utf-8")
+        nothing = set()
+        expected = [(str(broken), 2, "файл Python не разбирается: исправьте синтаксис")]
+        self.assertEqual(expected, gate.report([str(broken)], nothing, nothing), "битый Python — нарушение со строкой")
 
     def test_reports_every_comment_outside_ledger(self):
         found = {"app/K.kt": [12, 40]}
