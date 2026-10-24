@@ -14,7 +14,6 @@ import dev.alaev.rezkatv.rezka.ChoicePanel
 import dev.alaev.rezkatv.rezka.RezkaClient
 import dev.alaev.rezkatv.rezka.pinFocusToStart
 
-/** «Рейтинг»: лучшие по IMDb в каждом разделе, фильтры по десятилетию и жанру, отметки «просмотрено». */
 class TopPage(
     private val activity: Activity,
     private val client: RezkaClient,
@@ -77,7 +76,6 @@ class TopPage(
             lists = ListsAssets.top(activity).await()
             loaded = true
             render(resetPosition = true)
-            // Фокус ждал на разделах — переводим на постеры; если пользователь ушёл в меню, не трогаем
             if (focusOnLoad && page.hasFocus()) focus()
             focusOnLoad = false
         }
@@ -88,23 +86,19 @@ class TopPage(
     }
 
     fun focus() {
-        // Список ещё разбирается: фокус перейдёт на постеры, когда они появятся
         if (!loaded) focusOnLoad = true
         if (adapter.itemCount > 0) grid.requestFocus() else bucketChips.getChildAt(bucket.ordinal)?.requestFocus()
     }
 
-    /** Back в сетке: сначала наверх, потом — в меню. */
     fun onBack(): Boolean {
         if (!grid.hasFocus() || grid.selectedPosition < COLUMNS) return false
         grid.setSelectedPositionSmooth(0)
         return true
     }
 
-    /** Вернулись со страницы тайтла или из плеера: отметки могли измениться. */
     fun refresh() {
         if (!loaded) return
         marks.refresh()
-        // Скрытые просмотренные: только что досмотренный пропадает, но позиция остаётся рядом
         if (filter.hideWatched && shown.any { marks.isWatched(it.id) }) render(resetPosition = false) else adapter.refreshMarks()
         updateCount()
         if (grid.hasFocus()) showInfo(grid.selectedPosition)
@@ -113,7 +107,6 @@ class TopPage(
     private fun selectBucket(b: TopBucket) {
         if (b == bucket) return
         bucket = b
-        // Десятилетия и жанры у разделов разные
         filter = TopFilter(hideWatched = filter.hideWatched)
         render(resetPosition = true)
     }
@@ -141,7 +134,6 @@ class TopPage(
 
     private fun updateChips() {
         for (i in 0 until bucketChips.childCount) bucketChips.getChildAt(i).isActivated = i == bucket.ordinal
-        // Вверх с фильтров — на выбранный раздел; иначе с левого фильтра фокус уходит в меню
         val up = bucketChips.getChildAt(bucket.ordinal).id
         listOf(decadeChip, genreChip, hideChip).forEach { it.nextFocusUpId = up }
         decadeChip.text = activity.getString(R.string.filter_decade, filter.decade?.let(ListText::decade) ?: activity.getString(R.string.filter_all))
