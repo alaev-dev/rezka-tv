@@ -1,0 +1,54 @@
+name: Сканер техдолга
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: tech-debt
+  cancel-in-progress: false
+
+jobs:
+  tech-debt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Метка tech-debt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create tech-debt --color B60205 --description "Техдолг, найден сканером" --force
+      - id: scan
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            Найди техдолг и заведи issue строго по правилам из файла .github/tech-debt.md.
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 80
+            --allowedTools "Read,Glob,Grep,Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh issue create:*)"
+            --json-schema '{"type":"object","properties":{"created":{"type":"array","items":{"type":"string"}},"skipped":{"type":"array","items":{"type":"string"}}},"required":["created","skipped"]}'
+      - name: Итог
+        env:
+          RESULT: ${{ steps.scan.outputs.structured_output }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          raw = os.environ.get("RESULT", "")
+          if not raw:
+              print("::error title=Сканер техдолга::агент не вернул итог, смотрите лог шага")
+              sys.exit(1)
+          result = json.loads(raw)
+          print("Создано:", *result["created"] or ["ничего"], sep="\n- ")
+          print("Пропущено как уже заведённое:", *result["skipped"] or ["ничего"], sep="\n- ")
+          PY

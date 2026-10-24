@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Зависимости: обзор обновлений",
+  "labels": ["dependencies"],
+  "semanticCommits": "disabled",
+  "commitMessagePrefix": "Зависимости:",
+  "commitMessageAction": "обновление",
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchPackageNames": ["androidx.media3:**"],
+      "groupName": "Media3"
+    },
+    {
+      "matchPackageNames": ["androidx.leanback:**"],
+      "groupName": "Leanback"
+    }
+  ]
+}
