@@ -144,6 +144,8 @@ HTTPS-страницу [`docs/login/`](docs/login/index.html) на GitHub Pages:
 ## Для разработчиков
 
 - Логи: `adb logcat -s RezkaTv` — время загрузки и разбора каждой страницы, запуск потока и т. п.
+- Все быстрые проверки, как в CI: `./gradlew verify`; нужны `python3 -m pip install ruff==0.17.2 typos==1.51.1`
+  (`typos` — из PATH или переменной `TYPOS`).
 - Юнит-тесты: `./gradlew testDebugUnitTest` (разбор страниц и ответов сайта, серии, прогресс, cookies, кэш, вход,
   «Продолжить после выключения»). Фикстуры в `app/src/test/resources` — маленькие синтетические страницы и ответы,
   не копии сайтов.
