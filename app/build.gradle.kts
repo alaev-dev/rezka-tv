@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
-// Ключ release-сборки: keystore.properties в корне (не в git) — storeFile (путь от корня), storePassword, keyAlias,
-// keyPassword. Нет файла — отладочный ключ. Обновление ставится поверх установленного только с тем же ключом.
 val keystoreProps = Properties().apply {
     rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use { load(it) }
 }
@@ -54,11 +52,19 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        baseline = rootProject.file("quality/lint-baseline.xml")
+        disable += setOf("NewerVersionAvailable", "GradleDependency", "AndroidGradlePluginVersion")
+    }
 }
 
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
+        allWarningsAsErrors.set(true)
     }
 }
 
@@ -70,12 +76,11 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
     implementation("androidx.media3:media3-ui-leanback:$media3")
-    implementation("androidx.media3:media3-ui:$media3") // только SubtitleView
+    implementation("androidx.media3:media3-ui:$media3")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("org.jsoup:jsoup:1.18.1")
-    implementation("com.google.zxing:core:3.5.3") // QR-код для входа с телефона
+    implementation("com.google.zxing:core:3.5.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     testImplementation("junit:junit:4.13.2")
-    // В юнит-тестах android.jar — заглушки, org.json нужен настоящий
     testImplementation("org.json:json:20251224")
 }

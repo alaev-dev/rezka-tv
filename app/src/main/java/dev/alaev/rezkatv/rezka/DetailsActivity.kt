@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import dev.alaev.rezkatv.R
 import dev.alaev.rezkatv.rezka.player.PlayerActivity
 
-/** Страница тайтла: обложка, описание, «Продолжить», следующая серия, сезоны и серии, озвучка. */
 class DetailsActivity : Activity() {
 
     private val scope = MainScope()
@@ -32,7 +31,6 @@ class DetailsActivity : Activity() {
 
     private var details: Details? = null
     private var translator: Translator? = null
-    /** Серии выбранной озвучки (у разных озвучек списки бывают разными) */
     private var episodes: List<Episode> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +51,6 @@ class DetailsActivity : Activity() {
         watchedButton = findViewById(R.id.watched)
         watched = WatchedStore.get(this)
 
-        // Пока грузится — то, что уже известно по карточке
         findViewById<TextView>(R.id.title).text = intent.getStringExtra(EXTRA_TITLE)
         Images.art(findViewById(R.id.art), "", intent.getStringExtra(EXTRA_POSTER))
         description.setText(R.string.loading)
@@ -71,7 +68,6 @@ class DetailsActivity : Activity() {
 
     override fun onRestart() {
         super.onRestart()
-        // После просмотра сайт знает новую позицию, а у нас — новое место остановки
         load()
         updateButtons()
     }
@@ -86,7 +82,7 @@ class DetailsActivity : Activity() {
         when {
             choicePanel.isShowing -> choicePanel.hide()
             episodesPanel.isShowing -> episodesPanel.hide()
-            else -> super.onBackPressed()
+            else -> finishAfterTransition()
         }
     }
 
@@ -107,7 +103,6 @@ class DetailsActivity : Activity() {
         description.text = d.description
         if (d.poster.isNotEmpty()) Images.art(findViewById<ImageView>(R.id.art), d.poster, intent.getStringExtra(EXTRA_POSTER))
 
-        // Выбор озвучки на этой странице сохраняем, иначе — та, что смотрели последней
         val chosen = translator?.takeIf { sameTitle && d.translators.contains(it) }
         if (chosen == null || chosen.id == d.position?.translatorId) {
             translator = d.translators.find { it.id == d.position?.translatorId } ?: d.translators.firstOrNull()
@@ -116,7 +111,6 @@ class DetailsActivity : Activity() {
         updateButtons()
     }
 
-    /** Главная кнопка: какую серию играть, подпись и нужна ли рядом «Следующая». */
     private class Primary(val episode: Episode?, val label: String, val next: Episode?)
 
     private fun primary(): Primary {
@@ -130,7 +124,6 @@ class DetailsActivity : Activity() {
         val entry = resume.get(d.id, current.season, current.episode)
         val next = EpisodeNav.next(episodes, current.season, current.episode)
         return when {
-            // Серию досмотрели — главная кнопка сразу ведёт к следующей
             entry?.finished == true && next != null -> Primary(next, getString(R.string.play_episode, next.code), null)
             current == episodes.first() && entry == null -> Primary(current, getString(R.string.play_episode, current.code), null)
             entry != null && entry.positionMs > 0 ->
@@ -148,7 +141,6 @@ class DetailsActivity : Activity() {
         episodesButton.visibility = if (d.isSeries) View.VISIBLE else View.GONE
         translatorButton.text = getString(R.string.translator_button, translator?.name.orEmpty())
         translatorButton.visibility = if (d.translators.size > 1) View.VISIBLE else View.GONE
-        // Для фильмов: у сериала «просмотрено» неоднозначно, а кнопок у него и так много
         watchedButton.setText(if (watched.isWatched(d.id)) R.string.unmark_watched else R.string.mark_watched)
         watchedButton.visibility = if (d.isSeries) View.GONE else View.VISIBLE
     }
@@ -162,8 +154,6 @@ class DetailsActivity : Activity() {
         val d = details ?: return
         if (d.isSeries && episodes.isEmpty()) return
         val target = primary().episode
-        // «Продолжить» туда же, где и сайт: плеер ещё раз сверится с сайтом и со своим последним просмотром
-        // (могли досмотреть на другом устройстве, пока открыта эта страница)
         if (target == d.currentEpisode && translator?.id == d.position?.translatorId) {
             startActivity(PlayerActivity.intent(this, d.url, d.title, d.poster))
         } else {
