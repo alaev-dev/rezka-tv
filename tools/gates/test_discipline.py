@@ -104,8 +104,8 @@ class PythonDisciplineTest(unittest.TestCase):
 
     def test_reports_python_name_without_verb(self):
         expected = "имя test_format: предложение о поведении с глагола, например rejectsExpiredCode"
-        name = "test_format"
-        self.assertIn(expected, messages("        self.assertTrue(f(), 'да')\n", name), "имя — с глагола")
+        body, name = "        self.assertTrue(f(), 'да')\n", "test_format"
+        self.assertIn(expected, messages(body, name), "имя — с глагола")
 
     def test_reports_python_literal_in_assert(self):
         expected = "литерал в assert: вынесите значение в переменную"
@@ -125,12 +125,14 @@ class PythonDisciplineTest(unittest.TestCase):
     def test_reports_python_setup_method(self):
         expected = ["setUp/tearDown запрещены: готовьте данные в самом тесте"]
         text = python("        self.assertTrue(f(), 'да')\n") + "\n    def setUp(self):\n        pass\n"
-        self.assertEqual(expected, gate.python_problems("t.py", text)["t.py::(файл)"], "setUp запрещён")
+        actual = gate.python_problems("t.py", text)["t.py::(файл)"]
+        self.assertEqual(expected, actual, "setUp запрещён")
 
     def test_reports_python_module_constant(self):
         expected = ["константы и поля в тестах запрещены: значения — в самом тесте"]
         text = "X = 1\n\n\n" + python("        self.assertTrue(f(), 'да')\n")
-        self.assertEqual(expected, gate.python_problems("t.py", text)["t.py::(файл)"], "константа модуля запрещена")
+        actual = gate.python_problems("t.py", text)["t.py::(файл)"]
+        self.assertEqual(expected, actual, "константа модуля запрещена")
 
     def test_reports_long_python_test(self):
         expected = "тест длиннее 12 строк: 13"
@@ -151,3 +153,8 @@ class PythonDisciplineTest(unittest.TestCase):
         expected = "assert в тесте: 2, нужен ровно один"
         body = "        self.assertTrue(f(), 'да')\n        self.assertTrue(g(), 'да')\n"
         self.assertIn(expected, messages(body), "один assert на тест")
+
+    def test_reports_python_literal_nested_in_call(self):
+        expected = "литерал в assert: вынесите значение в переменную"
+        body = "        self.assertEqual(want, f('x.py'), 'вложенный литерал')\n"
+        self.assertIn(expected, messages(body), "литерал во вложенном вызове тоже запрещён")

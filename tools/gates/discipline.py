@@ -78,12 +78,6 @@ def is_text(node: ast.AST) -> bool:
     return isinstance(node, ast.JoinedStr) or (isinstance(node, ast.Constant) and isinstance(node.value, str))
 
 
-def is_literal(node: ast.AST) -> bool:
-    parts = getattr(node, "elts", None) or [*getattr(node, "keys", []), *getattr(node, "values", [])]
-    containers = (ast.List, ast.Tuple, ast.Set, ast.Dict)
-    return isinstance(node, ast.Constant) or (isinstance(node, containers) and all(map(is_literal, parts)))
-
-
 def python_assert_problems(test: ast.FunctionDef) -> list:
     calls = [n for n in ast.walk(test) if isinstance(n, ast.Call) and getattr(n.func, "attr", "").startswith("assert")]
     if len(calls) != 1:
@@ -96,7 +90,11 @@ def python_assert_problems(test: ast.FunctionDef) -> list:
     if not message or not is_text(message[0]):
         return problems + ["нужно сообщение последним аргументом assert"]
     checked = call.args[:arity]
-    return problems + (["литерал в assert: вынесите значение в переменную"] if any(map(is_literal, checked)) else [])
+    return problems + (
+        ["литерал в assert: вынесите значение в переменную"]
+        if any(isinstance(n, ast.Constant) for a in checked for n in ast.walk(a))
+        else []
+    )
 
 
 def python_test_problems(test: ast.FunctionDef) -> list:
