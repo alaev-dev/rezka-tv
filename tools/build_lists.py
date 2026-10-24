@@ -91,7 +91,6 @@ def log(*args):
     print(*args, file=sys.stderr, flush=True)
 
 
-
 def weighted_rating(rating: float, votes: int, m: int, mean: float) -> float:
     return votes / (votes + m) * rating + m / (votes + m) * mean
 
@@ -213,7 +212,6 @@ def ceremony_films(n: int) -> str:
     return f"{1926 + n}–{1927 + n}" if n <= 6 else str(1927 + n)
 
 
-
 class Http:
     def __init__(self, cache: Path, cookies, offline: bool):
         self.cache = cache / "rezka"
@@ -283,7 +281,6 @@ def download(url: str, path: Path, max_age_days: int):
     tmp.replace(path)
 
 
-
 class Matcher:
     def __init__(self, http_: Http):
         self.http = http_
@@ -325,7 +322,6 @@ def rezka_entry(card: dict) -> dict:
         "title": card["title"],
         "poster": card["poster"],
     }
-
 
 
 def load_imdb(cache: Path, min_votes: int, wanted: set) -> dict:
@@ -432,7 +428,6 @@ def write_top(buckets: dict, out: Path):
             "orig": t["title"], **t["rezka"],
         } for i, t in enumerate(items)]
     write_json(out, data)
-
 
 
 OSCAR_QUERY = """
@@ -592,7 +587,6 @@ def build_oscars(matcher: Matcher, rows: list, titles: dict, fixes: list, out: P
         log(f"Оскар, {c}: церемоний {sum(1 for cats in ceremonies.values() if c in cats)}, номинаций {len(items)}, "
             f"нет на rezka {sum(1 for e in items if 'id' not in e)}")
     return [(k, v) for k, v in cache.items() if v is None]
-
 
 
 def to_json(v, depth: int = 0) -> str:
