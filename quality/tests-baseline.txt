@@ -63,9 +63,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::garbageOrEmp
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::messageAsObject
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::messageAsStringWithHtml
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginResultTest.kt::success
-app/src/test/java/dev/alaev/rezkatv/rezka/player/SeekMathTest.kt::accelerationGrowsWithHold
-app/src/test/java/dev/alaev/rezkatv/rezka/player/SeekMathTest.kt::positionsEveryStep
-app/src/test/java/dev/alaev/rezkatv/rezka/player/SeekMathTest.kt::tileForPosition
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::filmTranslatorChangedElsewhere
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::onlyOneSide
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt::otherTranslatorSameEpisodeKeepsTime
