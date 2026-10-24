@@ -17,11 +17,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
 import dev.alaev.rezkatv.R
 
-/**
- * Стандартная связка leanback (PlaybackTransportControlGlue + LeanbackPlayerAdapter Media3),
- * дополненная кнопками серий, озвучки, качества и субтитров.
- * Над полосой — «Предыдущая», пауза, «Следующая»; под ней — серии, озвучка, качество, субтитры.
- */
 @UnstableApi
 class PlayerGlue(
     context: Context,
@@ -38,7 +33,6 @@ class PlayerGlue(
     private val row = PlaybackControlsRow(this)
 
     init {
-        // Ряд создаём сами, чтобы до подключения к фрагменту поставить свой вид кнопок
         setControlsRow(row)
         (row.primaryActionsAdapter as ArrayObjectAdapter).presenterSelector = SinglePresenterSelector(presenter)
         (row.secondaryActionsAdapter as ArrayObjectAdapter).presenterSelector = SinglePresenterSelector(presenter)
@@ -68,7 +62,6 @@ class PlayerGlue(
         if (action.id in ACTION_PREV..ACTION_SETTINGS) onAction(action.id) else super.onActionClicked(action)
     }
 
-    /** Кнопка «Субтитры» — только если у этой серии и озвучки они есть. */
     fun setSubtitlesAvailable(available: Boolean) {
         val adapter = row.secondaryActionsAdapter as ArrayObjectAdapter
         val index = adapter.indexOf(subtitlesAction)
@@ -83,11 +76,9 @@ class PlayerGlue(
     private fun action(id: Long, label: Int, icon: Int, iconOnly: Boolean = false, iconAtEnd: Boolean = false) =
         TextAction(id, context.getString(label), context.getDrawable(icon), iconOnly, iconAtEnd)
 
-    /** Кнопка с иконкой и (не всегда) подписью; у «Следующей» стрелка справа. */
     class TextAction(id: Long, label: String, icon: Drawable?, val iconOnly: Boolean, val iconAtEnd: Boolean) :
         Action(id, label, null, icon)
 
-    /** Одна «таблетка» на все кнопки плеера: иконка, подпись — только у текстовых. */
     private class ActionPresenter : Presenter() {
         override fun onCreateViewHolder(parent: ViewGroup) =
             ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_player_action, parent, false))

@@ -14,12 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import dev.alaev.rezkatv.rezka.Tile
 
-/**
- * Точки перемотки для leanback и превью к ним из спрайтов rezka (WebVTT + #xywh).
- * Без превью ([tiles] пуст) остаётся просто шаг перемотки.
- * [onSeekStateChanged] — leanback начал/закончил перемотку (сам он об этом наружу не сообщает),
- * [onSeekPosition] — куда сейчас указывает перемотка (чтобы двигать превью за бегунком).
- */
 class ThumbnailSeekProvider(
     context: Context,
     private val scope: CoroutineScope,
@@ -38,8 +32,6 @@ class ThumbnailSeekProvider(
         private set
 
     init {
-        // Спрайты (~60 КБ, по 25 кадров) заранее на диск — тогда первое превью появляется сразу.
-        // С задержкой: в первые секунды сеть нужнее самому видео
         if (tiles.isNotEmpty()) scope.launch {
             delay(PREFETCH_DELAY_MS)
             withContext(Dispatchers.IO) {
@@ -75,7 +67,6 @@ class ThumbnailSeekProvider(
         onSeekStateChanged(false)
     }
 
-    /** Спрайт ~800×450 кэширует Glide, отсюда вырезаем кадр 160×90. */
     private fun crop(tile: Tile): Bitmap? {
         val target = Glide.with(context).asBitmap().load(tile.url).format(DecodeFormat.PREFER_RGB_565).submit()
         return try {
@@ -83,7 +74,6 @@ class ThumbnailSeekProvider(
             val x = tile.x.coerceIn(0, sprite.width - 1)
             val y = tile.y.coerceIn(0, sprite.height - 1)
             val crop = Bitmap.createBitmap(sprite, x, y, tile.w.coerceAtMost(sprite.width - x), tile.h.coerceAtMost(sprite.height - y))
-            // Кадр во весь спрайт — тот же объект, а спрайт Glide вернёт в пул
             if (crop === sprite) sprite.copy(sprite.config ?: Bitmap.Config.RGB_565, false) else crop
         } catch (e: Exception) {
             Log.w("RezkaTv", "thumbnail failed: $e")

@@ -75,10 +75,6 @@ import dev.alaev.rezkatv.session.SessionStore
 import dev.alaev.rezkatv.session.SitePosition
 import dev.alaev.rezkatv.session.WatchSession
 
-/**
- * Родной плеер: ExoPlayer (HLS) внутри VideoSupportFragment leanback.
- * Потоки, серии и озвучки — из API плеера rezka; прогресс уходит в «Досмотреть» сайта.
- */
 @UnstableApi
 class PlayerActivity : FragmentActivity() {
 
@@ -105,7 +101,6 @@ class PlayerActivity : FragmentActivity() {
     private lateinit var nextUpProgress: ProgressBar
     private lateinit var errorView: TextView
 
-    // Что играет
     private var details: Details? = null
     private var translator: Translator? = null
     private var episodes: List<Episode> = emptyList()
@@ -118,32 +113,21 @@ class PlayerActivity : FragmentActivity() {
     private var seekProvider: ThumbnailSeekProvider? = null
     private var seekProviderKey = ""
     private var startJob: Job? = null
-    /** Идёт смена серии/озвучки: позиция плеера ещё от старого видео, сохранять её нельзя */
     private var preparing = false
-    /** Ссылки на поток живут несколько часов: после долгой паузы один раз запрашиваем свежие */
     private var refreshedAfterError = false
-    /** Экран не виден (Home, настройки): догрузившийся поток не должен заиграть сам */
     private var stopped = false
-    /** С какой позиции просили начать текущий запуск — для «Повторить», если поток не загрузился */
     private var requestedPosition = RESUME
-    /** Запустится ли видео само после загрузки потока (после пробуждения телевизора — нет, ждём OK) */
     private var autoplay = true
 
-    // Сеанс для «Продолжить» после выключения телевизора
     private lateinit var sessions: SessionStore
-    /** Что последним успешно отправили на сайт — по этому видно, смотрели ли дальше на другом устройстве */
     private var reported: SitePosition? = null
-    /** Вышли из плеера сами (Назад) — продолжать не предлагаем */
     private var deliberateExit = false
-    /** Когда экран погас при открытом плеере (elapsedRealtime), 0 — не гас */
     private var screenOffAt = 0L
 
-    // Прогресс и «следующая серия»
     private var serverSaved = false
     private var lastServerSave = 0L
     private var lastLocalSave = 0L
     private var nextUpDismissed = false
-    /** Сколько осталось до автозапуска следующей серии; тикает только во время воспроизведения, -1 — без отсчёта */
     private var nextUpLeftMs = -1L
 
     private val tick = object : Runnable {
@@ -177,7 +161,6 @@ class PlayerActivity : FragmentActivity() {
         nextUpProgress = findViewById(R.id.next_up_progress)
         errorView = findViewById(R.id.error)
         loadingTitle.text = intent.getStringExtra(EXTRA_TITLE)
-        // Белый текст с тенью, чуть выше края экрана: на телевизорах низ кадра часто обрезан
         subtitlesView.setStyle(
             CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, Color.BLACK, null),
         )
@@ -187,7 +170,6 @@ class PlayerActivity : FragmentActivity() {
         fragment = VideoSupportFragment()
         supportFragmentManager.beginTransaction().replace(R.id.playback, fragment).commitNow()
         fragment.backgroundType = PlaybackSupportFragment.BG_LIGHT
-        // Когда видны кнопки, субтитры поднимаются над ними
         fragment.setFadeCompleteListener(object : PlaybackSupportFragment.OnFadeCompleteListener() {
             override fun onFadeInComplete() = subtitlesView.setBottomPaddingFraction(SUBTITLES_ABOVE_CONTROLS)
             override fun onFadeOutComplete() = subtitlesView.setBottomPaddingFraction(SUBTITLES_BOTTOM)
@@ -200,7 +182,6 @@ class PlayerActivity : FragmentActivity() {
         super.onStart()
         stopped = false
         handler.post(tick)
-        // Телевизор выключали пультом, а плеер остался открытым: пока экран не горел, могли смотреть на ноутбуке
         val sleptMs = if (screenOffAt > 0) SystemClock.elapsedRealtime() - screenOffAt else 0
         screenOffAt = 0
         if (sleptMs >= WAKE_SYNC_AFTER_MS && details != null) resyncAfterWake()
@@ -208,14 +189,12 @@ class PlayerActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Могли поменять шаг перемотки в настройках (они открываются поверх плеера)
         installSeekProvider()
     }
 
     override fun onStop() {
         stopped = true
         handler.removeCallbacks(tick)
-        // Экран погас — телевизор выключили посреди просмотра (а не нажали «Домой» или «Назад»)
         val screenOff = !getSystemService(PowerManager::class.java).isInteractive
         if (screenOff) screenOffAt = SystemClock.elapsedRealtime()
         saveProgress(toServer = true, screenOff = screenOff)
@@ -225,7 +204,6 @@ class PlayerActivity : FragmentActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        // Сюда Назад доходит, только когда панели и кнопки уже закрыты: это осознанный выход
         deliberateExit = true
         saveProgress(toServer = false)
         super.onBackPressed()
@@ -238,13 +216,10 @@ class PlayerActivity : FragmentActivity() {
         super.onDestroy()
     }
 
-    // ---- Загрузка ----
 
     private fun load() {
         val url = requireNotNull(intent.getStringExtra(EXTRA_URL))
         scope.launch {
-            // Без явной серии (ряд «Продолжить просмотр», «Продолжить» на странице тайтла) сверяемся с сайтом:
-            // могли досмотреть дальше на другом устройстве
             val sync = intent.getStringExtra(EXTRA_TRANSLATOR) == null
             val d = loader.load { if (sync) client.details(url) else client.recentDetails(url) } ?: return@launch showError()
             details = d
@@ -274,7 +249,6 @@ class PlayerActivity : FragmentActivity() {
                 plan != null && plan.positionMs >= 0 && local != null -> Progress.startPosition(plan.positionMs, local.durationMs)
                 else -> RESUME
             }
-            // Свою серию досмотрели до титров — продолжаем со следующей
             if (plan != null && !plan.fromOtherDevice && local != null && Progress.isFinished(local.positionMs, local.durationMs)) {
                 target?.let { EpisodeNav.next(episodes, it.season, it.episode) }?.let {
                     target = it
@@ -290,7 +264,6 @@ class PlayerActivity : FragmentActivity() {
     private fun Details.sitePosition() = position?.let { SitePosition(it.translatorId, it.season, it.episode) }
 
     private fun showOtherDeviceOsd(target: Episode?, t: Translator) {
-        // Дольше обычного: пока грузится поток, подсказку легко пропустить
         showOsd(
             if (target != null) getString(R.string.resumed_other_device_episode, target.code)
             else getString(R.string.resumed_other_device_translator, t.name),
@@ -298,11 +271,6 @@ class PlayerActivity : FragmentActivity() {
         )
     }
 
-    /**
-     * Плеер пережил выключение телевизора. Ссылки на поток к этому времени истекли, а дальше могли
-     * смотреть на другом устройстве: берём свежую страницу тайтла и либо переходим туда, где остановились
-     * там, либо обновляем поток на своём месте и ждём OK.
-     */
     private fun resyncAfterWake() {
         val url = details?.url ?: return
         val position = player.currentPosition.coerceAtLeast(0)
@@ -332,12 +300,10 @@ class PlayerActivity : FragmentActivity() {
         val adapter = LeanbackPlayerAdapter(this, player, PROGRESS_UPDATE_MS)
         val g = PlayerGlue(this, adapter, series, ::onAction)
         g.host = VideoSupportFragmentGlueHost(fragment)
-        // Свои клавиши поверх стандартных: OK — пауза, стрелки — сразу перемотка
         fragment.setOnKeyInterceptListener { v, keyCode, event -> onPlaybackKey(keyCode, event) || g.onKey(v, keyCode, event) }
         glue = g
     }
 
-    /** Запуск серии (или фильма, [target] = null) с позиции [positionMs]; [RESUME] — с места остановки. */
     private fun start(target: Episode?, positionMs: Long) {
         val d = details ?: return
         val t = translator ?: return
@@ -408,7 +374,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    /** Точки перемотки зависят от длительности и шага: ставим, когда длительность известна. */
     private fun installSeekProvider() {
         val g = glue ?: return
         val duration = player.duration
@@ -427,7 +392,6 @@ class PlayerActivity : FragmentActivity() {
             .setAllowCrossProtocolRedirects(true)
             .setConnectTimeoutMs(HTTP_TIMEOUT_MS)
             .setReadTimeoutMs(HTTP_TIMEOUT_MS)
-        // Буфер скромнее стандартного: у телевизора 1,4 ГБ памяти на всё
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(30_000, 60_000, 2_000, 4_000)
             .setTargetBufferBytes(BUFFER_BYTES)
@@ -460,8 +424,6 @@ class PlayerActivity : FragmentActivity() {
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
-            // Пауза пользователем — хороший момент сохранить место. Буферизацию и перемотку не считаем;
-            // leanback ставит паузу чуть раньше, чем сообщает о начале перемотки, поэтому проверяем следующим шагом
             if (!isPlaying && !player.playWhenReady) handler.post {
                 if (!player.playWhenReady && seekProvider?.seeking != true) saveProgress(toServer = true)
             }
@@ -472,7 +434,6 @@ class PlayerActivity : FragmentActivity() {
             val q = quality
             val position = player.currentPosition.coerceAtLeast(0)
             when {
-                // Зеркало или MP4 вместо HLS
                 q != null && urlIndex + 1 < q.urls.size -> prepare(position, urlIndex + 1)
                 !refreshedAfterError -> {
                     refreshedAfterError = true
@@ -492,7 +453,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    // ---- Управление ----
 
     private fun onAction(id: Long) {
         when (id) {
@@ -509,12 +469,10 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    /** Клавиши внутри фрагмента (до leanback). true — обработано. */
     private fun onPlaybackKey(keyCode: Int, event: KeyEvent): Boolean {
         val hidden = !fragment.isControlsOverlayVisible
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> if (hidden) {
-                // Кнопки скрыты: OK — пауза/продолжить, leanback заодно покажет кнопки
                 if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) togglePlay()
                 return true
             }
@@ -523,7 +481,6 @@ class PlayerActivity : FragmentActivity() {
                 if (hidden || bar.hasFocus()) {
                     if (event.action == KeyEvent.ACTION_DOWN) {
                         if (!bar.hasFocus()) bar.requestFocus()
-                        // Удержание ускоряет: несколько шагов leanback за одно нажатие
                         repeat(1 + SeekMath.extraSteps(event.repeatCount)) { bar.dispatchKeyEvent(event) }
                         handler.removeCallbacks(commitSeek)
                         handler.postDelayed(commitSeek, SEEK_COMMIT_MS)
@@ -541,7 +498,6 @@ class PlayerActivity : FragmentActivity() {
         val back = key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_ESCAPE
         val ok = key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
         when {
-            // Back по очереди закрывает: панель → подсказку о следующей серии → (leanback) кнопки → плеер
             choicePanel.isShowing && back -> { if (!down) choicePanel.hide(); return true }
             episodesPanel.isShowing && back -> { if (!down) episodesPanel.hide(); return true }
             choicePanel.isShowing || episodesPanel.isShowing -> return super.dispatchKeyEvent(event)
@@ -565,7 +521,6 @@ class PlayerActivity : FragmentActivity() {
 
     private fun togglePlay() {
         val g = glue ?: return
-        // isPlaying ложно и при буферизации — смотрим на намерение играть
         if (player.playWhenReady && player.playbackState != Player.STATE_ENDED) g.pause() else g.play()
     }
 
@@ -575,7 +530,6 @@ class PlayerActivity : FragmentActivity() {
         fragment.tickle()
     }
 
-    /** Leanback ждёт OK, чтобы применить перемотку; применяем сами, когда стрелки отпустили. */
     private fun commitSeek() {
         if (seekProvider?.seeking != true) return
         val bar = progressBar() ?: return
@@ -589,7 +543,6 @@ class PlayerActivity : FragmentActivity() {
             handler.removeCallbacks(commitSeek)
             return
         }
-        // Одно крупное превью вместо ленты: ленту из одинаковых кадров при шаге 10 с читать трудно
         val thumbs = fragment.view?.findViewById<ThumbsBar>(androidx.leanback.R.id.thumbs_row) ?: return
         if (thumbs.childCount != 1) {
             val w = resources.getDimensionPixelSize(R.dimen.player_thumb_width)
@@ -600,7 +553,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    /** Превью стоит над бегунком, как у больших сервисов, а не по центру экрана. */
     private fun moveThumbnail(positionMs: Long) {
         val root = fragment.view ?: return
         val bar = root.findViewById<View>(androidx.leanback.R.id.playback_progress) ?: return
@@ -611,13 +563,11 @@ class PlayerActivity : FragmentActivity() {
         val barCenter = thumbs.width / 2f
         val minX = bar.left + half
         val maxX = bar.right - half
-        // Координаты строки и полосы совпадают по горизонтали (обе на всю ширину фрагмента)
         thumbs.translationX = knobX.coerceIn(minX, maxX) - barCenter
     }
 
     private fun progressBar(): View? = fragment.view?.findViewById(androidx.leanback.R.id.playback_progress)
 
-    // ---- Серии, озвучка, качество, субтитры ----
 
     private fun switchEpisode(forward: Boolean) {
         val current = episode ?: return
@@ -658,12 +608,10 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    /** Другая озвучка с того же места; у сериала сначала берём её список серий. */
     private fun switchTranslator(d: Details, chosen: Translator) {
         val position = player.currentPosition.coerceAtLeast(0)
         val current = episode
         saveProgress(toServer = false)
-        // Пока список серий новой озвучки не пришёл, играет и сохраняется старая; повторный выбор отменяет прошлый
         startJob?.cancel()
         startJob = scope.launch {
             if (!d.isSeries) {
@@ -684,7 +632,6 @@ class PlayerActivity : FragmentActivity() {
         val labels = listOf(getString(R.string.quality_auto_current, auto?.label.orEmpty())) + s.qualities.map { it.label }
         val selected = if (settings.quality == Settings.AUTO) 0 else s.qualities.indexOf(quality) + 1
         choicePanel.show(getString(R.string.action_quality), labels, selected) { i ->
-            // Выбор запоминается: в следующий раз то же качество
             settings.setQuality(if (i == 0) Settings.AUTO else s.qualities[i - 1].label)
             val chosen = if (i == 0) auto else s.qualities[i - 1]
             if (chosen != null && chosen != quality) {
@@ -710,7 +657,6 @@ class PlayerActivity : FragmentActivity() {
             .clearOverridesOfType(C.TRACK_TYPE_TEXT)
         if (wanted != null) {
             params.setPreferredTextLanguage(wanted.language)
-            // Без кода языка выбираем дорожку по названию
             if (wanted.language == null) {
                 player.currentTracks.groups
                     .find { it.type == C.TRACK_TYPE_TEXT && it.mediaTrackGroup.getFormat(0).label == wanted.label }
@@ -721,13 +667,11 @@ class PlayerActivity : FragmentActivity() {
         if (wanted == null) subtitlesView.setCues(emptyList())
     }
 
-    // ---- Следующая серия ----
 
     private fun onTick() {
         if (player.isPlaying) {
             val now = SystemClock.elapsedRealtime()
             if (now - lastLocalSave >= LOCAL_SAVE_MS) saveProgress(toServer = false)
-            // Как плеер сайта: вскоре после старта серия появляется в «Досмотреть», дальше — раз в пару минут
             val firstSave = !serverSaved && player.currentPosition >= FIRST_SAVE_AFTER_MS
             if (firstSave || (serverSaved && now - lastServerSave >= SERVER_SAVE_MS)) saveProgress(toServer = true)
         }
@@ -744,7 +688,6 @@ class PlayerActivity : FragmentActivity() {
             if (!nextUpDismissed && remaining in 1..NEXT_UP_BEFORE_END_MS && player.isPlaying) showNextUp(next, countdown = settings.autoplayNext)
             return
         }
-        // Перемотали назад — подсказка не нужна
         if (remaining > NEXT_UP_BEFORE_END_MS + NEXT_UP_HYSTERESIS_MS) return hideNextUp()
         if (nextUpLeftMs < 0 || !player.isPlaying) return
         nextUpLeftMs -= TICK_MS
@@ -788,7 +731,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    // ---- Прогресс ----
 
     private fun saveProgress(toServer: Boolean, screenOff: Boolean = false) {
         if (preparing) return
@@ -797,7 +739,6 @@ class PlayerActivity : FragmentActivity() {
         val session = currentSession(interrupted = !deliberateExit && player.playbackState != Player.STATE_ENDED, screenOff) ?: return
         val ep = episode
         resume.put(d.id, session.season, session.episode, session.positionMs, session.durationMs)
-        // Фильм досмотрен до титров — «Просмотрено» в «Рейтинге» и «Оскаре»
         if (ep == null && WatchedStore.reached(session.positionMs, session.durationMs)) WatchedStore.get(this).set(d.id, true)
         sessions.write(session)
         lastLocalSave = SystemClock.elapsedRealtime()
@@ -805,11 +746,9 @@ class PlayerActivity : FragmentActivity() {
         serverSaved = true
         lastServerSave = lastLocalSave
         val sent = SitePosition(t.id, session.season, session.episode)
-        // Не в scope экрана: сохранение при выходе должно успеть уйти
         background.launch {
             runCatching { client.saveProgress(d, t.id, ep, session.positionMs, session.durationMs) }
                 .onSuccess {
-                    // Сайт теперь знает это место; если потом покажет другое — смотрели на другом устройстве
                     handler.post { reported = sent }
                     sessions.update { if (it.url == d.url) it.copy(reported = sent) else it }
                 }
@@ -817,7 +756,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-    /** Текущее место просмотра для «Продолжить» после выключения; null — видео ещё не загрузилось. */
     private fun currentSession(interrupted: Boolean, screenOff: Boolean = false): WatchSession? {
         val d = details ?: return null
         val t = translator ?: return null
@@ -843,7 +781,6 @@ class PlayerActivity : FragmentActivity() {
         )
     }
 
-    // ---- Вспомогательное ----
 
     private fun updateTitles() {
         val d = details ?: return
@@ -877,13 +814,11 @@ class PlayerActivity : FragmentActivity() {
         errorView.visibility = View.GONE
         when {
             details == null -> load()
-            // Новый поток так и не загрузился — плеер ещё держит старое видео и его позицию
             preparing -> start(episode, requestedPosition)
             else -> start(episode, player.currentPosition.coerceAtLeast(0))
         }
     }
 
-    /** Поток не разобрать (например, зашифрован) — играем плеером сайта. */
     private fun fallbackToSite() {
         val d = details
         val url = intent.getStringExtra(EXTRA_URL) ?: return finish()
@@ -908,7 +843,6 @@ class PlayerActivity : FragmentActivity() {
         private const val OSD_MS = 3000L
         private const val OSD_LONG_MS = 6000L
         private const val LOCAL_SAVE_MS = 10_000L
-        // Раз в минуту: «Досмотреть» на сайте и на других устройствах не отстаёт
         private const val SERVER_SAVE_MS = 60_000L
         private const val WAKE_SYNC_AFTER_MS = 60_000L
         private const val FIRST_SAVE_AFTER_MS = 5_000L
