@@ -63,7 +63,10 @@ def post(repo: str, number: str, payload: dict) -> None:
 def graphql(query: str, **variables: str) -> dict:
     fields = [arg for name, value in variables.items() for arg in ("-F", f"{name}={value}")]
     command = ["gh", "api", "graphql", "-f", f"query={query}", *fields]
-    return json.loads(subprocess.run(command, text=True, check=True, capture_output=True).stdout)
+    result = subprocess.run(command, check=False, text=True, capture_output=True)
+    if result.returncode:
+        raise RuntimeError(f"gh api graphql: {result.stderr.strip() or result.stdout.strip()}")
+    return json.loads(result.stdout)
 
 
 def fetch_previous(repo: str, number: str) -> list:

@@ -9,13 +9,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ai-review:
+  ai-review-agent:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: read
       id-token: write
+    outputs:
+      verdict: ${{ steps.review.outputs.structured_output }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -46,10 +48,26 @@ jobs:
             --max-turns 40
             --allowedTools "Read,Glob,Grep,Bash(gh pr diff:*),Bash(gh pr view:*)"
             --json-schema '{"type":"object","properties":{"summary":{"type":"string"},"findings":{"type":"array","items":{"type":"object","properties":{"path":{"type":"string"},"line":{"type":"integer","minimum":1},"blocking":{"type":"boolean"},"message":{"type":"string"}},"required":["path","line","blocking","message"]}},"previous":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"fixed":{"type":"boolean"}},"required":["id","fixed"]}}},"required":["summary","findings","previous"]}'
+
+  ai-review:
+    needs: ai-review-agent
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
       - name: Публикация и вердикт
         env:
-          VERDICT: ${{ steps.review.outputs.structured_output }}
+          VERDICT: ${{ needs.ai-review-agent.outputs.verdict }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python3 "$RUNNER_TEMP/ai_review_post.py"
+        run: |
+          git fetch --depth 1 origin "${{ github.base_ref }}"
+          git show FETCH_HEAD:tools/gates/ai_review_post.py > "$RUNNER_TEMP/ai_review_post.py"
+          python3 "$RUNNER_TEMP/ai_review_post.py"
