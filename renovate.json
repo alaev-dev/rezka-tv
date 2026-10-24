@@ -9,7 +9,14 @@
   "commitMessageAction": "обновление",
   "prHourlyLimit": 2,
   "prConcurrentLimit": 5,
+  "major": {
+    "dependencyDashboardApproval": true
+  },
   "packageRules": [
+    {
+      "matchDepNames": ["java-jdk", "python"],
+      "enabled": false
+    },
     {
       "matchPackageNames": ["androidx.media3:**"],
       "groupName": "Media3"
