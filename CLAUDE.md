@@ -17,12 +17,10 @@
 белая скруглённая рамка фокуса с увеличением, только D-pad, «Назад» предсказуем, интерфейс на русском.
 
 ## Сборка и проверка
-```sh
-./gradlew verify                       # все быстрые проверки одной командой — как в CI
-./gradlew testDebugUnitTest            # юнит-тесты (JUnit 4, app/src/test, фикстуры в app/src/test/resources)
-./gradlew assembleRelease              # app/build/outputs/apk/release/app-release.apk
-python3 -m unittest discover -s tools  # тесты tools/build_lists.py
-```
+- `./gradlew verify` — все быстрые проверки одной командой, как в CI.
+- `./gradlew testDebugUnitTest` — юнит-тесты (JUnit 4, `app/src/test`, фикстуры в `app/src/test/resources`).
+- `./gradlew assembleRelease` — `app/build/outputs/apk/release/app-release.apk`.
+- `python3 -m unittest discover -s tools` — тесты `tools`.
 - JDK 17, Android SDK platform 36. `local.properties` (sdk.dir) — свой на каждой машине, не в git.
 - Ключ release — `keystore.properties` в корне (не в git); без него — отладочный ключ. Обновление на ТВ
   встаёт поверх только с тем же ключом, иначе удаление = потеря входа в rezka и прогресса.
