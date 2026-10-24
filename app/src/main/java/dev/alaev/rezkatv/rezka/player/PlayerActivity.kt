@@ -216,7 +216,6 @@ class PlayerActivity : FragmentActivity() {
         super.onDestroy()
     }
 
-
     private fun load() {
         val url = requireNotNull(intent.getStringExtra(EXTRA_URL))
         scope.launch {
@@ -435,10 +434,12 @@ class PlayerActivity : FragmentActivity() {
             val position = player.currentPosition.coerceAtLeast(0)
             when {
                 q != null && urlIndex + 1 < q.urls.size -> prepare(position, urlIndex + 1)
+
                 !refreshedAfterError -> {
                     refreshedAfterError = true
                     start(episode, position)
                 }
+
                 else -> showError()
             }
         }
@@ -452,7 +453,6 @@ class PlayerActivity : FragmentActivity() {
             if (!selected) applySubtitles()
         }
     }
-
 
     private fun onAction(id: Long) {
         when (id) {
@@ -476,6 +476,7 @@ class PlayerActivity : FragmentActivity() {
                 if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) togglePlay()
                 return true
             }
+
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 val bar = progressBar() ?: return false
                 if (hidden || bar.hasFocus()) {
@@ -567,7 +568,6 @@ class PlayerActivity : FragmentActivity() {
     }
 
     private fun progressBar(): View? = fragment.view?.findViewById(androidx.leanback.R.id.playback_progress)
-
 
     private fun switchEpisode(forward: Boolean) {
         val current = episode ?: return
@@ -667,7 +667,6 @@ class PlayerActivity : FragmentActivity() {
         if (wanted == null) subtitlesView.setCues(emptyList())
     }
 
-
     private fun onTick() {
         if (player.isPlaying) {
             val now = SystemClock.elapsedRealtime()
@@ -731,7 +730,6 @@ class PlayerActivity : FragmentActivity() {
         }
     }
 
-
     private fun saveProgress(toServer: Boolean, screenOff: Boolean = false) {
         if (preparing) return
         val d = details ?: return
@@ -780,7 +778,6 @@ class PlayerActivity : FragmentActivity() {
             reported = reported,
         )
     }
-
 
     private fun updateTitles() {
         val d = details ?: return
