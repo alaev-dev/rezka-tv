@@ -85,8 +85,6 @@ object PhonePage {
     e.preventDefault();
     send({ email: document.getElementById('email').value.trim(), password: pass.value }, function () {});
   };
-  // Пришли с HTTPS-страницы входа: email и пароль зашифрованы ключом телевизора и лежат во фрагменте.
-  // Фрагмент сразу убираем из адреса; при ошибке — назад, к форме с менеджером паролей.
   var sealed = new URLSearchParams(location.hash.slice(1));
   if (sealed.get('c')) {
     history.replaceState(null, '', location.pathname + location.search);
