@@ -67,6 +67,18 @@ class CommentsTest(unittest.TestCase):
         expected = [2]
         self.assertEqual(expected, gate.comment_lines(name, source), "докстринг функции считается комментарием")
 
+    def test_finds_python_class_docstring(self):
+        source = 'class Ёж:\n    """Класс."""\n    x = 1\n'
+        name = "m.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг класса считается комментарием")
+
+    def test_finds_python_async_function_docstring(self):
+        source = 'async def f():\n    """Асинхронно."""\n    return 5\n'
+        name = "n.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "докстринг async-функции считается комментарием")
+
     def test_finds_python_module_docstring(self):
         source = '"""Модуль."""\nimport os\n'
         name = "k.py"

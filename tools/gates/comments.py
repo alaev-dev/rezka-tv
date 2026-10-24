@@ -51,7 +51,6 @@ def hash_comments(text: str) -> list:
     return [n for n, row in enumerate(text.splitlines(), 1) if HASH.search(QUOTED.sub("", row))]
 
 
-
 def python_comments(text: str) -> list:
     tokens = tokenize.generate_tokens(io.StringIO(text).readline)
     found = [t.start[0] for t in tokens if t.type == tokenize.COMMENT and not t.string.startswith("#!")]
