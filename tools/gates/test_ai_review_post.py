@@ -1,10 +1,19 @@
 import unittest
 
-from gates.ai_review_post import blocking_count, review_payload
+from gates.ai_review_post import blocking_count, open_previous, previous_threads, review_payload
 
 
 def finding(path: str, line: int, blocking: bool, message: str) -> dict:
     return {"path": path, "line": line, "blocking": blocking, "message": message}
+
+
+def thread(thread_id: str, author: str, resolved: bool, body: str) -> dict:
+    comment = {"author": {"login": author}, "body": body}
+    return {"id": thread_id, "isResolved": resolved, "path": "a.kt", "line": 9, "comments": {"nodes": [comment]}}
+
+
+def threads_response(*nodes: dict) -> dict:
+    return {"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": list(nodes)}}}}}
 
 
 class AiReviewPostTest(unittest.TestCase):
@@ -48,6 +57,40 @@ class AiReviewPostTest(unittest.TestCase):
         verdict = {"summary": "Чисто", "findings": []}
         expected = "COMMENT"
         self.assertEqual(expected, review_payload(verdict, True)["event"], "статус блокирует сам, ревью — без вердикта")
+
+    def test_keeps_only_open_threads_of_reviewer(self):
+        response = threads_response(thread("T1", "github-actions", False, "**Блокирует.** ёж"),
+                                    thread("T2", "github-actions", True, "закрыто"), thread("T3", "alaev-dev", False, "моё"))
+        expected = [{"id": "T1", "path": "a.kt", "line": 9, "blocking": True, "body": "**Блокирует.** ёж"}]
+        self.assertEqual(expected, previous_threads(response), "только открытые треды ревьюера, с признаком блокировки")
+
+    def test_marks_advisory_thread_as_not_blocking(self):
+        response = threads_response(thread("T6", "github-actions", False, "Стиль: три пустые строки"))
+        expected = False
+        self.assertEqual(expected, previous_threads(response)[0]["blocking"], "совет без пометки не блокирует")
+
+    def test_drops_threads_the_reviewer_marked_fixed(self):
+        previous = [{"id": "T7", "blocking": True}, {"id": "T8", "blocking": False}]
+        verdict = {"previous": [{"id": "T7", "fixed": True}, {"id": "T8", "fixed": False}]}
+        expected = [{"id": "T8", "blocking": False}]
+        self.assertEqual(expected, open_previous(previous, verdict), "исправленный тред больше не открыт")
+
+    def test_keeps_threads_the_reviewer_forgot(self):
+        previous = [{"id": "T9", "blocking": True}]
+        verdict = {"previous": []}
+        self.assertEqual(previous, open_previous(previous, verdict), "забытый ревьюером тред считается открытым")
+
+    def test_counts_open_blocking_threads_with_new_findings(self):
+        verdict = {"summary": "", "findings": [finding("c.kt", 4, True, "новое")]}
+        still_open = [{"id": "T4", "blocking": True}, {"id": "T5", "blocking": False}]
+        expected = 2
+        self.assertEqual(expected, blocking_count(verdict, still_open), "открытое блокирующее прошлое тоже блокирует")
+
+    def test_reports_fixed_and_open_previous_in_body(self):
+        verdict = {"summary": "Итог", "findings": []}
+        previous, still_open = [{"id": "T1", "blocking": True}, {"id": "T2", "blocking": False}], [{"id": "T2", "blocking": False}]
+        expected = "Прошлые замечания: исправлено 1, открыто 1."
+        self.assertIn(expected, review_payload(verdict, True, previous, still_open)["body"], "итог помнит прошлые замечания")
 
 
 if __name__ == "__main__":
