@@ -1,4 +1,3 @@
-app/src/main/java/dev/alaev/rezkatv/RezkaActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/BrowseActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/CardAdapter.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/ChipAdapter.kt
@@ -7,21 +6,12 @@ app/src/main/java/dev/alaev/rezkatv/rezka/GridPage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Grids.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/HomePage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Images.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/Loader.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/Model.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/NavRail.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Navigation.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/PageCache.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Panels.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/PlayLink.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/Progress.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/RezkaClient.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/RezkaParser.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/SearchActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/SettingsActivity.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/StreamParser.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/Watched.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListLogic.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListsAssets.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListsData.kt

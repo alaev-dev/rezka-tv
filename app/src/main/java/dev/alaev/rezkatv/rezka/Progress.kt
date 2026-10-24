@@ -3,10 +3,8 @@ package dev.alaev.rezkatv.rezka
 import android.content.Context
 import java.net.URLEncoder
 
-/** Прогресс просмотра: запрос сайту («Досмотреть») и правила продолжения с места остановки. */
 object Progress {
 
-    /** Тело POST /ajax/send_save/ — те же поля, что шлёт плеер сайта (время в секундах). */
     fun saveForm(postId: String, translatorId: String, season: Int, episode: Int, positionMs: Long, durationMs: Long): String =
         listOf(
             "post_id" to postId,
@@ -17,11 +15,9 @@ object Progress {
             "duration" to (durationMs / 1000).toString(),
         ).joinToString("&") { (k, v) -> k + "=" + URLEncoder.encode(v, "UTF-8") }
 
-    /** Досмотрено: остались титры (5% длительности, но не меньше полутора минут). */
     fun isFinished(positionMs: Long, durationMs: Long): Boolean =
         durationMs > 0 && positionMs >= durationMs - maxOf(FINISH_MIN_TAIL_MS, durationMs / 20)
 
-    /** С какого места начинать: начало, если смотрели совсем чуть-чуть или уже досмотрели. */
     fun startPosition(savedMs: Long, durationMs: Long): Long = when {
         savedMs < MIN_RESUME_MS -> 0
         durationMs > 0 && isFinished(savedMs, durationMs) -> 0
@@ -32,7 +28,6 @@ object Progress {
     private const val MIN_RESUME_MS = 30_000L
 }
 
-/** Место остановки в каждой серии (сайт хранит его только в localStorage своего плеера). */
 class ResumeStore(context: Context) {
 
     data class Entry(val positionMs: Long, val durationMs: Long) {
@@ -51,7 +46,6 @@ class ResumeStore(context: Context) {
     fun put(id: String, season: Int, episode: Int, positionMs: Long, durationMs: Long) {
         if (durationMs <= 0) return
         val editor = prefs.edit().putString(key(id, season, episode), "$positionMs:$durationMs:${System.currentTimeMillis()}")
-        // Не даём файлу расти бесконечно: выкидываем самые старые записи
         val all = prefs.all
         if (all.size > MAX_ENTRIES) {
             all.entries.sortedBy { (it.value as? String)?.substringAfterLast(':')?.toLongOrNull() ?: 0 }

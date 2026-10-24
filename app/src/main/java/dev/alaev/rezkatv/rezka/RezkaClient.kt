@@ -20,10 +20,6 @@ import java.util.zip.GZIPInputStream
 
 class NotLoggedInException : IOException("rezka: not logged in")
 
-/**
- * Страницы и API плеера rezka. Блокирующие вызовы — только из фона ([io]).
- * Разобранные страницы кэшируются в памяти и на диске, чтобы экраны открывались сразу.
- */
 class RezkaClient private constructor(context: Context, val baseUrl: String) {
 
     private val cookies = CookieJar(context)
@@ -37,7 +33,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
     fun categoryUrl(category: Category, sort: Sort) = resolve(category.path(sort))
     fun searchUrl(query: String) = resolve("/search/?do=search&subaction=search&q=" + URLEncoder.encode(query, "UTF-8"))
 
-    /** Страница из кэша (память, затем диск) — без сети, можно звать с главного потока. */
     fun cachedPage(url: String): PageCache.Entry<Page>? =
         pages.get(url) ?: disk.page(url)?.also { pages.put(url, it) }
 
@@ -56,7 +51,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         return details.get(key) ?: disk.details(key)?.also { details.put(key, it) }
     }
 
-    /** Свежая страница тайтла: позиция просмотра и озвучки меняются, поэтому всегда из сети. */
     fun details(url: String): Details {
         val key = url.substringBefore('#')
         val html = fetch(key)
@@ -66,11 +60,9 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         return parsed
     }
 
-    /** Для плеера: только что загруженная страница тайтла годится, иначе — заново. */
     fun recentDetails(url: String): Details =
         cachedDetails(url)?.takeIf { it.age() < RECENT_MS }?.value ?: details(url)
 
-    /** Потоки серии (episode != null) или фильма. */
     fun streams(d: Details, translator: Translator, episode: Episode?): Streams {
         val params = mutableListOf("id" to d.id, "translator_id" to translator.id)
         if (episode != null) {
@@ -86,7 +78,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         return StreamParser.streams(StreamParser.response(json))
     }
 
-    /** Список серий у другой озвучки (у разных озвучек он разный). */
     fun translatorEpisodes(d: Details, translator: Translator): List<Episode> {
         val params = listOf("id" to d.id, "translator_id" to translator.id, "favs" to d.favs.orEmpty(), "action" to "get_episodes")
         val obj = StreamParser.response(post(ajax("get_cdn_series"), form(params), d.url))
@@ -98,17 +89,11 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         return StreamParser.thumbnails(request(url, null, null), url)
     }
 
-    /** Отметка в «Досмотреть», как это делает плеер сайта. */
     fun saveProgress(d: Details, translatorId: String, episode: Episode?, positionMs: Long, durationMs: Long) {
         val body = Progress.saveForm(d.id, translatorId, episode?.season ?: 0, episode?.episode ?: 0, positionMs, durationMs)
         post(ajax("send_save"), body, d.url)
     }
 
-    /**
-     * Вход по email и паролю (с телефона). Отдельный запрос без наших cookies: на неверный пароль сайт
-     * отвечает удалением cookies сессии, и текущий вход не должен от этого пострадать.
-     * Пароль никуда не пишется.
-     */
     fun login(email: String, password: String): LoginResult {
         val url = resolve("/ajax/login/")
         val body = form(listOf("login_name" to email, "login_password" to password, "login_not_save" to "0"))
@@ -130,7 +115,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
             val setCookies = conn.headerFields["Set-Cookie"].orEmpty()
             val session = setCookies.mapNotNull { Cookies.parseSetCookie(it, System.currentTimeMillis()) }
                 .any { it.name == LOGIN_COOKIE && !it.expired }
-            // «Успех» без cookie сессии — не затираем текущий вход
             if (!session) return LoginResult(false, LoginResult.DEFAULT_ERROR)
             cookies.replaceWith(setCookies)
             clearCaches()
@@ -151,15 +135,12 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         clearCaches()
     }
 
-    /** Перед открытием сайта в WebView: там должны быть те же cookies, что и у нас. */
     fun exportCookiesToWebView() = cookies.exportToWebView(baseUrl)
 
-    /** После WebView (вход, выход, сайт): забираем cookies себе. */
     fun importCookiesFromWebView() = cookies.importFromWebView(baseUrl)
 
     private fun ajax(name: String) = resolve("/ajax/$name/?t=${System.currentTimeMillis()}")
 
-    /** Адрес на текущем зеркале: «/films/…» → «https://rezka.fi/films/…» */
     fun resolve(path: String) = URL(URL(baseUrl), path).toString()
 
     private fun fetch(url: String): String {
@@ -175,7 +156,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         conn.connectTimeout = TIMEOUT_MS
         conn.readTimeout = TIMEOUT_MS
         conn.setRequestProperty("User-Agent", USER_AGENT)
-        // Cookies сессии — только своему сайту, не CDN
         if (isSiteUrl(url)) cookies.header()?.let { conn.setRequestProperty("Cookie", it) }
         if (body != null) {
             conn.requestMethod = "POST"
@@ -195,7 +175,6 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         }
     }
 
-    // Сайт отдаёт gzip, даже если его не просили, и не всегда помечает это заголовком
     private fun decode(input: InputStream): String {
         val stream = BufferedInputStream(input)
         stream.mark(2)
@@ -231,27 +210,23 @@ class RezkaClient private constructor(context: Context, val baseUrl: String) {
         private const val RECENT_MS = 5 * 60_000L
         private const val LOGIN_COOKIE = "dle_user_id"
 
-        /** Сеть и разбор HTML: слабому процессору больше трёх задач сразу во вред. */
         val io = Dispatchers.IO.limitedParallelism(3)
 
         @Volatile private var instance: RezkaClient? = null
 
         fun baseUrl(context: Context): String = Settings(context).baseUrl
 
-        /** Смена зеркала: adb shell am start -n dev.alaev.rezkatv/.rezka.BrowseActivity --es base https://… */
         fun setBaseUrl(context: Context, url: String) {
             Settings(context).setBaseUrl(url)
             instance = null
         }
 
-        /** С главного потока: при первом запуске cookies забираются из WebView, где выполнен вход. */
         fun get(context: Context): RezkaClient {
             val base = baseUrl(context)
             instance?.takeIf { it.baseUrl == base }?.let { return it }
             return RezkaClient(context.applicationContext, base).also {
                 if (it.cookies.isEmpty()) it.importCookiesFromWebView()
                 instance = it
-                // Первый разбор Jsoup грузит таблицы сущностей (~1 с): пусть это случится, пока идёт сеть
                 CoroutineScope(io).launch { Jsoup.parseBodyFragment("<p>&nbsp;</p>") }
             }
         }

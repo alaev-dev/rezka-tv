@@ -4,14 +4,11 @@ import org.json.JSONObject
 import java.io.IOException
 import java.net.URI
 
-/** Ответы плеера rezka: потоки по качествам, субтитры, превью перемотки. */
 object StreamParser {
 
-    // «[720p]https://a…m3u8 or https://b…mp4,[1080p]…»; в самих ссылках нет «[», а запятые бывают только между блоками
     private val BLOCK = Regex("""\[([^\]]+)]([^\[]*)""")
     private val VTT_TIME = Regex("""(\d+:)?(\d+):(\d+)[.,](\d{1,3})""")
 
-    /** Ответ /ajax/get_cdn_series/ (get_stream, get_movie, get_episodes). */
     fun response(json: String): JSONObject {
         val obj = JSONObject(json)
         if (!obj.optBoolean("success")) throw IOException("rezka: ${obj.optString("message").ifEmpty { "нет потока" }}")
@@ -30,21 +27,15 @@ object StreamParser {
         )
     }
 
-    /**
-     * Строка потоков → качества. Пусто, если формат незнакомый (например, зашифрованная строка):
-     * тогда играем через плеер сайта.
-     */
     fun qualities(raw: String): List<Quality> =
         BLOCK.findAll(raw).mapNotNull { m ->
             val urls = m.groupValues[2].trim().trimEnd(',').split(" or ")
                 .map { it.trim() }
                 .filter { it.startsWith("http") }
             if (urls.isEmpty()) return@mapNotNull null
-            // HLS перематывается и стартует быстрее MP4: сначала все m3u8, потом остальное
             Quality(m.groupValues[1].trim(), urls.sortedBy { if (it.endsWith(".m3u8")) 0 else 1 })
         }.toList()
 
-    /** «[Русский]https://…vtt,[English]https://…vtt» + {"Русский": "ru"} */
     fun subtitles(raw: String, languages: Map<String, String>): List<Subtitle> =
         BLOCK.findAll(raw).mapNotNull { m ->
             val label = m.groupValues[1].trim()
@@ -53,7 +44,6 @@ object StreamParser {
             Subtitle(label, url, languages[label]?.ifEmpty { null })
         }.toList()
 
-    /** WebVTT со ссылками на спрайты: «00:00:30.000 --> 00:01:00.000» и «https://…/t.jpg#xywh=160,0,160,90». */
     fun thumbnails(vtt: String, vttUrl: String): List<Tile> {
         val base = runCatching { URI(vttUrl) }.getOrNull()
         val lines = vtt.lineSequence().map { it.trim() }.toList()
