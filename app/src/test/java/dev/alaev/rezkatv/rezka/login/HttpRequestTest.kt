@@ -41,6 +41,13 @@ class HttpRequestTest {
     }
 
     @Test
+    fun readsMethodOfPostRequest() {
+        val expected = "POST"
+        val request = post("k=abc")
+        assertThat("метод POST", request?.method, equalTo(expected))
+    }
+
+    @Test
     fun readsPathOfPostRequest() {
         val expected = "/login"
         val request = post("k=abc")
