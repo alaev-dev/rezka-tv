@@ -52,7 +52,6 @@ object PhonePage {
   </form>
   <div id="status" role="status"></div>
   <button id="back" type="button" onclick="history.back()">Ввести ещё раз</button>
-  <!-- Эту страницу открывают по ссылке под QR-кодом, без интернета; на http:// менеджеры паролей часто молчат -->
   <p class="tip">Пароль не подставляется? Отсканируйте QR-код на телевизоре: та страница открывается по HTTPS,
     и менеджер паролей предложит пароль от rezka.</p>
 </main>
