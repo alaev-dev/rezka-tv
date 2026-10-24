@@ -2,7 +2,7 @@
 name: kotlin-coroutines-flows
 description: Structured concurrency, dispatchers and cancellation for Kotlin coroutines on Android. Use when writing or reviewing coroutine code, or debugging cancellation and concurrency.
 metadata:
-  origin: ECC (https://github.com/affaan-m/ECC, MIT), excerpt without Compose, StateFlow UI and Turbine sections
+  origin: ECC (https://github.com/affaan-m/ECC, MIT), adapted excerpt: no Compose, StateFlow UI or Turbine, examples rewritten for Activity scopes without comments
 ---
 
 # Kotlin Coroutines
@@ -15,23 +15,29 @@ Patterns for structured concurrency, dispatchers and cancellation in Android pro
 
 ```
 Application
-  └── viewModelScope (ViewModel)
+  └── MainScope() (Activity, cancelled in onDestroy)
         └── coroutineScope { } (structured child)
               ├── async { } (concurrent task)
               └── async { } (concurrent task)
 ```
 
-Always use structured concurrency — never `GlobalScope`:
+Always use structured concurrency — never `GlobalScope`. Wrong, the coroutine outlives the screen:
 
 ```kotlin
-// BAD
 GlobalScope.launch { fetchData() }
+```
 
-// GOOD — scoped to ViewModel lifecycle
-viewModelScope.launch { fetchData() }
+Right, the scope belongs to the Activity and is cancelled with it:
 
-// GOOD — scoped to composable lifecycle
-LaunchedEffect(key) { fetchData() }
+```kotlin
+private val scope = MainScope()
+
+fun load() = scope.launch { fetchData() }
+
+override fun onDestroy() {
+    scope.cancel()
+    super.onDestroy()
+}
 ```
 
 ### Parallel Decomposition
@@ -53,42 +59,39 @@ suspend fun loadDashboard(): Dashboard = coroutineScope {
 
 ### SupervisorScope
 
-Use `supervisorScope` when child failures should not cancel siblings:
+Use `supervisorScope` when child failures should not cancel siblings: a failing `syncItems` leaves
+`syncStats` and `syncSettings` running.
 
 ```kotlin
 suspend fun syncAll() = supervisorScope {
-    launch { syncItems() }       // failure here won't cancel syncStats
+    launch { syncItems() }
     launch { syncStats() }
     launch { syncSettings() }
 }
 ```
 
-
 ## Dispatchers
 
+CPU-bound work such as parsing goes to `Dispatchers.Default`, blocking IO such as network and disk goes
+to `Dispatchers.IO`, and views are touched only on `Dispatchers.Main`, the default of `MainScope()`:
+
 ```kotlin
-// CPU-intensive work
-withContext(Dispatchers.Default) { parseJson(largePayload) }
-
-// IO-bound work
-withContext(Dispatchers.IO) { database.query() }
-
-// Main thread (UI) — default in viewModelScope
-withContext(Dispatchers.Main) { updateUi() }
+val page = withContext(Dispatchers.IO) { client.download(url) }
+val details = withContext(Dispatchers.Default) { parser.details(page) }
+bind(details)
 ```
-
-In KMP, use `Dispatchers.Default` and `Dispatchers.Main` (available on all platforms). `Dispatchers.IO` is JVM/Android only — use `Dispatchers.Default` on other platforms or provide via DI.
 
 ## Cancellation
 
 ### Cooperative Cancellation
 
-Long-running loops must check for cancellation:
+Long-running loops must check for cancellation; `ensureActive()` throws `CancellationException`
+once the scope is cancelled:
 
 ```kotlin
 suspend fun processItems(items: List<Item>) = coroutineScope {
     for (item in items) {
-        ensureActive()  // throws CancellationException if cancelled
+        ensureActive()
         process(item)
     }
 }
@@ -96,18 +99,18 @@ suspend fun processItems(items: List<Item>) = coroutineScope {
 
 ### Cleanup with try/finally
 
+The `finally` block runs even when the coroutine is cancelled, so the spinner never stays on screen:
+
 ```kotlin
-viewModelScope.launch {
+scope.launch {
     try {
-        _state.update { it.copy(isLoading = true) }
-        val data = repository.fetch()
-        _state.update { it.copy(data = data) }
+        spinner.isVisible = true
+        bind(withContext(Dispatchers.IO) { client.details(url) })
     } finally {
-        _state.update { it.copy(isLoading = false) }  // always runs, even on cancellation
+        spinner.isVisible = false
     }
 }
 ```
-
 
 ## Anti-Patterns to Avoid
 
