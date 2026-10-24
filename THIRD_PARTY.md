@@ -1,7 +1,7 @@
 # Сторонние компоненты
 
 Код из сторонних проектов в репозиторий не копировался: всё ниже подключается как зависимости Gradle
-(исключение — данные контуров иконок Material Icons, см. ниже). Тексты лицензий —
+(исключения — данные контуров иконок Material Icons и инструкция для ИИ-ревьюера, см. ниже). Тексты лицензий —
 в самих артефактах и по ссылкам.
 
 ## Библиотеки в приложении
@@ -34,6 +34,11 @@
 | Gradle Wrapper (`gradlew`, `gradle/wrapper/`) | Apache-2.0 |
 | JUnit 4 | EPL-1.0 |
 | [JSON-java (org.json)](https://github.com/stleary/JSON-java) — в юнит-тестах вместо заглушки Android | Public Domain |
+
+## Инструменты разработки
+
+- `.claude/skills/kotlin-coroutines-flows/SKILL.md` — выдержка из скилла `kotlin-coroutines-flows`
+  проекта [ECC](https://github.com/affaan-m/ECC), MIT; используется ИИ-ревьюером в CI.
 
 ## Ориентиры без заимствования кода
 
