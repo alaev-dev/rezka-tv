@@ -8,7 +8,6 @@ app/src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/PlayerGlue.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/SeekMath.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/player/ThumbnailSeekProvider.kt
-app/src/main/res/drawable/rank_bg.xml
 app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/ProgressTest.kt
