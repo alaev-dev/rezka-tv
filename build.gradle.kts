@@ -23,6 +23,10 @@ val layoutGate by tasks.registering(Exec::class) {
     commandLine(python, "tools/gates/layout.py")
 }
 
+val testRules by tasks.registering(Exec::class) {
+    commandLine(python, "tools/gates/discipline.py")
+}
+
 val toolsTests by tasks.registering(Exec::class) {
     commandLine(python, "-m", "unittest", "discover", "-s", "tools", "-q")
 }
@@ -38,5 +42,5 @@ val commentsGate by tasks.registering(Exec::class) {
 tasks.register("verify") {
     group = "verification"
     description = "Быстрый эшелон проверок: одна команда для CI и для любой машины."
-    dependsOn(ruff, ruffFormat, typos, toolsTests, prSize, commentsGate, layoutGate, ":app:testDebugUnitTest", ":app:lintDebug", ":app:detekt")
+    dependsOn(ruff, ruffFormat, typos, toolsTests, prSize, commentsGate, layoutGate, testRules, ":app:testDebugUnitTest", ":app:lintDebug", ":app:detekt")
 }
