@@ -19,7 +19,7 @@ jobs:
     outputs:
       verdict: ${{ steps.review.outputs.structured_output }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - name: Правила, публикация и прошлые замечания
@@ -58,7 +58,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - name: Публикация и вердикт
