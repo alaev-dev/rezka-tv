@@ -1,0 +1,5 @@
+[files]
+extend-exclude = ["app/src/test/resources/"]
+
+[default.extend-words]
+Ove = "Ove"
