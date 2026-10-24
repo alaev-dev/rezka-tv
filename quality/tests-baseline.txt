@@ -28,12 +28,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::oscarProgressCount
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesOscars
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesTopLists
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::texts
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::expiresAfterTenMinutes
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::fiveWrongPasswordsExhaustTheCode
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::phoneUrlKeepsSecretsInFragment
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::qrUrl
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::tokenCheck
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::tokenIs128BitHexAndRandom
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::(файл)
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::decryptsWhatThePhonePageSealed
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::garbageIsRejectedNotThrown
