@@ -3,7 +3,6 @@ package dev.alaev.rezkatv.rezka
 import android.content.Context
 import androidx.preference.PreferenceManager
 
-/** Настройки rezka (экран — SettingsActivity, хранение — общие SharedPreferences leanback-preference). */
 class Settings(context: Context) {
 
     private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -32,10 +31,6 @@ class Settings(context: Context) {
 
 object QualityPicker {
 
-    /**
-     * Какое качество включить. «Авто» — лучшее обычное (не Ultra) не выше экрана;
-     * явный выбор — он сам, а если у этой озвучки такого нет — ближайшее ниже.
-     */
     fun pick(available: List<Quality>, preferred: String, screenHeight: Int): Quality? {
         if (available.isEmpty()) return null
         available.find { it.label == preferred }?.let { return it }

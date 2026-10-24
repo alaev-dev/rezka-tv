@@ -7,7 +7,6 @@
         <item name="android:windowAnimationStyle">@style/Animation.RezkaTv</item>
     </style>
 
-    <!-- Короткий fade вместо «съезжающих» окон: на слабом GPU так плавнее -->
     <style name="Animation.RezkaTv" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
         <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
@@ -19,7 +18,6 @@
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 
-    <!-- Плеер: leanback-фрагменты берут размеры и цвета из Theme.Leanback -->
     <style name="Theme.RezkaTv.Player" parent="@style/Theme.Leanback">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:windowFullscreen">true</item>
@@ -58,12 +56,10 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.RezkaTv</item>
     </style>
 
-    <!-- Тот же янтарный акцент, что и во всём приложении, вместо синего по умолчанию -->
     <style name="PreferenceThemeOverlay.RezkaTv" parent="@style/PreferenceThemeOverlayLeanback">
         <item name="android:colorAccent">@color/accent</item>
     </style>
 
-    <!-- rezka -->
 
     <style name="HeroTitle">
         <item name="android:layout_width">wrap_content</item>

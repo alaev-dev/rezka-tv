@@ -10,15 +10,9 @@ import dev.alaev.rezkatv.rezka.EXTRA_TITLE
 import dev.alaev.rezkatv.rezka.EXTRA_URL
 import dev.alaev.rezkatv.rezka.player.PlayerActivity
 
-/**
- * Открыть прерванный просмотр с того же места. Стопка как при обычном просмотре: Назад из плеера ведёт
- * на страницу тайтла, оттуда — на главную rezka. Серию и озвучку плеер сверит с сайтом сам
- * (могли досмотреть на другом устройстве).
- */
 fun Activity.resume(session: WatchSession) =
     openTitle(session, PlayerActivity.intent(this, session.url, session.title, session.poster))
 
-/** Страница тайтла поверх главной rezka (там можно выбрать другую серию или озвучку), [above] — ещё выше. */
 fun Activity.openTitle(session: WatchSession, vararg above: Intent) {
     startActivities(
         arrayOf(
@@ -32,7 +26,6 @@ fun Activity.openTitle(session: WatchSession, vararg above: Intent) {
     )
 }
 
-/** «S2:E8  ·  23:14 из 54:42», у фильма вместо серии — озвучка */
 fun Activity.resumeInfo(session: WatchSession): String {
     val position = getString(R.string.continue_position, TimeText.format(session.positionMs), TimeText.format(session.durationMs))
     val prefix = if (session.isSeries) session.episodeCode else session.translatorName

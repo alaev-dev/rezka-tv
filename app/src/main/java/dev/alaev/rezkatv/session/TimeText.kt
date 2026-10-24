@@ -1,6 +1,5 @@
 package dev.alaev.rezkatv.session
 
-/** «1:05:09», «23:14» */
 object TimeText {
     fun format(ms: Long): String {
         val total = (ms / 1000).coerceAtLeast(0)

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- «Оскар»: категории и общий прогресс, ряд церемоний, номинанты выбранной церемонии -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/oscar_page"
@@ -28,7 +27,6 @@
             android:orientation="horizontal" />
     </LinearLayout>
 
-    <!-- Общий прогресс по выбранной категории -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,7 +74,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- focusOutFront: вверх с первого ряда — к церемониям -->
         <androidx.leanback.widget.VerticalGridView
             android:id="@+id/oscar_grid"
             android:layout_width="match_parent"

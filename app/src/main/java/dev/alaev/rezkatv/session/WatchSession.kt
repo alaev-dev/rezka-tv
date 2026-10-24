@@ -7,16 +7,10 @@ import android.util.Log
 import org.json.JSONObject
 import java.io.File
 
-/** Что сайт знает о просмотре: озвучка, сезон, серия (время сайт не отдаёт). */
 data class SitePosition(val translatorId: String, val season: Int, val episode: Int)
 
-/**
- * Последний просмотр — чтобы после выключения телевизора продолжить с того же места.
- * Файл, а не prefs: атомарная запись переживает выдёргивание вилки.
- */
 data class WatchSession(
     val app: String,
-    /** страница тайтла */
     val url: String,
     val title: String,
     val poster: String = "",
@@ -28,18 +22,13 @@ data class WatchSession(
     val durationMs: Long = 0,
     val updatedAt: Long,
     val bootCount: Int,
-    /** false — вышли сами (Назад, досмотрели): тогда не предлагаем продолжить */
     val interrupted: Boolean,
-    /** плеер остановился, потому что погас экран (телевизор выключили пультом) */
     val stoppedByScreenOff: Boolean = false,
-    /** когда последний раз показали вопрос «Продолжить?»; 0 — не показывали */
     val promptedAt: Long = 0,
-    /** что последним успешно отправили на сайт: если сайт показывает другое — смотрели на другом устройстве */
     val reported: SitePosition? = null,
 ) {
     val isSeries get() = season > 0
 
-    /** «S2:E8» или пусто */
     val episodeCode get() = if (isSeries) "S$season:E$episode" else ""
 
     fun toJson(): String = JSONObject()
@@ -80,7 +69,6 @@ data class WatchSession(
     }
 }
 
-/** Атомарная запись (временный файл + fsync + rename): выключение питания посреди записи файл не портит. */
 class SessionStore(context: Context) {
 
     private val file = AtomicFile(File(context.filesDir, "watch_session.json"))
@@ -105,7 +93,6 @@ class SessionStore(context: Context) {
         }
     }
 
-    /** Изменить сохранённое, если оно про тот же просмотр. */
     fun update(transform: (WatchSession) -> WatchSession): Unit = synchronized(LOCK) {
         read()?.let { write(transform(it)) }
     }
@@ -116,7 +103,6 @@ class SessionStore(context: Context) {
         private const val TAG = "RezkaTv"
         private val LOCK = Any()
 
-        /** Номер загрузки системы: меняется при каждом включении после полного выключения. */
         fun bootCount(context: Context): Int =
             Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1)
     }
