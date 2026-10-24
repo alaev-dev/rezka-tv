@@ -51,9 +51,20 @@ def hash_comments(text: str) -> list:
     return [n for n, row in enumerate(text.splitlines(), 1) if HASH.search(QUOTED.sub("", row))]
 
 
+class UnparsableSource(Exception):
+    def __init__(self, path: str, line: int):
+        super().__init__(f"{path}:{line}")
+        self.path = path
+        self.line = line
+
+
+def is_shebang(token: tokenize.TokenInfo) -> bool:
+    return token.start == (1, 0) and token.string.startswith("#!")
+
+
 def python_comments(text: str) -> list:
     tokens = tokenize.generate_tokens(io.StringIO(text).readline)
-    found = [t.start[0] for t in tokens if t.type == tokenize.COMMENT and not t.string.startswith("#!")]
+    found = [t.start[0] for t in tokens if t.type == tokenize.COMMENT and not is_shebang(t)]
     return sorted(found + docstring_lines(text))
 
 
@@ -90,9 +101,17 @@ def comment_lines(path: str, text: str) -> list:
     return scanner(text) if scanner else []
 
 
+def parsed_lines(path: str) -> list:
+    try:
+        return comment_lines(path, Path(path).read_text(encoding="utf-8", errors="replace"))
+    except (SyntaxError, tokenize.TokenError) as error:
+        line = getattr(error, "lineno", None) or 1
+        raise UnparsableSource(path, line) from error
+
+
 def scan(paths: list) -> dict:
     readable = [p for p in paths if scanner_for(p) and Path(p).is_file()]
-    found = {p: comment_lines(p, Path(p).read_text(encoding="utf-8", errors="replace")) for p in readable}
+    found = {p: parsed_lines(p) for p in readable}
     return {p: lines for p, lines in found.items() if lines}
 
 
@@ -120,7 +139,10 @@ def git_paths(*args: str) -> list:
 def main(base: str) -> int:
     ledger = parse_ledger(Path(LEDGER).read_text(encoding="utf-8")) if Path(LEDGER).exists() else set()
     changed = set(git_paths("diff", "--name-only", f"{base}...HEAD"))
-    found = violations(scan(git_paths("ls-files")), ledger, changed)
+    try:
+        found = violations(scan(git_paths("ls-files")), ledger, changed)
+    except UnparsableSource as error:
+        found = [(error.path, error.line, "файл Python не разбирается: исправьте синтаксис")]
     for violation in found:
         print(annotation(*violation))
     return 1 if found else 0

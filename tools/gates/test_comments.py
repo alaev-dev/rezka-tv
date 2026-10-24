@@ -61,6 +61,12 @@ class CommentsTest(unittest.TestCase):
         expected = [2]
         self.assertEqual(expected, gate.comment_lines(name, source), "шебанг не комментарий, решётка после кода — да")
 
+    def test_finds_hash_bang_comment_after_first_line(self):
+        source = "x = 1\n#!заметка\n"
+        name = "o.py"
+        expected = [2]
+        self.assertEqual(expected, gate.comment_lines(name, source), "#! не в первой строке — комментарий")
+
     def test_finds_python_function_docstring(self):
         source = 'def f():\n    """Пояснение."""\n    return 4\n'
         name = "j.py"
@@ -136,6 +142,13 @@ class CommentsTest(unittest.TestCase):
         broken.write_bytes(bytes([0xFF, 0xD8]) + "<!-- ё -->".encode())
         expected = {str(broken): [1]}
         self.assertEqual(expected, gate.scan([str(broken)]), "файл не в UTF-8 сканируется, а не роняет проверку")
+
+    def test_reports_unparsable_python_file(self):
+        broken = Path(tempfile.mkdtemp(prefix="comments-")) / "broken.py"
+        broken.write_text("def f(:\n", encoding="utf-8")
+        paths = [str(broken)]
+        with self.assertRaises(gate.UnparsableSource, msg="битый Python — понятная ошибка, а не трассировка"):
+            gate.scan(paths)
 
     def test_reports_every_comment_outside_ledger(self):
         found = {"app/K.kt": [12, 40]}
