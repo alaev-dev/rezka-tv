@@ -50,8 +50,7 @@ def assert_problems(body: str) -> list:
     calls = list(ASSERT.finditer(body))
     if len(calls) != 1:
         return [f"assert в тесте: {len(calls)}, нужен ровно один"]
-    call = calls[0]
-    end = closing(body, call.end() - 1, "(", ")")
+    call, end = calls[0], closing(body, calls[0].end() - 1, "(", ")")
     args = body[call.end() : end]
     message = re.match(r"\s*\"(\\.|[^\"\\])*\"\s*,", args)
     problems = [] if not body[end + 1 :].strip() else ["assert должен быть последним"]
