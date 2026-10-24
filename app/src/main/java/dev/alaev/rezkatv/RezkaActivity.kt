@@ -26,10 +26,6 @@ import dev.alaev.rezkatv.rezka.RezkaClient
 import java.io.ByteArrayInputStream
 import java.net.URI
 
-/**
- * rezka в WebView с управлением с пульта. Два режима:
- * сайт целиком (вход, всё, чего нет в приложении) и плеер — серия сразу на весь экран, Back закрывает.
- */
 class RezkaActivity : Activity() {
 
     private lateinit var root: FrameLayout
@@ -40,7 +36,6 @@ class RezkaActivity : Activity() {
     private var swallowKeyUp = NO_KEY
     private var playerOnly = false
 
-    // Пишется из JS-потока через TVBridge
     @Volatile private var playerMode = false
 
     private val tvScript by lazy { assets.open("tv.js").bufferedReader().use { it.readText() } }
@@ -66,7 +61,6 @@ class RezkaActivity : Activity() {
         root.addView(web, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
         root.addView(overlay, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
         setContentView(root)
-        // Если плеер так и не развернулся — показываем страницу как есть
         if (playerOnly) overlay.postDelayed({ overlay.visibility = View.GONE }, PLAYER_TIMEOUT_MS)
 
         web.settings.apply {
@@ -88,7 +82,6 @@ class RezkaActivity : Activity() {
         web.webViewClient = Client()
         web.webChromeClient = Chrome()
 
-        // У родных экранов своя копия cookies: перед сайтом отдаём её WebView
         RezkaClient.get(this).exportCookiesToWebView()
         web.loadUrl(url)
         web.requestFocus()
@@ -98,7 +91,6 @@ class RezkaActivity : Activity() {
         val code = event.keyCode
         val down = event.action == KeyEvent.ACTION_DOWN
 
-        // Отпускание кнопки, нажатие которой мы уже обработали, в WebView не пускаем
         if (!down && code == swallowKeyUp) {
             swallowKeyUp = NO_KEY
             return true
@@ -147,7 +139,6 @@ class RezkaActivity : Activity() {
         web.evaluateJavascript(PlayerCommand("pause").toJs(), null)
         web.onPause()
         CookieManager.getInstance().flush()
-        // Вход, выход или обновлённая сессия на сайте — забираем cookies обратно
         RezkaClient.get(this).importCookiesFromWebView()
         super.onPause()
     }
@@ -204,7 +195,6 @@ class RezkaActivity : Activity() {
             customView = null
         }
 
-        // Вместо серой заглушки с иконкой play — пустой кадр
         override fun getDefaultVideoPoster(): Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     }
 

@@ -5,7 +5,6 @@ import org.json.JSONObject
 import java.io.File
 import java.security.MessageDigest
 
-/** Уже разобранные страницы на диске: при запуске ряды показываются сразу, сеть только обновляет. */
 class PageCache(private val dir: File) {
 
     class Entry<T>(val value: T, val savedAt: Long) {
