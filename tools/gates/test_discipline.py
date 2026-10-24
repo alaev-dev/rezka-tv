@@ -86,3 +86,53 @@ class DisciplineTest(unittest.TestCase):
     def test_reports_fixed_test_left_in_ledger(self):
         expected = [(f"{PATH}::format", f"тест в порядке: уберите {PATH}::format из {gate.LEDGER}")]
         self.assertEqual(expected, gate.violations({}, {f"{PATH}::format"}), "исправленный тест убирается")
+
+
+def python(body: str, name: str = "test_rejects_expired_code") -> str:
+    return f"import unittest\n\n\nclass FooTest(unittest.TestCase):\n    def {name}(self):\n{body}"
+
+
+def messages(body: str, name: str = "test_rejects_expired_code") -> list:
+    return gate.python_problems("t.py", python(body, name)).get(f"t.py::FooTest.{name}", [])
+
+
+class PythonDisciplineTest(unittest.TestCase):
+    def test_accepts_python_test_that_follows_rules(self):
+        expected = []
+        body = "        expected = []\n        self.assertEqual(expected, f(), 'пусто')\n"
+        self.assertEqual(expected, messages(body), "тест по правилам проходит")
+
+    def test_reports_python_name_without_verb(self):
+        expected = "имя test_format: предложение о поведении с глагола, например rejectsExpiredCode"
+        name = "test_format"
+        self.assertIn(expected, messages("        self.assertTrue(f(), 'да')\n", name), "имя — с глагола")
+
+    def test_reports_python_literal_in_assert(self):
+        expected = "литерал в assert: вынесите значение в переменную"
+        body = "        self.assertEqual([2], f(), 'вторая')\n"
+        self.assertIn(expected, messages(body), "литерал в assert запрещён")
+
+    def test_reports_python_assert_without_message(self):
+        expected = "нужно сообщение последним аргументом assert"
+        body = "        self.assertTrue(f())\n"
+        self.assertIn(expected, messages(body), "assert с сообщением")
+
+    def test_reports_python_assert_that_is_not_last(self):
+        expected = "assert должен быть последним"
+        body = "        self.assertTrue(f(), 'да')\n        g()\n"
+        self.assertIn(expected, messages(body), "assert последним")
+
+    def test_reports_python_setup_method(self):
+        expected = ["setUp/tearDown запрещены: готовьте данные в самом тесте"]
+        text = python("        self.assertTrue(f(), 'да')\n") + "\n    def setUp(self):\n        pass\n"
+        self.assertEqual(expected, gate.python_problems("t.py", text)["t.py::(файл)"], "setUp запрещён")
+
+    def test_reports_python_module_constant(self):
+        expected = ["константы и поля в тестах запрещены: значения — в самом тесте"]
+        text = "X = 1\n\n\n" + python("        self.assertTrue(f(), 'да')\n")
+        self.assertEqual(expected, gate.python_problems("t.py", text)["t.py::(файл)"], "константа модуля запрещена")
+
+    def test_reports_long_python_test(self):
+        expected = "тест длиннее 12 строк: 13"
+        body = "        a = 1\n" * 12 + "        self.assertTrue(a, 'да')\n"
+        self.assertIn(expected, messages(body), "тест не длиннее 12 строк")
