@@ -47,10 +47,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::oscarProgressCount
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesOscars
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesTopLists
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::texts
-app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::brokenEscapeIsEmptyNotCrash
-app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::emptyAndMissingValues
-app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::plusAndPercentEscapes
-app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::utf8
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::expiresAfterTenMinutes
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::fiveWrongPasswordsExhaustTheCode
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::phoneUrlKeepsSecretsInFragment

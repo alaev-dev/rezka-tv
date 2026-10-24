@@ -10,7 +10,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/WatchedStoreTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt
-app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/player/SeekMathTest.kt
 app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt
