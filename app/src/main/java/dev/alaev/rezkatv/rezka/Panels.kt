@@ -5,7 +5,6 @@ import android.widget.TextView
 import androidx.leanback.widget.VerticalGridView
 import dev.alaev.rezkatv.R
 
-/** Боковая панель со списком: озвучка, качество, субтитры. Back закрывает её, фокус возвращается назад. */
 class ChoicePanel(private val root: View) {
 
     private val title: TextView = root.findViewById(R.id.choice_title)
@@ -38,7 +37,6 @@ class ChoicePanel(private val root: View) {
     }
 }
 
-/** Сезоны и серии: сезон выбирается фокусом, серия — по OK. Текущая серия отмечена. */
 class EpisodesPanel(private val root: View) {
 
     private val title: TextView = root.findViewById(R.id.episodes_title)
@@ -53,7 +51,6 @@ class EpisodesPanel(private val root: View) {
         episodeList.itemAnimator = null
     }
 
-    /** [label] — подпись серии в списке («Серия 7 · Сейчас», «Серия 6 · Просмотрено»). */
     fun show(
         titleText: String,
         episodes: List<Episode>,

@@ -7,7 +7,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import dev.alaev.rezkatv.R
 
 object Images {
-    /** RGB_565 вдвое экономнее по памяти, для постеров разница незаметна. */
     fun poster(view: ImageView, url: String) {
         Glide.with(view)
             .load(url.ifEmpty { null })
@@ -17,10 +16,6 @@ object Images {
             .into(view)
     }
 
-    /**
-     * Большая обложка (герой, страница тайтла). Пока грузится крупная — показываем маленький постер
-     * из карточки: он уже в памяти, так что смена тайтла мгновенная.
-     */
     fun art(view: ImageView, url: String, preview: String? = null) {
         val glide = Glide.with(view)
         var request = glide.load(url.ifEmpty { preview }).format(DecodeFormat.PREFER_RGB_565).centerCrop()

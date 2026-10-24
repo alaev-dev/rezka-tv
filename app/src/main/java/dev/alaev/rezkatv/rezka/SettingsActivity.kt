@@ -14,7 +14,6 @@ import dev.alaev.rezkatv.BuildConfig
 import dev.alaev.rezkatv.R
 import kotlin.concurrent.thread
 
-/** Настройки поверх текущего экрана — стандартная панель Android TV справа (leanback-preference). */
 class SettingsActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

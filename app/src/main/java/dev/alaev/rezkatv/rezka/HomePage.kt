@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import dev.alaev.rezkatv.R
 
-/** Главная: сверху «герой» выбранного тайтла, ниже ряды постеров. */
 class HomePage(
     private val activity: Activity,
     private val client: RezkaClient,
@@ -58,7 +57,7 @@ class HomePage(
     init {
         rowsView.adapter = rowsAdapter
         rowsView.pinFocusToStart(0)
-        rowsView.setItemViewCacheSize(shelves.size) // ряды не пересоздаются, позиция в каждом сохраняется
+        rowsView.setItemViewCacheSize(shelves.size)
         heroDescription.maxLines = if (lite) 2 else 3
         if (lite) heroArtBox.visibility = View.GONE
     }
@@ -81,7 +80,6 @@ class HomePage(
         userNavigated = true
     }
 
-    /** Сначала всё, что есть в кэше, — мгновенно; потом сеть по порядку рядов. */
     fun load() {
         shelves.forEach { shelf -> client.cachedPage(client.shelfUrl(shelf))?.let { show(shelf, it.value) } }
         shelves.forEach { shelf ->
@@ -99,7 +97,6 @@ class HomePage(
         }
     }
 
-    /** Back на главной: сначала к первому ряду, как у Netflix. */
     fun onBack(): Boolean {
         if (rowsView.selectedPosition <= 0) return false
         rowsView.setSelectedPositionSmooth(0)
@@ -114,11 +111,8 @@ class HomePage(
         }
         val focused = row.adapter.items.getOrNull(row.selected)?.url?.takeIf { row.selected > 0 }
         if (row.adapter.replace(page.cards)) {
-            // Догружаемая вторая страница относится к старому списку
             row.more?.cancel()
             row.nextUrl = page.nextUrl
-            // Порядок в «Продолжить» меняется после просмотра: если пользователь ушёл вглубь ряда —
-            // остаёмся на том же тайтле, иначе — снова в начале, где теперь последний просмотренный
             row.selected = if (focused == null) 0 else page.cards.indexOfFirst { it.url == focused }.coerceAtLeast(0)
             rowsAdapter.notifyItemChanged(rows.indexOf(row))
         }
@@ -140,7 +134,6 @@ class HomePage(
         rowsAdapter.notifyItemInserted(index)
         loader.hideStatus()
         if (rows.size == 1) Log.i(TAG, "first row: ${SystemClock.elapsedRealtime() - Process.getStartElapsedRealtime()} ms after process start")
-        // Ряды приходят в разном порядке; пока пользователь ничего не нажимал — держим фокус на первом
         if (!userNavigated && isVisible) {
             rowsView.selectedPosition = 0
             rowsView.requestFocus()
@@ -176,7 +169,6 @@ class HomePage(
         val cached = client.cachedDetails(card.url)?.value
         if (cached != null) showHeroDetails(card, cached)
         heroJob = scope.launch {
-            // Обложку меняем, когда пользователь остановился: быстрый пролёт по ряду не грузит картинки зря
             delay(HERO_ART_DELAY_MS)
             if (!lite) Images.art(heroArt, cached?.poster.orEmpty(), card.poster)
             if (cached != null) return@launch
@@ -209,8 +201,6 @@ class HomePage(
         init {
             cards.setRecycledViewPool(cardPool)
             cards.pinFocusToStart(cards.paddingStart)
-            // Карточки левее выбранной не выглядывают из-под меню: обрезаем чуть левее padding,
-            // оставляя место только под увеличение выбранной
             val overflow = activity.resources.getDimensionPixelSize(R.dimen.card_focus_overflow)
             cards.clipBounds = Rect(cards.paddingStart - overflow, -CLIP_FAR, CLIP_FAR, CLIP_FAR)
             cards.horizontalSpacing = activity.resources.getDimensionPixelSize(R.dimen.card_spacing)

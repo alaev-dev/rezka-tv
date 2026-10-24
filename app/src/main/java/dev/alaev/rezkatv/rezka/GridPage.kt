@@ -11,7 +11,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import dev.alaev.rezkatv.R
 
-/** Раздел из меню: сетка постеров с подгрузкой страниц и сортировкой. */
 class GridPage(
     private val activity: Activity,
     private val client: RezkaClient,
@@ -35,7 +34,6 @@ class GridPage(
 
     init {
         grid.setNumColumns(COLUMNS)
-        // Выбранный ряд — у верхнего края, предыдущие уходят целиком, а не торчат половиной
         grid.pinFocusToStart(grid.paddingTop)
         val spacing = activity.resources.getDimensionPixelSize(R.dimen.card_spacing)
         grid.horizontalSpacing = spacing + spacing / 2
@@ -62,7 +60,6 @@ class GridPage(
         if (adapter.itemCount > 0) grid.requestFocus() else chips.getChildAt(0)?.requestFocus()
     }
 
-    /** Back в сетке: сначала наверх, потом — в меню. */
     fun onBack(): Boolean {
         if (grid.selectedPosition < COLUMNS) return false
         grid.setSelectedPositionSmooth(0)
@@ -91,7 +88,6 @@ class GridPage(
         val category = category ?: return
         val url = client.categoryUrl(category, sort)
         loadJob?.cancel()
-        // Страница от прежней сортировки не должна дописаться к новой
         moreJob?.cancel()
         moreJob = null
         val cached = client.cachedPage(url)
