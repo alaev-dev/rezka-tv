@@ -1,6 +1,5 @@
 package dev.alaev.rezkatv.rezka.login
 
-/** Страница входа для телефона: без внешних ресурсов, тёмная, с янтарным акцентом как у приложения. */
 object PhonePage {
 
     val HTML = """

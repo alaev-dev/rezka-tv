@@ -12,7 +12,6 @@ import java.net.NetworkInterface
 
 object Qr {
 
-    /** QR-код с тихой зоной в 4 модуля; модуль — целое число пикселей, чтобы не было размытия. */
     fun bitmap(text: String, maxSizePx: Int): Bitmap {
         val hints = mapOf(
             EncodeHintType.MARGIN to QUIET_ZONE,
@@ -32,7 +31,6 @@ object Qr {
     private const val QUIET_ZONE = 4
 }
 
-/** Адрес телевизора в домашней сети, на котором его увидит телефон. */
 object LanAddress {
 
     fun find(): Inet4Address? {
@@ -41,7 +39,6 @@ object LanAddress {
             .flatMap { nif -> nif.inetAddresses.toList().map { nif.name to it } })
     }
 
-    /** Wi-Fi (wlan*) важнее Ethernet, остальное — в последнюю очередь; только обычные локальные IPv4. */
     fun pick(candidates: List<Pair<String, InetAddress>>): Inet4Address? =
         candidates
             .filter { (_, a) -> a is Inet4Address && !a.isLoopbackAddress && !a.isLinkLocalAddress && a.isSiteLocalAddress }

@@ -12,19 +12,12 @@ import java.net.ServerSocket
 import java.net.Socket
 import kotlin.concurrent.thread
 
-/**
- * Крошечный HTTP-сервер в локальной сети, пока открыт экран входа: отдаёт телефону страницу
- * и принимает с неё email и пароль — открытым текстом с этой же страницы или зашифрованными
- * с HTTPS-страницы входа (см. [LoginCrypto]). Без верного токена из QR — 403.
- * Пароль не пишется ни в лог, ни на диск: он только передаётся в [login].
- */
 class LoginServer(
     private val address: Inet4Address,
     private val code: LoginCode,
     private val listener: Listener,
     private val login: (email: String, password: String) -> LoginResult,
 ) {
-    /** Вызывается из потока сервера. */
     interface Listener {
         fun onPhoneConnected()
         fun onChecking()
@@ -33,7 +26,6 @@ class LoginServer(
 
     @Volatile private var socket: ServerSocket? = null
 
-    /** Занимает первый свободный порт из [PORTS]; -1 — не вышло. Блокирующий вызов. */
     fun start(): Int {
         for (port in PORTS) {
             val server = ServerSocket()
@@ -63,7 +55,6 @@ class LoginServer(
             } catch (e: IOException) {
                 break
             }
-            // По одному запросу за раз: телефон один, а вход и так идёт последовательно
             client.use { runCatching { handle(it) }.onFailure { e -> Log.w(TAG, "login request failed: ${e.javaClass.simpleName}") } }
         }
     }
@@ -142,7 +133,6 @@ class LoginServer(
     }
 }
 
-/** Разбор HTTP/1.1-запроса с жёсткими лимитами: в локальной сети тоже бывают странные клиенты. */
 data class HttpRequest(val method: String, val path: String, val query: Map<String, String>, val body: String) {
 
     companion object {
@@ -150,7 +140,6 @@ data class HttpRequest(val method: String, val path: String, val query: Map<Stri
         private const val MAX_HEADERS = 64
         const val MAX_BODY = 8192
 
-        /** null — запрос битый или слишком большой. */
         fun read(input: InputStream): HttpRequest? {
             val requestLine = readLine(input) ?: return null
             val parts = requestLine.split(' ')
