@@ -28,7 +28,8 @@ class PrSizeTest(unittest.TestCase):
 
     def test_ignores_text_baselines(self):
         baseline = [Change("quality/comments-baseline.txt", 517)]
-        self.assertEqual([], violations(baseline), "текстовый журнал долга тоже не входит в размер PR")
+        expected = []
+        self.assertEqual(expected, violations(baseline), "текстовый журнал долга тоже не входит в размер PR")
 
     def test_counts_added_and_deleted_lines(self):
         parsed = parse_numstat("3\t4\tapp/A.kt\0")
