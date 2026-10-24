@@ -3,9 +3,7 @@ package dev.alaev.rezkatv.rezka.lists
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Списки «Рейтинг» и «Оскар» из assets/lists (их собирает tools/build_lists.py). */
 
-/** Тайтл на rezka: id для отметок, путь без домена (домен — текущее зеркало). */
 interface RezkaTitle {
     val id: String?
     val path: String?
@@ -26,9 +24,7 @@ data class TopItem(
     val rating: Double,
     val votes: Int,
     val year: Int,
-    /** По-русски: «Драма», «Криминал» */
     val genres: List<String>,
-    /** Название в IMDb, обычно английское */
     val original: String,
     override val id: String,
     override val path: String,
@@ -52,22 +48,18 @@ data class Nominee(
     val original: String,
     val year: Int,
     val won: Boolean,
-    /** null — фильма нет на rezka */
     override val id: String?,
     override val path: String?,
     override val poster: String?,
 ) : RezkaTitle {
     val onRezka get() = id != null
 
-    /** Один фильм бывает номинирован в нескольких категориях: считаем его один раз. */
     val key get() = imdb ?: id ?: title
 }
 
 data class Ceremony(
-    /** Номер церемонии: в 1930 году их было две */
     val number: Int,
     val year: Int,
-    /** «2024» или «1927–1928» */
     val films: String,
     val nominees: Map<OscarCategory, List<Nominee>>,
 )

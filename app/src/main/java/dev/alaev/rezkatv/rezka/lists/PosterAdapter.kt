@@ -12,7 +12,6 @@ import dev.alaev.rezkatv.R
 import dev.alaev.rezkatv.rezka.Images
 import java.util.Locale
 
-/** Постер списка: тайтл, место в рейтинге, подпись снизу. */
 data class Poster(
     val item: RezkaTitle,
     val caption: String?,
@@ -20,10 +19,6 @@ data class Poster(
     val winner: Boolean = false,
 )
 
-/**
- * Сетка «Рейтинга» и «Оскара» — как [dev.alaev.rezkatv.rezka.CardAdapter], плюс место, отметка «просмотрено»
- * и победитель. Отметки обновляются без перезагрузки постеров ([refreshMarks]).
- */
 class PosterAdapter(
     private val marks: TitleMarks,
     private val onFocus: (Int) -> Unit,
@@ -50,7 +45,6 @@ class PosterAdapter(
         val mark: ImageView = view.findViewById(R.id.mark)
         val badge: TextView = view.findViewById(R.id.badge)
         val progress: ProgressBar = view.findViewById(R.id.progress)
-        /** Оформление победителя или обычное — меняем, только если оно другое (без лишних объектов при прокрутке) */
         var style: Int = -1
     }
 
@@ -58,7 +52,6 @@ class PosterAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_poster, parent, false)
         view.clipToOutline = true
         val holder = Holder(view)
-        // Переносы по-русски, даже если язык системы другой: иначе длинное слово рвётся посередине
         holder.placeholder.textLocale = RU
         view.setOnFocusChangeListener { v, focused ->
             val scale = if (focused) FOCUS_SCALE else 1f

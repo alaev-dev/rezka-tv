@@ -14,10 +14,6 @@ import dev.alaev.rezkatv.rezka.WatchedStore
 import java.io.FileNotFoundException
 import java.util.concurrent.Executors
 
-/**
- * Списки из assets/lists разбираются один раз на процесс, в своём фоновом потоке.
- * [preload] зовётся, когда открывают меню: к выбору раздела списки обычно уже готовы.
- */
 object ListsAssets {
 
     private val scope = CoroutineScope(SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "lists") }.asCoroutineDispatcher())
@@ -25,7 +21,6 @@ object ListsAssets {
     private var oscars: Deferred<Oscars?>? = null
     private var watched: Job? = null
 
-    /** null — файла нет (рейтинг не собран) или он испорчен. */
     @Synchronized
     fun top(context: Context): Deferred<TopLists?> = top ?: load(context, "top.json", ListsJson::top).also { top = it }
 
@@ -34,7 +29,6 @@ object ListsAssets {
 
     @Synchronized
     fun preload(context: Context) {
-        // Отметки «просмотрено» нужны тем же экранам: маленький файл читаем первым и здесь, а не на главном потоке
         if (watched == null) watched = scope.launch { WatchedStore.get(context) }
         oscars(context)
         top(context)
