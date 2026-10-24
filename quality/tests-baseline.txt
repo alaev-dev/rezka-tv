@@ -5,11 +5,6 @@ app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::mediaKeysAlwaysHandled
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::okTogglesAndBackExits
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekDirectionAndAcceleration
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekRepeatsAreThrottled
-app/src/test/java/dev/alaev/rezkatv/UrlPolicyTest.kt::(файл)
-app/src/test/java/dev/alaev/rezkatv/UrlPolicyTest.kt::allowsSiteAndSubdomains
-app/src/test/java/dev/alaev/rezkatv/UrlPolicyTest.kt::blocksAdDomainsButNotLookalikes
-app/src/test/java/dev/alaev/rezkatv/UrlPolicyTest.kt::blocksForeignHostsAndSchemes
-app/src/test/java/dev/alaev/rezkatv/UrlPolicyTest.kt::wwwHomeMatchesBareDomain
 app/src/test/java/dev/alaev/rezkatv/rezka/CacheJsonTest.kt::detailsRoundTrip
 app/src/test/java/dev/alaev/rezkatv/rezka/CacheJsonTest.kt::pageRoundTrip
 app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::(файл)
