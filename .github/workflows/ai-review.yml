@@ -10,6 +10,7 @@ concurrency:
 
 jobs:
   ai-review-agent:
+    if: ${{ github.event.pull_request.user.login != 'renovate[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -18,25 +19,32 @@ jobs:
       id-token: write
     outputs:
       verdict: ${{ steps.review.outputs.structured_output }}
+      diff_id: ${{ steps.prior.outputs.diff_id }}
+      prior: ${{ steps.prior.outputs.prior }}
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 1
-      - name: Правила, публикация и прошлые замечания
+          fetch-depth: 0
+      - id: prior
+        name: Правила, прошлый вердикт и прошлые замечания
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE: origin/${{ github.base_ref }}
         run: |
-          git fetch --depth 1 origin "${{ github.base_ref }}"
-          git show FETCH_HEAD:.github/ai-review.md > .ai-review-rules.md
-          git show FETCH_HEAD:tools/gates/ai_review_post.py > "$RUNNER_TEMP/ai_review_post.py"
+          git show "$BASE:.github/ai-review.md" > .ai-review-rules.md
+          git show "$BASE:tools/gates/ai_review_post.py" > "$RUNNER_TEMP/ai_review_post.py"
+          diff_id=$(git diff "$BASE...HEAD" | git patch-id --stable | cut -d' ' -f1)
+          prior=$(DIFF_ID="$diff_id" python3 "$RUNNER_TEMP/ai_review_post.py" prior)
+          echo "diff_id=$diff_id" >> "$GITHUB_OUTPUT"
+          echo "prior=$prior" >> "$GITHUB_OUTPUT"
           python3 "$RUNNER_TEMP/ai_review_post.py" previous > .ai-review-previous.json
       - id: review
+        if: ${{ steps.prior.outputs.prior == '' }}
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          allowed_bots: renovate,renovate[bot]
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -64,10 +72,22 @@ jobs:
       - name: Публикация и вердикт
         env:
           VERDICT: ${{ needs.ai-review-agent.outputs.verdict }}
+          DIFF_ID: ${{ needs.ai-review-agent.outputs.diff_id }}
+          PRIOR: ${{ needs.ai-review-agent.outputs.prior }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          if [ "$AUTHOR" = "renovate[bot]" ]; then
+            echo "Обновление зависимостей от Renovate: ИИ-ревью не запускается, проверяет verify."
+            exit 0
+          fi
+          if [ -n "$PRIOR" ]; then
+            echo "Собственный дифф PR не изменился: вердикт прошлого ревью, блокирующих нарушений: $PRIOR."
+            test "$PRIOR" = 0
+            exit
+          fi
           git fetch --depth 1 origin "${{ github.base_ref }}"
           git show FETCH_HEAD:tools/gates/ai_review_post.py > "$RUNNER_TEMP/ai_review_post.py"
           python3 "$RUNNER_TEMP/ai_review_post.py"

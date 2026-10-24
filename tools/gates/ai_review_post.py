@@ -1,9 +1,12 @@
 import json
 import os
+import re
 import subprocess
 import sys
 
 REVIEWER = "github-actions"
+REVIEWER_APP = "github-actions[bot]"
+VERDICT_COUNT = re.compile(r"блокирующих нарушений: (\d+)")
 BLOCKING = "**Блокирует.** "
 THREADS = """query($owner: String!, $name: String!, $number: Int!) {
   repository(owner: $owner, name: $name) { pullRequest(number: $number) { reviewThreads(first: 100) {
@@ -44,10 +47,23 @@ def listed_finding(finding: dict) -> str:
     return f"- `{finding['path']}:{finding['line']}` — {comment_body(finding)}"
 
 
-def review_payload(verdict: dict, inline: bool, previous: list = (), still_open: list = ()) -> dict:
+def diff_marker(diff_id: str) -> str:
+    return f"<!-- ai-review-diff: {diff_id} -->"
+
+
+def prior_blocking(reviews: list, diff_id: str):
+    marker = diff_marker(diff_id)
+    same = [r["body"] for r in reviews if r["user"]["login"] == REVIEWER_APP and marker in r["body"]]
+    found = VERDICT_COUNT.search(same[-1]) if same else None
+    return int(found.group(1)) if found else None
+
+
+def review_payload(verdict: dict, inline: bool, previous: list = (), still_open: list = (), diff_id: str = "") -> dict:
     header = f"## ИИ-ревью: блокирующих нарушений: {blocking_count(verdict, still_open)}\n\n{verdict['summary']}"
     if previous:
         header += f"\n\nПрошлые замечания: исправлено {len(previous) - len(still_open)}, открыто {len(still_open)}."
+    if diff_id:
+        header += f"\n\n{diff_marker(diff_id)}"
     if inline:
         comments = [inline_comment(f) for f in verdict["findings"]]
         return {"event": "COMMENT", "body": header, "comments": comments}
@@ -74,19 +90,30 @@ def fetch_previous(repo: str, number: str) -> list:
     return previous_threads(graphql(THREADS, owner=owner, name=name, number=number))
 
 
-def publish(repo: str, number: str, verdict: dict, previous: list, still_open: list) -> None:
+def publish(repo: str, number: str, verdict: dict, previous: list, still_open: list, diff_id: str) -> None:
     open_ids = {t["id"] for t in still_open}
     for fixed in (t for t in previous if t["id"] not in open_ids):
         graphql(RESOLVE, id=fixed["id"])
     try:
-        post(repo, number, review_payload(verdict, True, previous, still_open))
+        post(repo, number, review_payload(verdict, True, previous, still_open, diff_id))
     except subprocess.CalledProcessError:
         print("::warning title=ИИ-ревью::замечания вне строк диффа, публикую списком")
-        post(repo, number, review_payload(verdict, False, previous, still_open))
+        post(repo, number, review_payload(verdict, False, previous, still_open, diff_id))
+
+
+def fetch_reviews(repo: str, number: str) -> list:
+    command = ["gh", "api", "--paginate", "--slurp", f"repos/{repo}/pulls/{number}/reviews"]
+    pages = json.loads(subprocess.run(command, text=True, check=True, capture_output=True).stdout)
+    return [review for page in pages for review in page]
 
 
 def main(mode: str) -> int:
     repo, number = os.environ["REPO"], os.environ["PR_NUMBER"]
+    diff_id = os.environ.get("DIFF_ID", "")
+    if mode == "prior":
+        blocking = prior_blocking(fetch_reviews(repo, number), diff_id)
+        print("" if blocking is None else blocking)
+        return 0
     previous = fetch_previous(repo, number)
     if mode == "previous":
         print(json.dumps(previous, ensure_ascii=False, indent=2))
@@ -97,7 +124,7 @@ def main(mode: str) -> int:
         return 1
     verdict = json.loads(raw)
     still_open = open_previous(previous, verdict)
-    publish(repo, number, verdict, previous, still_open)
+    publish(repo, number, verdict, previous, still_open, diff_id)
     print(verdict["summary"])
     return 1 if blocking_count(verdict, still_open) else 0
 

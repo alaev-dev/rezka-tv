@@ -9,6 +9,7 @@
   "commitMessageAction": "обновление",
   "prHourlyLimit": 2,
   "prConcurrentLimit": 5,
+  "timezone": "Europe/Moscow",
   "major": {
     "dependencyDashboardApproval": true
   },
@@ -24,6 +25,11 @@
     {
       "matchPackageNames": ["androidx.leanback:**"],
       "groupName": "Leanback"
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "минорные обновления",
+      "schedule": ["before 6am on monday"]
     }
   ]
 }
