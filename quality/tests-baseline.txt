@@ -5,11 +5,6 @@ app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::mediaKeysAlwaysHandled
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::okTogglesAndBackExits
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekDirectionAndAcceleration
 app/src/test/java/dev/alaev/rezkatv/PlayerKeysTest.kt::seekRepeatsAreThrottled
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::(файл)
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::deletionsAreExpired
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::garbageIgnored
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::headerRoundTrip
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt::setCookieValue
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::(файл)
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::edges
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt::find

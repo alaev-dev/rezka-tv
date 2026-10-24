@@ -4,7 +4,6 @@ app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCrypto.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginServer.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/PhonePage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/Qr.kt
-app/src/test/java/dev/alaev/rezkatv/rezka/CookiesTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/EpisodeNavTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
