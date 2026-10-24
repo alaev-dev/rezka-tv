@@ -36,7 +36,7 @@ jobs:
           claude_args: |
             --model claude-sonnet-5-5
             --max-turns 80
-            --allowedTools "Read,Glob,Grep,Write,Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh issue create:*)"
+            --allowedTools "Read,Glob,Grep,Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh issue create:*)"
             --json-schema '{"type":"object","properties":{"created":{"type":"array","items":{"type":"string"}},"skipped":{"type":"array","items":{"type":"string"}}},"required":["created","skipped"]}'
       - name: Итог
         env:
