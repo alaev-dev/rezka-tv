@@ -177,7 +177,7 @@ def parse_search(html: str) -> list:
     for block in html.split('class="b-content__inline_item"')[1:]:
         m_id = re.search(r'data-id="(\d+)"', block)
         m_url = re.search(r'data-url="([^"]+)"', block)
-        m_link = re.search(r'b-content__inline_item-link">\s*<a [^>]*>(.*?)</a>\s*<div>(.*?)</div>', block, re.S)
+        m_link = re.search(r'b-content__inline_item-link">\s*<a [^>]*>(.*?)</a>\s*<div>(.*?)</div>', block, re.DOTALL)
         if not (m_id and m_url and m_link):
             continue
         m_img = re.search(r'<img src="([^"]+)"', block)

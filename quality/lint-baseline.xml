@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.13.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.13.0)" variant="all" version="8.13.0">
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        targetSdk = 35"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="20"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="VectorRaster"
+        message="Limit vector icons sizes to 200×200 to keep icon drawing fast; see https://developer.android.com/studio/write/vector-asset-studio#when for more"
+        errorLine1="    android:width=&quot;320dp&quot;"
+        errorLine2="                   ~~~~~">
+        <location
+            file="src/main/res/drawable/banner.xml"
+            line="3"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="OnFadeCompleteListener can only be called from within the same library (androidx.leanback:leanback)"
+        errorLine1="        fragment.setFadeCompleteListener(object : PlaybackSupportFragment.OnFadeCompleteListener() {"
+        errorLine2="                                         ^">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="191"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="OnFadeCompleteListener can only be called from within the same library (androidx.leanback:leanback)"
+        errorLine1="        fragment.setFadeCompleteListener(object : PlaybackSupportFragment.OnFadeCompleteListener() {"
+        errorLine2="                                                                          ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="191"
+            column="75"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="PlaybackSupportFragment.setFadeCompleteListener can only be called from within the same library (androidx.leanback:leanback)"
+        errorLine1="        fragment.setFadeCompleteListener(object : PlaybackSupportFragment.OnFadeCompleteListener() {"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="191"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="OnFadeCompleteListener.onFadeInComplete can only be called from within the same library (androidx.leanback:leanback)"
+        errorLine1="            override fun onFadeInComplete() = subtitlesView.setBottomPaddingFraction(SUBTITLES_ABOVE_CONTROLS)"
+        errorLine2="                         ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="192"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="OnFadeCompleteListener.onFadeOutComplete can only be called from within the same library (androidx.leanback:leanback)"
+        errorLine1="            override fun onFadeOutComplete() = subtitlesView.setBottomPaddingFraction(SUBTITLES_BOTTOM)"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="193"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ComponentActivity.dispatchKeyEvent can only be called from within the same library group prefix (referenced groupId=`androidx.core` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="    override fun dispatchKeyEvent(event: KeyEvent): Boolean {"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="538"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ComponentActivity.dispatchKeyEvent can only be called from within the same library group prefix (referenced groupId=`androidx.core` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="            choicePanel.isShowing || episodesPanel.isShowing -> return super.dispatchKeyEvent(event)"
+        errorLine2="                                                                             ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="547"
+            column="78"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ComponentActivity.dispatchKeyEvent can only be called from within the same library group prefix (referenced groupId=`androidx.core` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="        return super.dispatchKeyEvent(event)"
+        errorLine2="                     ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="563"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ThumbsBar.setThumbSize can only be called from within the same library group prefix (referenced groupId=`androidx.leanback` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="            thumbs.setThumbSize(w, h)"
+        errorLine2="                   ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="597"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ThumbsBar.setHeroThumbSize can only be called from within the same library group prefix (referenced groupId=`androidx.leanback` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="            thumbs.setHeroThumbSize(w, h)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="598"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ThumbsBar.setNumberOfThumbs can only be called from within the same library group prefix (referenced groupId=`androidx.leanback` with prefix androidx from groupId=`rezka-tv`)"
+        errorLine1="            thumbs.setNumberOfThumbs(1)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="599"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="            startActivity(PlayerActivity.intent(this, d.url, d.title, d.poster))"
+        errorLine2="                          ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/DetailsActivity.kt"
+            line="158"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="            startActivity(PlayerActivity.intent(this, d.url, d.title, d.poster))"
+        errorLine2="                                         ~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/DetailsActivity.kt"
+            line="158"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="            PlayerActivity.intent(this, d.url, d.title, d.poster, t.id, episode?.season ?: 0, episode?.episode ?: 0, fromStart),"
+        errorLine2="            ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/DetailsActivity.kt"
+            line="168"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="            PlayerActivity.intent(this, d.url, d.title, d.poster, t.id, episode?.season ?: 0, episode?.episode ?: 0, fromStart),"
+        errorLine2="                           ~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/DetailsActivity.kt"
+            line="168"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="    startActivities(arrayOf(detailsIntent(card), PlayerActivity.intent(this, card.url, card.title, card.poster)))"
+        errorLine2="                                                 ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/Navigation.kt"
+            line="27"
+            column="50"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="    startActivities(arrayOf(detailsIntent(card), PlayerActivity.intent(this, card.url, card.title, card.poster)))"
+        errorLine2="                                                                ~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/Navigation.kt"
+            line="27"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="    openTitle(session, PlayerActivity.intent(this, session.url, session.title, session.poster))"
+        errorLine2="                       ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/session/Resume.kt"
+            line="19"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        errorLine1="    openTitle(session, PlayerActivity.intent(this, session.url, session.title, session.poster))"
+        errorLine2="                                      ~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/session/Resume.kt"
+            line="19"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="Overriding `@dimen/lb_playback_controls_child_margin_default` which is marked as private in androidx.leanback:leanback:1.2.0. If deliberate, use tools:override=&quot;true&quot;, otherwise pick a different name."
+        errorLine1="    &lt;dimen name=&quot;lb_playback_controls_child_margin_default&quot;>0dp&lt;/dimen>"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="25"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="Overriding `@dimen/lb_control_icon_width` which is marked as private in androidx.leanback:leanback:1.2.0. If deliberate, use tools:override=&quot;true&quot;, otherwise pick a different name."
+        errorLine1="    &lt;dimen name=&quot;lb_control_icon_width&quot;>0dp&lt;/dimen>"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="26"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="The resource `@style/PreferenceThemeOverlayLeanback` is marked as private in androidx.leanback:leanback-preference:1.2.0"
+        errorLine1="    &lt;style name=&quot;PreferenceThemeOverlay.RezkaTv&quot; parent=&quot;@style/PreferenceThemeOverlayLeanback&quot;>"
+        errorLine2="                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/styles.xml"
+            line="62"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="DataExtractionRules"
+        message="The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml` resource which configures cloud backups and device transfers on Android 12 and higher."
+        errorLine1="        android:allowBackup=&quot;false&quot;"
+        errorLine2="                             ~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="9"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        errorLine1="        notifyDataSetChanged()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/CardAdapter.kt"
+            line="39"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        errorLine1="        yearAdapter.notifyDataSetChanged()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/lists/OscarPage.kt"
+            line="153"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        errorLine1="        notifyDataSetChanged()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/lists/PosterAdapter.kt"
+            line="39"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="DisableBaselineAlignment"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2=" ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_login.xml"
+            line="2"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="DisableBaselineAlignment"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2=" ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_search.xml"
+            line="2"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/Theme.RezkaTv`)"
+        errorLine1="    android:background=&quot;@color/bg&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_browse.xml"
+            line="7"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/Theme.RezkaTv`)"
+        errorLine1="    android:background=&quot;@color/bg&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_details.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/Theme.RezkaTv`)"
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_login.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/Theme_RezkaTv_Player`)"
+        errorLine1="    android:background=&quot;@android:color/black&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_player.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/Theme.RezkaTv`)"
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_search.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.rail_expanded_width` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;rail_expanded_width&quot;>196dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="6"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.lb_playback_controls_child_margin_default` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;lb_playback_controls_child_margin_default&quot;>0dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="25"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.lb_control_icon_width` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;lb_control_icon_width&quot;>0dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="26"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.quality_auto` appears to be unused"
+        errorLine1="    &lt;string name=&quot;quality_auto&quot;>Авто&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="82"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        nextUpTitle.text = &quot;${next.code} · ${next.name}&quot;"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/dev/alaev/rezkatv/rezka/player/PlayerActivity.kt"
+            line="756"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="RtlSymmetry"
+        message="When you define `paddingStart` you should probably also define `paddingEnd` for right-to-left symmetry"
+        errorLine1="                android:paddingStart=&quot;@dimen/content_padding&quot;>"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_browse.xml"
+            line="95"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="RtlSymmetry"
+        message="When you define `paddingStart` you should probably also define `paddingEnd` for right-to-left symmetry"
+        errorLine1="        android:paddingStart=&quot;@dimen/screen_padding&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_details.xml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlSymmetry"
+        message="When you define `paddingStart` you should probably also define `paddingEnd` for right-to-left symmetry"
+        errorLine1="        android:paddingStart=&quot;@dimen/content_padding&quot;>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/page_oscar.xml"
+            line="17"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlSymmetry"
+        message="When you define `paddingStart` you should probably also define `paddingEnd` for right-to-left symmetry"
+        errorLine1="        android:paddingStart=&quot;@dimen/content_padding&quot;>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/page_top.xml"
+            line="17"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlEnabled"
+        message="The project references RTL attributes, but does not explicitly enable or disable RTL support with `android:supportsRtl` in the manifest">
+        <location
+            file="src/main/AndroidManifest.xml"/>
+    </issue>
+
+</issues>
