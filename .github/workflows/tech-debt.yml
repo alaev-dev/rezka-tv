@@ -28,17 +28,13 @@ jobs:
           gh label create tech-debt --color B60205 --description "Техдолг, найден сканером" --force
       - id: scan
         uses: anthropics/claude-code-action@v1
-        env:
-          ANTHROPIC_BASE_URL: https://api.z.ai/api/anthropic
-          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ZAI_API_KEY }}
-          API_TIMEOUT_MS: 3000000
         with:
-          anthropic_api_key: ${{ secrets.ZAI_API_KEY }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
             REPO: ${{ github.repository }}
             Найди техдолг и заведи issue строго по правилам из файла .github/tech-debt.md.
           claude_args: |
-            --model glm-5.3
+            --model claude-sonnet-5-5
             --max-turns 80
             --allowedTools "Read,Glob,Grep,Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh issue create:*)"
             --json-schema '{"type":"object","properties":{"created":{"type":"array","items":{"type":"string"}},"skipped":{"type":"array","items":{"type":"string"}}},"required":["created","skipped"]}'
