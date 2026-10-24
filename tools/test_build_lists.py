@@ -1,4 +1,3 @@
-"""Тесты чистых функций build_lists.py: python3 -m unittest discover -s tools"""
 import base64
 import unittest
 import urllib.parse
@@ -11,7 +10,7 @@ class WeightedRatingTest(unittest.TestCase):
     def test_few_votes_pulled_to_mean(self):
         many = b.weighted_rating(9.0, 2_000_000, 25_000, 7.0)
         few = b.weighted_rating(9.0, 25_000, 25_000, 7.0)
-        self.assertAlmostEqual(8.0, few)  # голосов ровно m — середина между оценкой и средним
+        self.assertAlmostEqual(8.0, few)
         self.assertGreater(many, few)
         self.assertAlmostEqual(8.975, many, places=2)
 
@@ -41,7 +40,6 @@ class TitleTest(unittest.TestCase):
         self.assertEqual(["Léon: The Professional", "Léon", "Leon: The Professional", "Leon"],
                          b.search_queries("Léon: The Professional", "Léon"))
         self.assertEqual(["Heat"], b.search_queries("Heat", "Heat", None))
-        # Русское название из Wikidata не вытесняется вариантами английского
         self.assertEqual(["Amélie", "Le fabuleux destin d'Amélie Poulain", "Амели", "Amelie"],
                          b.search_queries("Amélie", "Le fabuleux destin d'Amélie Poulain", "Амели"))
 
@@ -105,7 +103,6 @@ class ParseTest(unittest.TestCase):
 
 
 class FakeHttp:
-    """Поиск и страницы тайтлов из словаря вместо сети."""
 
     def __init__(self, pages):
         self.pages = pages
@@ -129,7 +126,6 @@ class MatcherTest(unittest.TestCase):
         self.assertEqual(1, len(http.requested))
 
     def test_single_candidate_not_first_is_verified(self):
-        # «Схватка» вторая в выдаче: страница проверяется, IMDb не совпал — не берём
         other = SEARCH.replace("series/drama/59348-nakal-2023.html", "films/drama/59348-nakal-1995.html").replace(
             "2023 - ..., Австралия", "1995, США")
         reordered = other.replace('data-id="1076"', 'data-id="X"').replace('data-id="59348"', 'data-id="1076"').replace(
@@ -137,7 +133,7 @@ class MatcherTest(unittest.TestCase):
         http = FakeHttp({self.search_url("Heat"): reordered})
         card = b.Matcher(http).match("tt0113277", "movie", 1995, ["Heat"])
         self.assertIsNone(card)
-        self.assertEqual(3, len(http.requested))  # поиск и две страницы
+        self.assertEqual(3, len(http.requested))
 
     def test_russian_title_must_look_alike(self):
         http = FakeHttp({self.search_url("Heat"): SEARCH})

@@ -1,4 +1,3 @@
-# Сборка
 build/
 .gradle/
 .kotlin/
@@ -8,21 +7,17 @@ build/
 *.dex
 captures/
 
-# Локальные пути и ключи подписи
 local.properties
 *.jks
 *.keystore
 keystore.properties
 
-# IDE и системный мусор
 .idea/
 *.iml
 .vscode/
 .DS_Store
 
-# Рабочие копии агентов Claude Code
 .claude/worktrees/
 
-# Рейтинг из наборов данных IMDb: их нельзя распространять, собирается локально (tools/build_lists.py)
 app/src/main/assets/lists/top.json
 __pycache__/

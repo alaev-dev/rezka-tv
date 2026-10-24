@@ -147,12 +147,6 @@ HTTPS-страницу [`docs/login/`](docs/login/index.html) на GitHub Pages:
 - Юнит-тесты: `./gradlew testDebugUnitTest` (разбор страниц и ответов сайта, серии, прогресс, cookies, кэш, вход,
   «Продолжить после выключения»). Фикстуры в `app/src/test/resources` — маленькие синтетические страницы и ответы,
   не копии сайтов.
-- `tools/cdp.mjs` — выполнить JavaScript в открытой странице WebView (только отладочная сборка):
-  ```sh
-  PID=$(adb shell pidof dev.alaev.rezkatv | tr -d '\r')
-  adb forward tcp:9222 localabstract:webview_devtools_remote_$PID
-  node tools/cdp.mjs 'document.title'
-  ```
 - Выход с главной завершает процесс приложения и сразу отдаёт системе память плеера, WebView и постеров.
 
 ## Списки «Рейтинг» и «Оскар»

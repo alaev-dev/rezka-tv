@@ -6,7 +6,6 @@ data class PlayerCommand(val name: String, val arg: Int = 0) {
     fun toJs() = "window.__tv&&__tv.cmd('$name',$arg)"
 }
 
-/** Кнопки пульта → команды плееру в tv.js. Стрелки и OK перехватываются только в режиме плеера. */
 object PlayerKeys {
 
     private val MEDIA_KEYS = setOf(
@@ -39,10 +38,6 @@ object PlayerKeys {
         }
     }
 
-    /**
-     * Шаг перемотки в секундах при удержании кнопки; null — пропустить этот повтор.
-     * Повторы идут ~20 раз в секунду, берём каждый 4-й, шаг растёт чем дольше держишь.
-     */
     fun seekStep(repeatCount: Int): Int? = when {
         repeatCount % 4 != 0 -> null
         repeatCount < 20 -> 10

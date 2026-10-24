@@ -25,11 +25,15 @@
 
 ## Фазы
 - Ф0. `./gradlew verify`, размер PR, ruff, предупреждения = ошибки, workflow. — смержено (PR #1, 9ff3faf).
-- Ф1. Запрет комментариев во всех файлах + журнал `quality/comments-baseline.txt` (проверка — PR #15–#17), раскладка файлов, detekt+ktlint, typos, `ruff format`.
+- Ф1. Запрет комментариев во всех файлах — проверка `tools/gates/comments.py` и журнал `quality/comments-baseline.txt`
+  смержены (PR #15–#17, #20); идёт чистка журнала пачками по ≤ 10 файлов, `rezka/player` и `rezka/login` — отдельными PR
+  на ручную проверку. Дальше: `ruff format`, typos, detekt+ktlint (с журналом), раскладка файлов (один верхнеуровневый
+  класс на файл, имя файла = имя класса, пакет = каталог, тест зеркально исходнику).
 - Ф2. Тестовая дисциплина: JUnit 5, Hamcrest (Kotlin и PyHamcrest), maybeslow, таймауты, параллельность,
   fast ≤ 100 мс / `@Tag("deep")`, тишина лога, tmpdir доступен после прогона, без сети; проверка правил тестов
   (2.x, 3.x) скриптом и по диффу (нельзя удалять `@Test`, изменение кода требует тестов); `:testkit` — матчеры,
   фейки, генераторы, DSL; снимки; перевод всех старых тестов (Kotlin и Python).
+  Долг описан в issue #14.
 - Ф3. Модуль `:core`, вынос логики из Activity, ArchUnit, правило detekt для аргументов по умолчанию (3.29).
 - Ф4. Контракты: JSON Schema хранимых данных и протокола входа, снимки разбора, диф и метка `contract-break-approved`.
 - Ф5. Безопасность и лицензии: Lint security, CodeQL, пробный SpotBugs, OSV-Scanner, SonarCloud, REUSE, Renovate.
@@ -39,13 +43,19 @@
   github-action-benchmark, живой smoke против rezka, ZAP, ORT.
 - Ф8. `tools/release.sh`: установка на ТВ, health check (старт < 1 с, gfxinfo, logcat), сравнение с прошлым релизом, откат.
 - Ф9. Агенты: Impact-отчёт и оценка риска, триаж, master-fixer, issue по нестабильным тестам, автомерж.
-  ИИ-ревьюер уже работает (PR #2–#4): `.github/ai-review.md`, обязательная проверка `ai-review`.
+  ИИ-ревьюер работает (PR #2–#5, #35, #37–#40): `.github/ai-review.md`, обязательная проверка `ai-review`, помнит свои
+  прошлые замечания, не повторяется на том же диффе; сканер техдолга завёл issue #8–#14.
 - Ф10. CLAUDE.md под регламент.
+
+## Сделано вне плана
+- Renovate (PR #7, обновления #19–#36): мажорные обновления — через одобрение, JDK и Python в CI закреплены.
+- Kotlin 2.4.21 и исправления под новые проверки компилятора (PR #41).
+- Открыто: переход на AGP 9, Gradle 9 и Glide 5 (issue #39).
 
 ## Неприменимо
 REST/Kafka/DDL, pgtap, dexter (нет БД и своего API); jmeter/locust (нагружать нечего); canary/blue-green (нет серверов,
-заменено Ф8); clang-tidy и санитайзеры (нет нативного кода); eslint/clippy/checkstyle/pylint (нет этих языков,
-`tools/cdp.mjs` — eslint или удалить).
+заменено Ф8); clang-tidy и санитайзеры (нет нативного кода); eslint/clippy/checkstyle/pylint (нет этих языков;
+`tools/cdp.mjs` удалён).
 
 ## Открытые вопросы
 1. Автомерж — настройка GitHub, только с подтверждения. Защита `main` включена: `verify` и `ai-review`.
