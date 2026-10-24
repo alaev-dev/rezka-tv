@@ -9,6 +9,7 @@ val keystoreProps = Properties().apply {
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("dev.detekt")
 }
 
 android {
@@ -75,6 +76,13 @@ kotlin {
     }
 }
 
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.file("detekt.yml"))
+    baseline = rootProject.file("quality/detekt-baseline.xml")
+    source.setFrom("src/main/java", "src/test/java")
+}
+
 val media3 = "1.11.1"
 
 dependencies {
@@ -88,6 +96,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.23.2")
     implementation("com.google.zxing:core:3.5.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    detektPlugins("dev.detekt:detekt-rules-ktlint-wrapper:2.0.0-alpha.6")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20251224")
 }

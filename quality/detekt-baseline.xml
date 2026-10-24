@@ -1,0 +1,603 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:BrowseActivity.kt:BrowseActivity$(R.id.rail)</ID>
+    <ID>ArgumentListWrapping:BrowseActivity.kt:BrowseActivity$(R.id.rail_scrim)</ID>
+    <ID>ArgumentListWrapping:BrowseActivity.kt:BrowseActivity$(findViewById(R.id.rail), findViewById(R.id.rail_scrim), ::onSection)</ID>
+    <ID>ArgumentListWrapping:BrowseActivity.kt:BrowseActivity$(this)</ID>
+    <ID>ArgumentListWrapping:CacheJsonTest.kt:CacheJsonTest$("355", "Студия")</ID>
+    <ID>ArgumentListWrapping:CacheJsonTest.kt:CacheJsonTest$("77", "Режиссёрская", camrip = true, director = true)</ID>
+    <ID>ArgumentListWrapping:CacheJsonTest.kt:CacheJsonTest$(Translator("355", "Студия"), Translator("77", "Режиссёрская", camrip = true, director = true))</ID>
+    <ID>ArgumentListWrapping:CardAdapter.kt:CardAdapter$(card)</ID>
+    <ID>ArgumentListWrapping:CardAdapter.kt:CardAdapter$(onLongClick?.let { handler -&gt; View.OnLongClickListener { handler(card); true } })</ID>
+    <ID>ArgumentListWrapping:CookieJar.kt:Cookies$("EEE, dd-MMM-yyyy HH:mm:ss zzz", Locale.US)</ID>
+    <ID>ArgumentListWrapping:CookieJar.kt:Cookies$(DATE_PARTS.replace(text.trim(), "$1-$2-$3"))</ID>
+    <ID>ArgumentListWrapping:CookieJar.kt:Cookies$(text.trim(), "$1-$2-$3")</ID>
+    <ID>ArgumentListWrapping:CookiesTest.kt:CookiesTest$("dle_password=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/", now)</ID>
+    <ID>ArgumentListWrapping:CookiesTest.kt:CookiesTest$("rzk_last_refresh=1792; expires=Fri, 19-Nov-2027 08:52:00 GMT; path=/; domain=.rezka.test; HttpOnly", now)</ID>
+    <ID>ArgumentListWrapping:CookiesTest.kt:CookiesTest$(Cookies.parseSetCookie("dle_password=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/", now)!!.expired)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(EXTRA_POSTER)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(R.id.art)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(R.string.play)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(R.string.play_episode, current.code)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(R.string.resume)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(current, getString(R.string.play_episode, current.code), null)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(episodes, it.season, it.episode)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(findViewById&lt;ImageView&gt;(R.id.art), d.poster, intent.getStringExtra(EXTRA_POSTER))</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(getString(R.string.resume), it)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(null, entry?.let { remaining(getString(R.string.resume), it) } ?: getString(R.string.play), null)</ID>
+    <ID>ArgumentListWrapping:DetailsActivity.kt:DetailsActivity$(this, d.url, d.title, d.poster, t.id, episode?.season ?: 0, episode?.episode ?: 0, fromStart)</ID>
+    <ID>ArgumentListWrapping:EpisodeNavTest.kt:EpisodeNavTest$( Episode(1, 1, "Серия 1"), Episode(1, 2, "Серия 2"), Episode(2, 0, "Серия 0"), Episode(2, 1, "Серия 1"), Episode(2, 2, "Серия 2"), Episode(3, 1, "Серия 1"), )</ID>
+    <ID>ArgumentListWrapping:GridPage.kt:GridPage$(" · ")</ID>
+    <ID>ArgumentListWrapping:GridPage.kt:GridPage$(card.title, card.subtitle, card.badge.orEmpty())</ID>
+    <ID>ArgumentListWrapping:HomePage.kt:HomePage$(TAG, "first row: ${SystemClock.elapsedRealtime() - Process.getStartElapsedRealtime()} ms after process start")</ID>
+    <ID>ArgumentListWrapping:HomePage.kt:HomePage$(card)</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("10.0.0.5")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("127.0.0.1")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("169.254.1.1")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("192.168.1.20")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("8.8.8.8")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("fe80::1")</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("lo" to ip("127.0.0.1"), "eth0" to ip("10.0.0.5"), "wlan0" to ip("fe80::1"), "wlan0" to ip("192.168.1.20"))</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$("lo" to ip("127.0.0.1"), "wlan0" to ip("169.254.1.1"), "wlan0" to ip("8.8.8.8"))</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$(LanAddress.pick(listOf("lo" to ip("127.0.0.1"), "wlan0" to ip("169.254.1.1"), "wlan0" to ip("8.8.8.8"))))</ID>
+    <ID>ArgumentListWrapping:LanAddressTest.kt:LanAddressTest$(listOf("lo" to ip("127.0.0.1"), "wlan0" to ip("169.254.1.1"), "wlan0" to ip("8.8.8.8")))</ID>
+    <ID>ArgumentListWrapping:ListsAssets.kt:ListsAssets$(SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "lists") }.asCoroutineDispatcher())</ID>
+    <ID>ArgumentListWrapping:ListsAssets.kt:ListsAssets$(context, "oscars.json", ListsJson::oscars)</ID>
+    <ID>ArgumentListWrapping:ListsAssets.kt:ListsAssets$(it, "lists")</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(2, 3, 1)</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(OscarProgress(2, 3, 1), OscarProgress.overall(oscars, OscarCategory.PICTURE) { it == "1" || it == "5" })</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(OscarProgress(watched = 1, total = 2, missing = 1), OscarProgress.ceremony(c, OscarCategory.PICTURE) { it == "2" })</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(TopFilter(decade = 2000, genre = "Драма", hideWatched = true).apply(films) { it in watched }.isEmpty())</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(c, OscarCategory.PICTURE)</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(decade = 2000, genre = "Драма", hideWatched = true)</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(films)</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(oscars, OscarCategory.PICTURE)</ID>
+    <ID>ArgumentListWrapping:ListsTest.kt:ListsTest$(watched = 1, total = 2, missing = 1)</ID>
+    <ID>ArgumentListWrapping:LoginCryptoTest.kt:LoginCryptoTest$("tvPrivatePkcs8")</ID>
+    <ID>ArgumentListWrapping:LoginCryptoTest.kt:LoginCryptoTest$(LoginCrypto.unb64(fixture.getString("tvPrivatePkcs8")))</ID>
+    <ID>ArgumentListWrapping:LoginCryptoTest.kt:LoginCryptoTest$(PKCS8EncodedKeySpec(LoginCrypto.unb64(fixture.getString("tvPrivatePkcs8"))))</ID>
+    <ID>ArgumentListWrapping:LoginCryptoTest.kt:LoginCryptoTest$(fixture.getString("tvPrivatePkcs8"))</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer$("c")</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer$(TAG, "login request failed: ${e.javaClass.simpleName}")</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer$(form["p"].orEmpty(), form["iv"].orEmpty(), it, code.token)</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer$(it)</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer$(out, 400, ok = false, UNREADABLE, final = false)</ID>
+    <ID>ArgumentListWrapping:LoginServer.kt:LoginServer.Companion$(200 to "OK", 400 to "Bad Request", 403 to "Forbidden", 404 to "Not Found", 405 to "Method Not Allowed", 410 to "Gone")</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage$(R.string.oscar_progress_missing, p.watched, p.total, p.missing)</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage$(category)</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage$(n, caption = when { n.won -&gt; activity.getString(R.string.winner) !n.onRezka -&gt; activity.getString(R.string.not_on_rezka) else -&gt; null }, winner = n.won)</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage.YearAdapter$(LayoutInflater.from(parent.context).inflate(R.layout.item_chip, parent, false) as TextView)</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage.YearAdapter$(R.layout.item_chip, parent, false)</ID>
+    <ID>ArgumentListWrapping:OscarPage.kt:OscarPage.YearAdapter$(parent.context)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("ads")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("ads", it.ads)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("camrip")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("camrip", it.camrip)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("desc", d.description)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("director")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("director", it.director)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("e", it.episode)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("episodes", JSONArray(d.episodes.map { JSONObject().put("s", it.season).put("e", it.episode).put("n", it.name) }))</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("id")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("id", it.id)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("meta", d.meta)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("n", it.name)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("name")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("name", it.name)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("position", d.position?.let { JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode) } ?: JSONObject.NULL)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("poster", d.poster)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("ratings", d.ratings ?: JSONObject.NULL)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("s", it.season)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$("t", it.translatorId)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$(d.episodes.map { JSONObject().put("s", it.season).put("e", it.episode).put("n", it.name) })</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:CacheJson$(t.getString("id"), t.getString("name"), t.optBoolean("camrip"), t.optBoolean("ads"), t.optBoolean("director"))</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:PageCache$("p:$url")</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:PageCache$(CacheJson.page(json), time)</ID>
+    <ID>ArgumentListWrapping:PageCache.kt:PageCache$(json)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, Color.BLACK, null)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(EXTRA_EPISODE, 0)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(EXTRA_SEASON, 0)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(R.string.quality_auto_current, auto?.label.orEmpty())</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(R.string.translators)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(current)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(d, chosen)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(d.id, true)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(d.url, t.id, episode?.season ?: 0, episode?.episode ?: 0)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(episodes, plan?.season ?: intent.getIntExtra(EXTRA_SEASON, 0), plan?.episode ?: intent.getIntExtra(EXTRA_EPISODE, 0))</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(getString(R.string.quality_auto_current, auto?.label.orEmpty()))</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(getString(R.string.translators), d.translators.map { it.name }, d.translators.indexOf(current))</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(if (d != null &amp;&amp; t != null) PlayLink.build(d.url, t.id, episode?.season ?: 0, episode?.episode ?: 0) else url)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(interrupted = !deliberateExit &amp;&amp; player.playbackState != Player.STATE_ENDED, screenOff)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(keyCode, event)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(local.positionMs, local.durationMs)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(next, countdown = settings.autoplayNext)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(plan.positionMs, local.durationMs)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(session.positionMs, session.durationMs)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(this)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(this, if (forward) R.string.last_episode else R.string.first_episode, Toast.LENGTH_SHORT)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(url)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity$(v, keyCode, event)</ID>
+    <ID>ArgumentListWrapping:PlayerActivity.kt:PlayerActivity.PlayerListener$(0)</ID>
+    <ID>ArgumentListWrapping:PlayerGlue.kt:PlayerGlue.ActionPresenter$(R.dimen.chip_spacing)</ID>
+    <ID>ArgumentListWrapping:PlayerGlue.kt:PlayerGlue.ActionPresenter$(if (textual) R.dimen.player_icon_small else R.dimen.player_icon)</ID>
+    <ID>ArgumentListWrapping:PlayerKeys.kt:PlayerKeys$( KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_BACK, )</ID>
+    <ID>ArgumentListWrapping:PlayerKeys.kt:PlayerKeys$( KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_STOP, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD, KeyEvent.KEYCODE_MEDIA_REWIND, )</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(context.getColor(if (p.winner) R.color.text_on_focus else if (onRezka) R.color.text else R.color.text_dim))</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(holder, items[position])</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(holder, position, payloads)</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(if (p.winner) R.color.text_on_focus else if (onRezka) R.color.text else R.color.text_dim)</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(if (p.winner) R.drawable.card_winner else R.drawable.card_focus)</ID>
+    <ID>ArgumentListWrapping:PosterAdapter.kt:PosterAdapter$(onClick)</ID>
+    <ID>ArgumentListWrapping:Progress.kt:ResumeStore$(id, season, episode)</ID>
+    <ID>ArgumentListWrapping:Progress.kt:ResumeStore$(key(id, season, episode), "$positionMs:$durationMs:${System.currentTimeMillis()}")</ID>
+    <ID>ArgumentListWrapping:Qr.kt:LanAddress$(emptyList())</ID>
+    <ID>ArgumentListWrapping:Qr.kt:LanAddress$(interfaces.filter { runCatching { it.isUp }.getOrDefault(false) } .flatMap { nif -&gt; nif.inetAddresses.toList().map { nif.name to it } })</ID>
+    <ID>ArgumentListWrapping:Resume.kt:(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)</ID>
+    <ID>ArgumentListWrapping:Resume.kt:(R.string.continue_position, TimeText.format(session.positionMs), TimeText.format(session.durationMs))</ID>
+    <ID>ArgumentListWrapping:Resume.kt:(session.durationMs)</ID>
+    <ID>ArgumentListWrapping:Resume.kt:(session.positionMs)</ID>
+    <ID>ArgumentListWrapping:Resume.kt:(this, BrowseActivity::class.java)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("232", 2, 8)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("232", 2, 8, 1_394_000, true)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("56", 0, 0)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("56", 0, 0, 1_394_000, true)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 1, 3)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 1, 3, ResumePlanner.FROM_STORE, false)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 2, 7)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 2, 8, 1_394_000, false)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 2, 9)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 2, 9, ResumePlanner.FROM_STORE, true)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 3, 1)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$("7", 3, 1, ResumePlanner.FROM_STORE, true)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(0, 0, "238")</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(2, 8)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(2, 8, reported = SitePosition("7", 2, 7))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(2, 8, reported = null)</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("232", 2, 8, 1_394_000, true), ResumePlanner.plan(local(2, 8), SitePosition("232", 2, 8)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("56", 0, 0, 1_394_000, true), ResumePlanner.plan(local(0, 0, "238"), SitePosition("56", 0, 0)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("7", 1, 3, ResumePlanner.FROM_STORE, false), ResumePlanner.plan(null, SitePosition("7", 1, 3)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("7", 2, 8, 1_394_000, false), ResumePlanner.plan(local(2, 8, reported = SitePosition("7", 2, 7)), SitePosition("7", 2, 7)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("7", 2, 8, 1_394_000, false), ResumePlanner.plan(local(2, 8, reported = null), SitePosition("7", 2, 7)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("7", 2, 9, ResumePlanner.FROM_STORE, true), ResumePlanner.plan(local(2, 8), SitePosition("7", 2, 9)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(ResumePlan("7", 3, 1, ResumePlanner.FROM_STORE, true), ResumePlanner.plan(local(2, 8), SitePosition("7", 3, 1)))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(0, 0, "238"), SitePosition("56", 0, 0))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(2, 8), SitePosition("232", 2, 8))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(2, 8), SitePosition("7", 2, 9))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(2, 8), SitePosition("7", 3, 1))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(2, 8, reported = SitePosition("7", 2, 7)), SitePosition("7", 2, 7))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(local(2, 8, reported = null), SitePosition("7", 2, 7))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(null, SitePosition("7", 1, 3))</ID>
+    <ID>ArgumentListWrapping:ResumePlannerTest.kt:ResumePlannerTest$(translator, season, episode)</ID>
+    <ID>ArgumentListWrapping:RezkaClient.kt:RezkaClient$( "is_camrip" to translator.camrip.flag(), "is_ads" to translator.ads.flag(), "is_director" to translator.director.flag(), "action" to "get_movie", )</ID>
+    <ID>ArgumentListWrapping:RezkaClient.kt:RezkaClient$("id" to d.id, "translator_id" to translator.id, "favs" to d.favs.orEmpty(), "action" to "get_episodes")</ID>
+    <ID>ArgumentListWrapping:RezkaClient.kt:RezkaClient$("season" to "${episode.season}", "episode" to "${episode.episode}", "action" to "get_stream")</ID>
+    <ID>ArgumentListWrapping:RezkaClient.kt:RezkaClient$(d.id, translatorId, episode?.season ?: 0, episode?.episode ?: 0, positionMs, durationMs)</ID>
+    <ID>ArgumentListWrapping:RezkaParserTest.kt:RezkaParserTest$("film.html")</ID>
+    <ID>ArgumentListWrapping:RezkaParserTest.kt:RezkaParserTest$(fixture("film.html"), "https://rezka.test/films/fiction/400-test-trip-2008.html")</ID>
+    <ID>ArgumentListWrapping:SettingsActivity.kt:SettingsActivity.PrefsFragment$("login")</ID>
+    <ID>ArgumentListWrapping:SettingsActivity.kt:SettingsActivity.PrefsFragment$(if (loggedIn) R.string.logged_in else R.string.logged_out)</ID>
+    <ID>ArgumentListWrapping:SettingsTest.kt:SettingsTest$("360p", "480p", "720p", "1080p", "1080p Ultra")</ID>
+    <ID>ArgumentListWrapping:SettingsTest.kt:SettingsTest$("https://x/$it")</ID>
+    <ID>ArgumentListWrapping:SettingsTest.kt:SettingsTest$(it, listOf("https://x/$it"))</ID>
+    <ID>ArgumentListWrapping:StreamParserTest.kt:StreamParserTest$("https://cdn-a.test/aa:hls:manifest.m3u8", "https://cdn-b.test/aa:hls:manifest.m3u8", "https://cdn-a.test/aa.mp4")</ID>
+    <ID>ArgumentListWrapping:StreamParserTest.kt:StreamParserTest$("https://cdn-a.test/cc:hls:manifest.m3u8", "https://cdn-a.test/cc.mp4")</ID>
+    <ID>ArgumentListWrapping:StreamParserTest.kt:StreamParserTest$("thumbnails.vtt")</ID>
+    <ID>ArgumentListWrapping:StreamParserTest.kt:StreamParserTest$(fixture("thumbnails.vtt"), "https://rezka.test/ajax/get_cdn_tiles/1/42/?t=1")</ID>
+    <ID>ArgumentListWrapping:StreamParserTest.kt:StreamParserTest$(listOf("https://cdn-a.test/cc:hls:manifest.m3u8", "https://cdn-a.test/cc.mp4"), streams.qualities[1].urls)</ID>
+    <ID>ArgumentListWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$(sprite, x, y, tile.w.coerceAtMost(sprite.width - x), tile.h.coerceAtMost(sprite.height - y))</ID>
+    <ID>ArgumentListWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$(sprite.height - y)</ID>
+    <ID>ArgumentListWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$(sprite.width - x)</ID>
+    <ID>ArgumentListWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$(this@ThumbnailSeekProvider.context)</ID>
+    <ID>ArgumentListWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$(url)</ID>
+    <ID>ArgumentListWrapping:TitleMarks.kt:TitleMarks$(id, 0, 0)</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(ListText::decade)</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(R.string.filter_all)</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(R.string.filter_decade, filter.decade?.let(ListText::decade) ?: activity.getString(R.string.filter_all))</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(R.string.filter_genre, filter.genre ?: activity.getString(R.string.filter_all))</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(it.id)</ID>
+    <ID>ArgumentListWrapping:TopPage.kt:TopPage$(resetPosition = false)</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession$("e", it.episode)</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession$("reported", reported?.let { JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode) } ?: JSONObject.NULL)</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession$("s", it.season)</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession$("t", it.translatorId)</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession.Companion$("e")</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession.Companion$("reported")</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession.Companion$("s")</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession.Companion$("t")</ID>
+    <ID>ArgumentListWrapping:WatchSession.kt:WatchSession.Companion$(it.getString("t"), it.getInt("s"), it.getInt("e"))</ID>
+    <ID>ArgumentListWrapping:Watched.kt:WatchedStore.Companion$(File(context.applicationContext.filesDir, "watched.json"))</ID>
+    <ID>ArgumentListWrapping:Watched.kt:WatchedStore.Companion$(context.applicationContext.filesDir, "watched.json")</ID>
+    <ID>BinaryExpressionWrapping:BrowseActivity.kt:BrowseActivity$rail = NavRail(findViewById(R.id.rail), findViewById(R.id.rail_scrim), ::onSection) { ListsAssets.preload(this) }</ID>
+    <ID>BinaryExpressionWrapping:DetailsActivity.kt:DetailsActivity$d.currentEpisode?.let { EpisodeNav.find(episodes, it.season, it.episode) } ?: episodes.firstOrNull()</ID>
+    <ID>BinaryExpressionWrapping:DetailsActivity.kt:DetailsActivity$d.currentEpisode?.let { EpisodeNav.find(episodes, it.season, it.episode) } ?: episodes.firstOrNull() ?: return Primary(null, getString(R.string.play), null)</ID>
+    <ID>BinaryExpressionWrapping:GridPage.kt:GridPage$info.text = listOf(card.title, card.subtitle, card.badge.orEmpty()).filter { it.isNotBlank() }.joinToString(" · ")</ID>
+    <ID>BinaryExpressionWrapping:HomePage.kt:HomePage$rows.size == 1</ID>
+    <ID>BinaryExpressionWrapping:HomePage.kt:HomePage$shelf == Shelf.CONTINUE</ID>
+    <ID>BinaryExpressionWrapping:LanAddressTest.kt:LanAddressTest$"wlan0" to ip("192.168.1.20")</ID>
+    <ID>BinaryExpressionWrapping:LanAddressTest.kt:LanAddressTest$"wlan0" to ip("8.8.8.8")</ID>
+    <ID>BinaryExpressionWrapping:ListsAssets.kt:ListsAssets$SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "lists") }.asCoroutineDispatcher()</ID>
+    <ID>BinaryExpressionWrapping:ListsAssets.kt:ListsAssets$oscars = it</ID>
+    <ID>BinaryExpressionWrapping:ListsAssets.kt:ListsAssets$oscars ?: load(context, "oscars.json", ListsJson::oscars).also { oscars = it }</ID>
+    <ID>BinaryExpressionWrapping:ListsTest.kt:ListsTest$it == "1" || it == "5"</ID>
+    <ID>BinaryExpressionWrapping:ListsTest.kt:ListsTest$it == "2"</ID>
+    <ID>BinaryExpressionWrapping:ListsTest.kt:ListsTest$it == "5"</ID>
+    <ID>BinaryExpressionWrapping:LoginServer.kt:LoginServer$form.containsKey("c") &amp;&amp; encrypted == null</ID>
+    <ID>BinaryExpressionWrapping:LoginServer.kt:LoginServer.Companion$405 to "Method Not Allowed"</ID>
+    <ID>BinaryExpressionWrapping:LoginServer.kt:LoginServer.Companion$410 to "Gone"</ID>
+    <ID>BinaryExpressionWrapping:OscarPage.kt:OscarPage$adapter.itemCount &gt; 0</ID>
+    <ID>BinaryExpressionWrapping:OscarPage.kt:OscarPage$all != null &amp;&amp; (it.tag as OscarCategory) in all.categories</ID>
+    <ID>BinaryExpressionWrapping:OscarPage.kt:OscarPage$it.visibility = if (all != null &amp;&amp; (it.tag as OscarCategory) in all.categories) View.VISIBLE else View.GONE</ID>
+    <ID>BinaryExpressionWrapping:OscarPage.kt:OscarPage$p.missing &gt; 0</ID>
+    <ID>BinaryExpressionWrapping:OscarPage.kt:OscarPage$progressText.text = if (p.missing &gt; 0) activity.getString(R.string.oscar_progress_missing, p.watched, p.total, p.missing) else activity.getString(R.string.oscar_progress, p.watched, p.total)</ID>
+    <ID>BinaryExpressionWrapping:PageCache.kt:CacheJson$d.position?.let { JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode) } ?: JSONObject.NULL</ID>
+    <ID>BinaryExpressionWrapping:PageCache.kt:CacheJson$d.ratings ?: JSONObject.NULL</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$!nextUpDismissed &amp;&amp; remaining in 1..NEXT_UP_BEFORE_END_MS &amp;&amp; player.isPlaying</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$(bar.width - bar.paddingLeft - bar.paddingRight) * positionMs.toFloat() / duration</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$bar.left + bar.paddingLeft + (bar.width - bar.paddingLeft - bar.paddingRight) * positionMs.toFloat() / duration</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$currentSession(interrupted = !deliberateExit &amp;&amp; player.playbackState != Player.STATE_ENDED, screenOff) ?: return</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$d != null &amp;&amp; t != null</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$ep == null &amp;&amp; WatchedStore.reached(session.positionMs, session.durationMs)</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$episodes = loader.quietly { client.translatorEpisodes(d, chosen) }?.takeIf { it.isNotEmpty() } ?: episodes</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$listOf(getString(R.string.quality_auto_current, auto?.label.orEmpty())) + s.qualities.map { it.label }</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$loader.load { if (sync) client.details(url) else client.recentDetails(url) } ?: return@launch showError()</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$loader.quietly { client.translatorEpisodes(d, chosen) }?.takeIf { it.isNotEmpty() } ?: episodes</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$loadingView.visibility = View.VISIBLE</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$onPlaybackKey(keyCode, event) || g.onKey(v, keyCode, event)</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$plan != null &amp;&amp; !plan.fromOtherDevice &amp;&amp; local != null &amp;&amp; Progress.isFinished(local.positionMs, local.durationMs)</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$plan?.episode ?: intent.getIntExtra(EXTRA_EPISODE, 0)</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity$player.playbackState == Player.STATE_IDLE || player.mediaItemCount == 0</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity.PlayerListener$it.mediaTrackGroup.getFormat(0).label == wanted.label</ID>
+    <ID>BinaryExpressionWrapping:PlayerActivity.kt:PlayerActivity.PlayerListener$it.type == C.TRACK_TYPE_TEXT &amp;&amp; it.isSelected &amp;&amp; it.mediaTrackGroup.getFormat(0).label == wanted.label</ID>
+    <ID>BinaryExpressionWrapping:PlayerGlue.kt:PlayerGlue.ActionPresenter$view.compoundDrawablePadding = if (textual) view.resources.getDimensionPixelSize(R.dimen.chip_spacing) else 0</ID>
+    <ID>BinaryExpressionWrapping:PosterAdapter.kt:PosterAdapter$holder.itemView.foreground = context.getDrawable(if (p.winner) R.drawable.card_winner else R.drawable.card_focus)</ID>
+    <ID>BinaryExpressionWrapping:PosterAdapter.kt:PosterAdapter$payloads.isNotEmpty() &amp;&amp; payloads.all { it === MARKS }</ID>
+    <ID>BinaryExpressionWrapping:Qr.kt:LanAddress$a is Inet4Address &amp;&amp; !a.isLoopbackAddress &amp;&amp; !a.isLinkLocalAddress &amp;&amp; a.isSiteLocalAddress</ID>
+    <ID>BinaryExpressionWrapping:Resume.kt:Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK</ID>
+    <ID>BinaryExpressionWrapping:RezkaActivity.kt:RezkaActivity$code == KeyEvent.KEYCODE_DPAD_CENTER || code == KeyEvent.KEYCODE_ENTER</ID>
+    <ID>BinaryExpressionWrapping:RezkaActivity.kt:RezkaActivity$code == KeyEvent.KEYCODE_ENTER</ID>
+    <ID>BinaryExpressionWrapping:RezkaActivity.kt:RezkaActivity$overlay.visibility == View.VISIBLE &amp;&amp; !playerOnly &amp;&amp; (code == KeyEvent.KEYCODE_DPAD_CENTER || code == KeyEvent.KEYCODE_ENTER)</ID>
+    <ID>BinaryExpressionWrapping:RezkaClient.kt:RezkaClient$"action" to "get_episodes"</ID>
+    <ID>BinaryExpressionWrapping:RezkaClient.kt:RezkaClient$"action" to "get_stream"</ID>
+    <ID>BinaryExpressionWrapping:RezkaClient.kt:RezkaClient$params += listOf("season" to "${episode.season}", "episode" to "${episode.episode}", "action" to "get_stream")</ID>
+    <ID>BinaryExpressionWrapping:Settings.kt:Settings.Companion$(value?.toLongOrNull()?.takeIf { it in 1..120 } ?: DEFAULT_SEEK_STEP_S) * 1000</ID>
+    <ID>BinaryExpressionWrapping:SettingsActivity.kt:SettingsActivity.PrefsFragment$findPreference&lt;Preference&gt;("login")?.summary = getString(if (loggedIn) R.string.logged_in else R.string.logged_out)</ID>
+    <ID>BinaryExpressionWrapping:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$sprite.height - y</ID>
+    <ID>BinaryExpressionWrapping:TitleMarks.kt:TitleMarks$resume.get(id, 0, 0)?.takeIf { it.positionMs &gt; 0 &amp;&amp; !it.finished &amp;&amp; it.durationMs &gt; 0 } ?: return null</ID>
+    <ID>BinaryExpressionWrapping:TopPage.kt:TopPage$decadeChip.text = activity.getString(R.string.filter_decade, filter.decade?.let(ListText::decade) ?: activity.getString(R.string.filter_all))</ID>
+    <ID>BinaryExpressionWrapping:TopPage.kt:TopPage$filter.decade?.let(ListText::decade) ?: activity.getString(R.string.filter_all)</ID>
+    <ID>BinaryExpressionWrapping:TopPage.kt:TopPage$filter.genre ?: activity.getString(R.string.filter_all)</ID>
+    <ID>BinaryExpressionWrapping:TopPage.kt:TopPage$filter.hideWatched &amp;&amp; shown.any { marks.isWatched(it.id) }</ID>
+    <ID>BinaryExpressionWrapping:TopPage.kt:TopPage$genreChip.text = activity.getString(R.string.filter_genre, filter.genre ?: activity.getString(R.string.filter_all))</ID>
+    <ID>BinaryExpressionWrapping:WatchSession.kt:WatchSession$reported?.let { JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode) } ?: JSONObject.NULL</ID>
+    <ID>BinaryExpressionWrapping:Watched.kt:WatchedStore.Companion$instance ?: WatchedStore(File(context.applicationContext.filesDir, "watched.json")).also { instance = it }</ID>
+    <ID>BlankLineBetweenWhenConditions:BrowseActivity.kt:BrowseActivity$when (section) { Section.SEARCH -&gt; openSearch() Section.SETTINGS -&gt; startActivity(Intent(this, SettingsActivity::class.java)) else -&gt; { rail.selected = section if (section != Section.HOME) home.hide() if (section.category == null) grid.hide() if (section != Section.TOP) top.hide() if (section != Section.OSCAR) oscar.hide() when (section) { Section.HOME -&gt; home.show() Section.TOP -&gt; top.show() Section.OSCAR -&gt; oscar.show() else -&gt; grid.show(requireNotNull(section.category)) } focusPage() } }</ID>
+    <ID>BlankLineBetweenWhenConditions:BrowseActivity.kt:BrowseActivity$when { choice.isShowing &amp;&amp; (direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT) -&gt; focused direction == View.FOCUS_LEFT &amp;&amp; !rail.contains(focused) -&gt; { val next = FocusFinder.getInstance().findNextFocus(root, focused, direction) if (next == null || rail.contains(next)) rail.selectedView() else null } direction == View.FOCUS_RIGHT &amp;&amp; rail.contains(focused) -&gt; { focusPage() root.findFocus()?.takeUnless { rail.contains(it) } } else -&gt; null }</ID>
+    <ID>BlankLineBetweenWhenConditions:DetailsActivity.kt:DetailsActivity$when { entry?.finished == true &amp;&amp; next != null -&gt; Primary(next, getString(R.string.play_episode, next.code), null) current == episodes.first() &amp;&amp; entry == null -&gt; Primary(current, getString(R.string.play_episode, current.code), null) entry != null &amp;&amp; entry.positionMs &gt; 0 -&gt; Primary(current, remaining(getString(R.string.resume_episode, current.code), entry), next) else -&gt; Primary(current, getString(R.string.resume_episode, current.code), next) }</ID>
+    <ID>BlankLineBetweenWhenConditions:LoginActivity.kt:LoginActivity.Events$when { result.success -&gt; { showStatus(R.string.login_status_done) handler.removeCallbacks(expire) client.exportCookiesToWebView() setResult(RESULT_OK) handler.postDelayed({ finish() }, DONE_DELAY_MS) } codeExhausted -&gt; { stopServer() hideCode() showStatus(getString(R.string.login_status_too_many, result.message), error = true) } else -&gt; showStatus(result.message, error = true) }</ID>
+    <ID>BlankLineBetweenWhenConditions:LoginServer.kt:LoginServer$when { request.method == "GET" &amp;&amp; request.path == "/" -&gt; { if (!code.matches(request.query["k"])) return respond(out, 403, TEXT, FORBIDDEN) listener.onPhoneConnected() respond(out, 200, HTML, PhonePage.HTML) } request.method == "POST" &amp;&amp; request.path == "/login" -&gt; handleLogin(out, FormData.parse(request.body)) else -&gt; respond(out, if (request.path == "/") 405 else 404, TEXT, "Not found") }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity$when (id) { PlayerGlue.ACTION_PREV -&gt; switchEpisode(forward = false) PlayerGlue.ACTION_NEXT -&gt; switchEpisode(forward = true) PlayerGlue.ACTION_EPISODES -&gt; showEpisodes() PlayerGlue.ACTION_TRANSLATOR -&gt; showTranslators() PlayerGlue.ACTION_QUALITY -&gt; showQualities() PlayerGlue.ACTION_SUBTITLES -&gt; showSubtitles() PlayerGlue.ACTION_SETTINGS -&gt; { glue?.pause() startActivity(Intent(this, SettingsActivity::class.java)) } }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity$when (keyCode) { KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -&gt; if (hidden) { // Кнопки скрыты: OK — пауза/продолжить, leanback заодно покажет кнопки if (event.action == KeyEvent.ACTION_DOWN &amp;&amp; event.repeatCount == 0) togglePlay() return true } KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT -&gt; { val bar = progressBar() ?: return false if (hidden || bar.hasFocus()) { if (event.action == KeyEvent.ACTION_DOWN) { if (!bar.hasFocus()) bar.requestFocus() // Удержание ускоряет: несколько шагов leanback за одно нажатие repeat(1 + SeekMath.extraSteps(event.repeatCount)) { bar.dispatchKeyEvent(event) } handler.removeCallbacks(commitSeek) handler.postDelayed(commitSeek, SEEK_COMMIT_MS) } return true } } }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity$when { // Back по очереди закрывает: панель → подсказку о следующей серии → (leanback) кнопки → плеер choicePanel.isShowing &amp;&amp; back -&gt; { if (!down) choicePanel.hide(); return true } episodesPanel.isShowing &amp;&amp; back -&gt; { if (!down) episodesPanel.hide(); return true } choicePanel.isShowing || episodesPanel.isShowing -&gt; return super.dispatchKeyEvent(event) errorView.visibility == View.VISIBLE &amp;&amp; ok -&gt; { if (!down) retry(); return true } nextUp.visibility == View.VISIBLE &amp;&amp; back -&gt; { if (!down) dismissNextUp(); return true } nextUp.visibility == View.VISIBLE &amp;&amp; ok -&gt; { if (!down) switchEpisode(forward = true); return true } glue == null &amp;&amp; !back -&gt; return true }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity$when { details == null -&gt; load() // Новый поток так и не загрузился — плеер ещё держит старое видео и его позицию preparing -&gt; start(episode, requestedPosition) else -&gt; start(episode, player.currentPosition.coerceAtLeast(0)) }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity.PlayerListener$when (state) { Player.STATE_READY -&gt; { preparing = false refreshedAfterError = false loadingView.visibility = View.GONE installSeekProvider() } Player.STATE_ENDED -&gt; onEnded() else -&gt; Unit }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerActivity.kt:PlayerActivity.PlayerListener$when { // Зеркало или MP4 вместо HLS q != null &amp;&amp; urlIndex + 1 &lt; q.urls.size -&gt; prepare(position, urlIndex + 1) !refreshedAfterError -&gt; { refreshedAfterError = true start(episode, position) } else -&gt; showError() }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerKeys.kt:PlayerKeys$when (keyCode) { KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -&gt; seekStep(repeatCount)?.let { PlayerCommand("seek", it) } KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_MEDIA_REWIND -&gt; seekStep(repeatCount)?.let { PlayerCommand("seek", -it) } else -&gt; if (repeatCount &gt; 0) null else when (keyCode) { KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -&gt; PlayerCommand("toggle") KeyEvent.KEYCODE_MEDIA_PLAY -&gt; PlayerCommand("play") KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_STOP -&gt; PlayerCommand("pause") KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -&gt; PlayerCommand("controls") KeyEvent.KEYCODE_BACK -&gt; PlayerCommand("exit") else -&gt; null } }</ID>
+    <ID>BlankLineBetweenWhenConditions:PlayerKeys.kt:PlayerKeys$when (keyCode) { KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -&gt; PlayerCommand("toggle") KeyEvent.KEYCODE_MEDIA_PLAY -&gt; PlayerCommand("play") KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_STOP -&gt; PlayerCommand("pause") KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -&gt; PlayerCommand("controls") KeyEvent.KEYCODE_BACK -&gt; PlayerCommand("exit") else -&gt; null }</ID>
+    <ID>BlankLineBetweenWhenConditions:SearchActivity.kt:SearchActivity$when (key) { SPACE -&gt; if (query.isNotEmpty() &amp;&amp; query.last() != ' ') query.append(' ') BACKSPACE -&gt; if (query.isNotEmpty()) query.setLength(query.length - 1) CLEAR -&gt; query.setLength(0) nextLayout().label -&gt; { layout = nextLayout() showKeyboard() keyboard.selectedPosition = layoutSwitchPosition() return } else -&gt; query.append(key.lowercase()) }</ID>
+    <ID>ClassSignature:ListsData.kt:Ceremony</ID>
+    <ID>ClassSignature:PosterAdapter.kt:Poster</ID>
+    <ID>ComplexCondition:PlayerActivity.kt:PlayerActivity$plan != null &amp;&amp; !plan.fromOtherDevice &amp;&amp; local != null &amp;&amp; Progress.isFinished(local.positionMs, local.durationMs)</ID>
+    <ID>ComplexCondition:RezkaActivity.kt:RezkaActivity$overlay.visibility == View.VISIBLE &amp;&amp; !playerOnly &amp;&amp; (code == KeyEvent.KEYCODE_DPAD_CENTER || code == KeyEvent.KEYCODE_ENTER)</ID>
+    <ID>CyclomaticComplexMethod:DetailsActivity.kt:DetailsActivity$private fun primary: Primary</ID>
+    <ID>CyclomaticComplexMethod:LoginServer.kt:LoginServer$private fun handleLogin</ID>
+    <ID>CyclomaticComplexMethod:PlayerActivity.kt:PlayerActivity$override fun dispatchKeyEvent: Boolean</ID>
+    <ID>CyclomaticComplexMethod:PlayerActivity.kt:PlayerActivity$private fun load</ID>
+    <ID>CyclomaticComplexMethod:RezkaActivity.kt:RezkaActivity$override fun dispatchKeyEvent: Boolean</ID>
+    <ID>EmptyElseBlock:PlayerActivity.kt:PlayerActivity$if (!down) choicePanel.hide()</ID>
+    <ID>EmptyElseBlock:PlayerActivity.kt:PlayerActivity$if (!down) dismissNextUp()</ID>
+    <ID>EmptyElseBlock:PlayerActivity.kt:PlayerActivity$if (!down) episodesPanel.hide()</ID>
+    <ID>EmptyElseBlock:PlayerActivity.kt:PlayerActivity$if (!down) retry()</ID>
+    <ID>EmptyElseBlock:PlayerActivity.kt:PlayerActivity$if (!down) switchEpisode(forward = true)</ID>
+    <ID>Filename:Watched.kt:dev.alaev.rezkatv.rezka.Watched.kt</ID>
+    <ID>FunctionLiteral:BrowseActivity.kt:BrowseActivity$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:CardAdapter.kt:CardAdapter$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:DetailsActivity.kt:DetailsActivity$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:GridPage.kt:GridPage$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:HomePage.kt:HomePage$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:ListLogic.kt:TopFilter.Companion$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:ListsAssets.kt:ListsAssets$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:ListsTest.kt:ListsTest$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:LoginServer.kt:LoginServer$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:PageCache.kt:CacheJson$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:PageCache.kt:PageCache$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:PlayerActivity.kt:PlayerActivity$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:PlayerActivity.kt:PlayerActivity.PlayerListener$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:PosterAdapter.kt:PosterAdapter$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:Qr.kt:LanAddress$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:Settings.kt:Settings.Companion$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:SettingsTest.kt:SettingsTest$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:TitleMarks.kt:TitleMarks$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:TopPage.kt:TopPage$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:WatchSession.kt:WatchSession$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:WatchSession.kt:WatchSession.Companion$&lt;anonymous&gt;</ID>
+    <ID>FunctionLiteral:Watched.kt:WatchedStore.Companion$&lt;anonymous&gt;</ID>
+    <ID>FunctionSignature:CookieJar.kt:Cookies$fun parseHeader: Map&lt;String, String&gt;</ID>
+    <ID>FunctionSignature:HomePage.kt:HomePage.RowHolder.&lt;no name provided&gt;$override fun onChildViewHolderSelected</ID>
+    <ID>FunctionSignature:ListLogic.kt:TopFilter.Companion$fun decades: List&lt;Int&gt;</ID>
+    <ID>FunctionSignature:ListsAssets.kt:ListsAssets$@Synchronized fun oscars: Deferred&lt;Oscars?&gt;</ID>
+    <ID>FunctionSignature:LoginCode.kt:FormData$fun parse: Map&lt;String, String&gt;</ID>
+    <ID>FunctionSignature:LoginCryptoTest.kt:LoginCryptoTest$private fun decrypt</ID>
+    <ID>FunctionSignature:Navigation.kt:fun Activity.detailsIntent: Intent</ID>
+    <ID>FunctionSignature:PageCache.kt:PageCache$fun page: Entry&lt;Page&gt;?</ID>
+    <ID>FunctionSignature:PlayerKeys.kt:PlayerKeys$fun handles</ID>
+    <ID>FunctionSignature:Progress.kt:Progress$fun saveForm: String</ID>
+    <ID>FunctionSignature:Qr.kt:LanAddress$fun pick: Inet4Address?</ID>
+    <ID>FunctionSignature:ResumePlannerTest.kt:ResumePlannerTest$private fun local</ID>
+    <ID>FunctionSignature:RezkaClient.kt:RezkaClient$fun cachedPage: PageCache.Entry&lt;Page&gt;?</ID>
+    <ID>FunctionSignature:RezkaClient.kt:RezkaClient$fun recentDetails: Details</ID>
+    <ID>FunctionSignature:RezkaParser.kt:RezkaParser$private fun episodes: List&lt;Episode&gt;</ID>
+    <ID>FunctionSignature:RezkaParser.kt:RezkaParser$private fun infoTable: Map&lt;String, String&gt;</ID>
+    <ID>FunctionSignature:Settings.kt:Settings.Companion$fun seekStepMs: Long</ID>
+    <ID>FunctionSignature:StreamParser.kt:StreamParser$fun qualities: List&lt;Quality&gt;</ID>
+    <ID>FunctionSignature:StreamParser.kt:StreamParser$fun subtitles: List&lt;Subtitle&gt;</ID>
+    <ID>FunctionSignature:Watched.kt:WatchedStore.Companion$fun get: WatchedStore</ID>
+    <ID>ImportOrdering:BrowseActivity.kt:import android.app.Activity import android.content.Intent import android.os.Bundle import android.os.Process import android.view.FocusFinder import android.view.KeyEvent import android.view.View import android.widget.TextView import androidx.leanback.widget.BrowseFrameLayout import kotlinx.coroutines.MainScope import kotlinx.coroutines.cancel import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.lists.ListsAssets import dev.alaev.rezkatv.rezka.lists.OscarPage import dev.alaev.rezkatv.rezka.lists.TitleMarks import dev.alaev.rezkatv.rezka.lists.TopPage</ID>
+    <ID>ImportOrdering:DetailsActivity.kt:import android.app.Activity import android.os.Bundle import android.view.View import android.widget.ImageView import android.widget.TextView import kotlinx.coroutines.MainScope import kotlinx.coroutines.cancel import kotlinx.coroutines.launch import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.player.PlayerActivity</ID>
+    <ID>ImportOrdering:GridPage.kt:import android.app.Activity import android.view.LayoutInflater import android.view.View import android.widget.LinearLayout import android.widget.TextView import androidx.leanback.widget.VerticalGridView import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Job import kotlinx.coroutines.launch import dev.alaev.rezkatv.R</ID>
+    <ID>ImportOrdering:HomePage.kt:import android.app.Activity import android.graphics.Rect import android.os.Process import android.os.SystemClock import android.util.Log import android.view.LayoutInflater import android.view.View import android.view.ViewGroup import android.widget.ImageView import android.widget.TextView import androidx.leanback.widget.HorizontalGridView import androidx.leanback.widget.OnChildViewHolderSelectedListener import androidx.leanback.widget.VerticalGridView import androidx.recyclerview.widget.RecyclerView import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Job import kotlinx.coroutines.delay import kotlinx.coroutines.launch import dev.alaev.rezkatv.R</ID>
+    <ID>ImportOrdering:ListsAssets.kt:import android.content.Context import android.os.SystemClock import android.util.Log import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Deferred import kotlinx.coroutines.Job import kotlinx.coroutines.SupervisorJob import kotlinx.coroutines.async import kotlinx.coroutines.asCoroutineDispatcher import kotlinx.coroutines.launch import dev.alaev.rezkatv.rezka.WatchedStore import java.io.FileNotFoundException import java.util.concurrent.Executors</ID>
+    <ID>ImportOrdering:Loader.kt:import android.app.Activity import android.util.Log import android.view.View import android.widget.TextView import android.widget.Toast import kotlinx.coroutines.withContext import dev.alaev.rezkatv.R import kotlin.coroutines.cancellation.CancellationException</ID>
+    <ID>ImportOrdering:LoginActivity.kt:import android.app.Activity import android.os.Bundle import android.os.Handler import android.os.Looper import android.view.View import android.widget.ImageView import android.widget.TextView import kotlinx.coroutines.MainScope import kotlinx.coroutines.cancel import kotlinx.coroutines.launch import kotlinx.coroutines.withContext import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.RezkaClient import dev.alaev.rezkatv.rezka.openSite</ID>
+    <ID>ImportOrdering:OscarPage.kt:import android.app.Activity import android.view.KeyEvent import android.view.LayoutInflater import android.view.View import android.view.ViewGroup import android.widget.LinearLayout import android.widget.ProgressBar import android.widget.TextView import androidx.leanback.widget.HorizontalGridView import androidx.leanback.widget.VerticalGridView import androidx.recyclerview.widget.RecyclerView import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Job import kotlinx.coroutines.delay import kotlinx.coroutines.launch import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.RezkaClient import dev.alaev.rezkatv.rezka.pinFocusToStart</ID>
+    <ID>ImportOrdering:PlayerActivity.kt:import android.content.Context import android.content.Intent import android.graphics.Color import android.net.Uri import android.os.Bundle import android.os.Handler import android.os.Looper import android.os.PowerManager import android.os.SystemClock import android.util.Log import android.view.KeyEvent import android.view.View import android.widget.ProgressBar import android.widget.TextView import android.widget.Toast import androidx.fragment.app.FragmentActivity import androidx.leanback.app.PlaybackSupportFragment import androidx.leanback.app.VideoSupportFragment import androidx.leanback.app.VideoSupportFragmentGlueHost import androidx.leanback.widget.ThumbsBar import androidx.media3.common.AudioAttributes import androidx.media3.common.C import androidx.media3.common.MediaItem import androidx.media3.common.MimeTypes import androidx.media3.common.PlaybackException import androidx.media3.common.Player import androidx.media3.common.TrackSelectionOverride import androidx.media3.common.Tracks import androidx.media3.common.text.CueGroup import androidx.media3.common.util.UnstableApi import androidx.media3.common.util.Util import androidx.media3.datasource.DefaultDataSource import androidx.media3.datasource.DefaultHttpDataSource import androidx.media3.exoplayer.DefaultLoadControl import androidx.media3.exoplayer.DefaultRenderersFactory import androidx.media3.exoplayer.ExoPlayer import androidx.media3.exoplayer.source.DefaultMediaSourceFactory import androidx.media3.ui.CaptionStyleCompat import androidx.media3.ui.SubtitleView import androidx.media3.ui.leanback.LeanbackPlayerAdapter import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Job import kotlinx.coroutines.MainScope import kotlinx.coroutines.SupervisorJob import kotlinx.coroutines.cancel import kotlinx.coroutines.launch import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.ChoicePanel import dev.alaev.rezkatv.rezka.Details import dev.alaev.rezkatv.rezka.EXTRA_POSTER import dev.alaev.rezkatv.rezka.EXTRA_TITLE import dev.alaev.rezkatv.rezka.EXTRA_URL import dev.alaev.rezkatv.rezka.Episode import dev.alaev.rezkatv.rezka.EpisodeNav import dev.alaev.rezkatv.rezka.EpisodesPanel import dev.alaev.rezkatv.rezka.Loader import dev.alaev.rezkatv.rezka.PlayLink import dev.alaev.rezkatv.rezka.Progress import dev.alaev.rezkatv.rezka.Quality import dev.alaev.rezkatv.rezka.QualityPicker import dev.alaev.rezkatv.rezka.ResumeStore import dev.alaev.rezkatv.rezka.RezkaClient import dev.alaev.rezkatv.rezka.Settings import dev.alaev.rezkatv.rezka.SettingsActivity import dev.alaev.rezkatv.rezka.Streams import dev.alaev.rezkatv.rezka.Subtitle import dev.alaev.rezkatv.rezka.Tile import dev.alaev.rezkatv.rezka.Translator import dev.alaev.rezkatv.rezka.WatchedStore import dev.alaev.rezkatv.rezka.playOnSite import dev.alaev.rezkatv.session.ResumePlanner import dev.alaev.rezkatv.session.SessionStore import dev.alaev.rezkatv.session.SitePosition import dev.alaev.rezkatv.session.WatchSession</ID>
+    <ID>ImportOrdering:RezkaClient.kt:import android.content.Context import android.os.SystemClock import android.util.Log import android.util.LruCache import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Dispatchers import kotlinx.coroutines.launch import dev.alaev.rezkatv.rezka.login.LoginResult import org.jsoup.Jsoup import java.io.BufferedInputStream import java.io.File import java.io.IOException import java.io.InputStream import java.net.HttpURLConnection import java.net.URL import java.net.URLEncoder import java.util.zip.GZIPInputStream</ID>
+    <ID>ImportOrdering:SearchActivity.kt:import android.app.Activity import android.os.Bundle import android.view.View import android.widget.TextView import androidx.leanback.widget.VerticalGridView import kotlinx.coroutines.Job import kotlinx.coroutines.MainScope import kotlinx.coroutines.cancel import kotlinx.coroutines.delay import kotlinx.coroutines.launch import dev.alaev.rezkatv.R</ID>
+    <ID>ImportOrdering:ThumbnailSeekProvider.kt:import android.content.Context import android.graphics.Bitmap import android.util.Log import android.util.LruCache import androidx.leanback.widget.PlaybackSeekDataProvider import com.bumptech.glide.Glide import com.bumptech.glide.load.DecodeFormat import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Dispatchers import kotlinx.coroutines.delay import kotlinx.coroutines.launch import kotlinx.coroutines.withContext import dev.alaev.rezkatv.rezka.Tile</ID>
+    <ID>ImportOrdering:TopPage.kt:import android.app.Activity import android.view.LayoutInflater import android.view.View import android.widget.LinearLayout import android.widget.TextView import androidx.leanback.widget.VerticalGridView import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Job import kotlinx.coroutines.launch import dev.alaev.rezkatv.R import dev.alaev.rezkatv.rezka.ChoicePanel import dev.alaev.rezkatv.rezka.RezkaClient import dev.alaev.rezkatv.rezka.pinFocusToStart</ID>
+    <ID>Indentation:LoginCryptoTest.kt:LoginCryptoTest$ </ID>
+    <ID>Indentation:PhonePage.kt:PhonePage$ </ID>
+    <ID>LargeClass:PlayerActivity.kt:PlayerActivity : FragmentActivity</ID>
+    <ID>LoopWithTooManyJumpStatements:StreamParser.kt:StreamParser$for</ID>
+    <ID>MagicNumber:CardAdapter.kt:CardAdapter$120</ID>
+    <ID>MagicNumber:HomePage.kt:HomePage$100</ID>
+    <ID>MagicNumber:HomePage.kt:HomePage$3</ID>
+    <ID>MagicNumber:HomePage.kt:HomePage$30</ID>
+    <ID>MagicNumber:HomePage.kt:HomePage$60_000L</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$10</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$1000</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$100_000</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$1_000</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$1_000_000</ID>
+    <ID>MagicNumber:ListLogic.kt:ListText$50_000</ID>
+    <ID>MagicNumber:LoginCrypto.kt:LoginCrypto.Companion$4</ID>
+    <ID>MagicNumber:LoginServer.kt:HttpRequest.Companion$3</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$200</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$400</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$403</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$404</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$405</ID>
+    <ID>MagicNumber:LoginServer.kt:LoginServer$410</ID>
+    <ID>MagicNumber:OscarPage.kt:OscarPage$1000</ID>
+    <ID>MagicNumber:PlayerActivity.kt:PlayerActivity$1000</ID>
+    <ID>MagicNumber:PlayerActivity.kt:PlayerActivity$999</ID>
+    <ID>MagicNumber:PlayerGlue.kt:PlayerGlue$0x66FFFFFF</ID>
+    <ID>MagicNumber:PlayerKeys.kt:PlayerKeys$10</ID>
+    <ID>MagicNumber:PlayerKeys.kt:PlayerKeys$20</ID>
+    <ID>MagicNumber:PlayerKeys.kt:PlayerKeys$30</ID>
+    <ID>MagicNumber:PlayerKeys.kt:PlayerKeys$4</ID>
+    <ID>MagicNumber:PlayerKeys.kt:PlayerKeys$60</ID>
+    <ID>MagicNumber:PosterAdapter.kt:PosterAdapter$120</ID>
+    <ID>MagicNumber:Progress.kt:Progress$1000</ID>
+    <ID>MagicNumber:Progress.kt:Progress$20</ID>
+    <ID>MagicNumber:RezkaActivity.kt:RezkaActivity$24f</ID>
+    <ID>MagicNumber:RezkaClient.kt:RezkaClient$200</ID>
+    <ID>MagicNumber:RezkaClient.kt:RezkaClient$299</ID>
+    <ID>MagicNumber:RezkaClient.kt:RezkaClient$60</ID>
+    <ID>MagicNumber:RezkaParser.kt:RezkaParser$3</ID>
+    <ID>MagicNumber:RezkaParser.kt:RezkaParser$4</ID>
+    <ID>MagicNumber:SeekMath.kt:SeekMath$24</ID>
+    <ID>MagicNumber:SeekMath.kt:SeekMath$3</ID>
+    <ID>MagicNumber:SeekMath.kt:SeekMath$48</ID>
+    <ID>MagicNumber:SeekMath.kt:SeekMath$7</ID>
+    <ID>MagicNumber:SeekMath.kt:SeekMath$8</ID>
+    <ID>MagicNumber:Settings.kt:Settings.Companion$1000</ID>
+    <ID>MagicNumber:Settings.kt:Settings.Companion$120</ID>
+    <ID>MagicNumber:StreamParser.kt:StreamParser$1000</ID>
+    <ID>MagicNumber:StreamParser.kt:StreamParser$3</ID>
+    <ID>MagicNumber:StreamParser.kt:StreamParser$4</ID>
+    <ID>MagicNumber:StreamParser.kt:StreamParser$60</ID>
+    <ID>MagicNumber:TitleMarks.kt:TitleMarks$100</ID>
+    <ID>MagicNumber:TitleMarks.kt:TitleMarks$99</ID>
+    <ID>MagicNumber:TopPage.kt:TopPage$3</ID>
+    <ID>MagicNumber:Watched.kt:WatchedStore.Companion$10</ID>
+    <ID>MagicNumber:Watched.kt:WatchedStore.Companion$9</ID>
+    <ID>MatchingDeclarationName:Watched.kt:WatchedStore</ID>
+    <ID>MaximumLineLength:BrowseActivity.kt:BrowseActivity$}</ID>
+    <ID>MaximumLineLength:CacheJsonTest.kt:CacheJsonTest$,</ID>
+    <ID>MaximumLineLength:CardAdapter.kt:CardAdapter$)</ID>
+    <ID>MaximumLineLength:CookieJar.kt:Cookies$time</ID>
+    <ID>MaximumLineLength:CookiesTest.kt:CookiesTest$)</ID>
+    <ID>MaximumLineLength:DetailsActivity.kt:DetailsActivity$)</ID>
+    <ID>MaximumLineLength:DetailsActivity.kt:DetailsActivity$,</ID>
+    <ID>MaximumLineLength:GridPage.kt:GridPage$)</ID>
+    <ID>MaximumLineLength:HomePage.kt:HomePage$)</ID>
+    <ID>MaximumLineLength:HomePage.kt:HomePage$,</ID>
+    <ID>MaximumLineLength:LanAddressTest.kt:LanAddressTest$)</ID>
+    <ID>MaximumLineLength:LanAddressTest.kt:LanAddressTest$,</ID>
+    <ID>MaximumLineLength:ListLogic.kt:TopFilter.Companion$)</ID>
+    <ID>MaximumLineLength:ListsAssets.kt:ListsAssets$)</ID>
+    <ID>MaximumLineLength:ListsAssets.kt:ListsAssets$}</ID>
+    <ID>MaximumLineLength:ListsTest.kt:ListsTest$)</ID>
+    <ID>MaximumLineLength:LoginCryptoTest.kt:LoginCryptoTest$ECPrivateKey</ID>
+    <ID>MaximumLineLength:LoginServer.kt:LoginServer$)</ID>
+    <ID>MaximumLineLength:LoginServer.kt:LoginServer$}</ID>
+    <ID>MaximumLineLength:LoginServer.kt:LoginServer.Companion$)</ID>
+    <ID>MaximumLineLength:OscarPage.kt:OscarPage$)</ID>
+    <ID>MaximumLineLength:OscarPage.kt:OscarPage$GONE</ID>
+    <ID>MaximumLineLength:OscarPage.kt:OscarPage.YearAdapter$)</ID>
+    <ID>MaximumLineLength:PageCache.kt:CacheJson$)</ID>
+    <ID>MaximumLineLength:PageCache.kt:PageCache$}</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$)</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$,</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$-&gt;</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$VISIBLE</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$duration</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$episodes</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$return</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity${</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity$}</ID>
+    <ID>MaximumLineLength:PlayerActivity.kt:PlayerActivity.PlayerListener$}</ID>
+    <ID>MaximumLineLength:PlayerGlue.kt:PlayerGlue.ActionPresenter$)</ID>
+    <ID>MaximumLineLength:PlayerGlue.kt:PlayerGlue.ActionPresenter$0</ID>
+    <ID>MaximumLineLength:PosterAdapter.kt:PosterAdapter$)</ID>
+    <ID>MaximumLineLength:PosterAdapter.kt:PosterAdapter$}</ID>
+    <ID>MaximumLineLength:Progress.kt:Progress$=</ID>
+    <ID>MaximumLineLength:Progress.kt:ResumeStore$)</ID>
+    <ID>MaximumLineLength:Qr.kt:LanAddress$)</ID>
+    <ID>MaximumLineLength:Qr.kt:LanAddress$}</ID>
+    <ID>MaximumLineLength:Resume.kt:)</ID>
+    <ID>MaximumLineLength:Resume.kt:,</ID>
+    <ID>MaximumLineLength:ResumePlannerTest.kt:ResumePlannerTest$)</ID>
+    <ID>MaximumLineLength:ResumePlannerTest.kt:ResumePlannerTest$,</ID>
+    <ID>MaximumLineLength:ResumePlannerTest.kt:ResumePlannerTest$=</ID>
+    <ID>MaximumLineLength:RezkaActivity.kt:RezkaActivity${</ID>
+    <ID>MaximumLineLength:RezkaClient.kt:RezkaClient$)</ID>
+    <ID>MaximumLineLength:RezkaParserTest.kt:RezkaParserTest$)</ID>
+    <ID>MaximumLineLength:RezkaParserTest.kt:RezkaParserTest$+</ID>
+    <ID>MaximumLineLength:Settings.kt:Settings.Companion$1000</ID>
+    <ID>MaximumLineLength:SettingsActivity.kt:SettingsActivity.PrefsFragment$)</ID>
+    <ID>MaximumLineLength:SettingsTest.kt:SettingsTest$}</ID>
+    <ID>MaximumLineLength:StreamParserTest.kt:StreamParserTest$)</ID>
+    <ID>MaximumLineLength:StreamParserTest.kt:StreamParserTest$,</ID>
+    <ID>MaximumLineLength:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$)</ID>
+    <ID>MaximumLineLength:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$}</ID>
+    <ID>MaximumLineLength:TitleMarks.kt:TitleMarks$null</ID>
+    <ID>MaximumLineLength:TopPage.kt:TopPage$)</ID>
+    <ID>MaximumLineLength:WatchSession.kt:WatchSession$)</ID>
+    <ID>MaximumLineLength:WatchSession.kt:WatchSession.Companion$,</ID>
+    <ID>MaximumLineLength:Watched.kt:WatchedStore.Companion$}</ID>
+    <ID>MultiLineIfElse:DetailsActivity.kt:DetailsActivity$description.setText(R.string.load_failed)</ID>
+    <ID>MultiLineIfElse:EpisodeNav.kt:EpisodeNav$episodes.firstOrNull { compare(it, season, episode) &gt; 0 }</ID>
+    <ID>MultiLineIfElse:EpisodeNav.kt:EpisodeNav$episodes.getOrNull(index + 1)</ID>
+    <ID>MultiLineIfElse:EpisodeNav.kt:EpisodeNav$episodes.getOrNull(index - 1)</ID>
+    <ID>MultiLineIfElse:EpisodeNav.kt:EpisodeNav$episodes.lastOrNull { compare(it, season, episode) &lt; 0 }</ID>
+    <ID>MultiLineIfElse:GridPage.kt:GridPage$info.text = ""</ID>
+    <ID>MultiLineIfElse:GridPage.kt:GridPage$showPage(cached.value)</ID>
+    <ID>MultiLineIfElse:OscarPage.kt:OscarPage$activity.getString(R.string.oscar_progress, p.watched, p.total)</ID>
+    <ID>MultiLineIfElse:OscarPage.kt:OscarPage$activity.getString(R.string.oscar_progress_missing, p.watched, p.total, p.missing)</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$EpisodeNav.next(episodes, current.season, current.episode)</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$EpisodeNav.previous(episodes, current.season, current.episode)</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$getString(R.string.resumed_other_device_episode, target.code)</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$getString(R.string.resumed_other_device_translator, t.name)</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$loadingView.visibility = View.VISIBLE</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$player.pause()</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity$positionMs</ID>
+    <ID>MultiLineIfElse:PlayerActivity.kt:PlayerActivity.PlayerListener$handler.post { if (!player.playWhenReady &amp;&amp; seekProvider?.seeking != true) saveProgress(toServer = true) }</ID>
+    <ID>MultiLineIfElse:PlayerGlue.kt:PlayerGlue.ActionPresenter$view.setCompoundDrawables(icon, null, null, null)</ID>
+    <ID>MultiLineIfElse:PlayerGlue.kt:PlayerGlue.ActionPresenter$view.setCompoundDrawables(null, null, icon, null)</ID>
+    <ID>MultiLineIfElse:PlayerKeys.kt:PlayerKeys$null</ID>
+    <ID>MultiLineIfElse:PlayerKeys.kt:PlayerKeys$when (keyCode) { KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -&gt; PlayerCommand("toggle") KeyEvent.KEYCODE_MEDIA_PLAY -&gt; PlayerCommand("play") KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_STOP -&gt; PlayerCommand("pause") KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -&gt; PlayerCommand("controls") KeyEvent.KEYCODE_BACK -&gt; PlayerCommand("exit") else -&gt; null }</ID>
+    <ID>MultiLineIfElse:PosterAdapter.kt:PosterAdapter$MISSING</ID>
+    <ID>MultiLineIfElse:PosterAdapter.kt:PosterAdapter$NORMAL</ID>
+    <ID>MultiLineIfElse:PosterAdapter.kt:PosterAdapter$R.color.text</ID>
+    <ID>MultiLineIfElse:PosterAdapter.kt:PosterAdapter$R.color.text_dim</ID>
+    <ID>MultiLineIfElse:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$scope.launch { delay(PREFETCH_DELAY_MS) withContext(Dispatchers.IO) { tiles.map { it.url }.distinct().forEach { url -&gt; runCatching { Glide.with(this@ThumbnailSeekProvider.context).downloadOnly().load(url).submit().get() } } } }</ID>
+    <ID>MultilineLoop:OscarPage.kt:OscarPage$categoryChips.getChildAt(i).let { it.visibility = if (all != null &amp;&amp; (it.tag as OscarCategory) in all.categories) View.VISIBLE else View.GONE }</ID>
+    <ID>NoBlankLineBeforeRbrace:WatchSessionTest.kt:WatchSessionTest$ </ID>
+    <ID>NoConsecutiveBlankLines:ListLogic.kt:ListText$ </ID>
+    <ID>NoConsecutiveBlankLines:ListsData.kt: </ID>
+    <ID>ParameterListWrapping:HomePage.kt:HomePage.RowHolder.&lt;no name provided&gt;$( parent: RecyclerView, child: RecyclerView.ViewHolder?, position: Int, subposition: Int, )</ID>
+    <ID>ParameterListWrapping:ListLogic.kt:TopFilter.Companion$(items: List&lt;TopItem&gt;)</ID>
+    <ID>ParameterListWrapping:ListsAssets.kt:ListsAssets$(context: Context)</ID>
+    <ID>ParameterListWrapping:LoginCryptoTest.kt:LoginCryptoTest$(crypto: LoginCrypto = tvCrypto(), phoneKey: String = fixture.getString("p"), iv: String = fixture.getString("iv"), c: String = fixture.getString("c"), token: String = fixture.getString("token"))</ID>
+    <ID>PropertyWrapping:ListsAssets.kt:ListsAssets$private val scope = CoroutineScope(SupervisorJob() + Executors.newSingleThreadExecutor { Thread(it, "lists") }.asCoroutineDispatcher())</ID>
+    <ID>PropertyWrapping:LoginServer.kt:LoginServer.Companion$private val REASONS = mapOf(200 to "OK", 400 to "Bad Request", 403 to "Forbidden", 404 to "Not Found", 405 to "Method Not Allowed", 410 to "Gone")</ID>
+    <ID>PropertyWrapping:OscarPage.kt:OscarPage.YearAdapter$val holder = Holder(LayoutInflater.from(parent.context).inflate(R.layout.item_chip, parent, false) as TextView)</ID>
+    <ID>PropertyWrapping:Resume.kt:val position = getString(R.string.continue_position, TimeText.format(session.positionMs), TimeText.format(session.durationMs))</ID>
+    <ID>PropertyWrapping:RezkaClient.kt:RezkaClient$val params = listOf("id" to d.id, "translator_id" to translator.id, "favs" to d.favs.orEmpty(), "action" to "get_episodes")</ID>
+    <ID>ReturnCount:DetailsActivity.kt:DetailsActivity$private fun primary: Primary</ID>
+    <ID>ReturnCount:HomePage.kt:HomePage$private fun progress: Int?</ID>
+    <ID>ReturnCount:LoginResult.kt:LoginResult.Companion$fun parse: LoginResult</ID>
+    <ID>ReturnCount:LoginServer.kt:HttpRequest.Companion$fun read: HttpRequest?</ID>
+    <ID>ReturnCount:LoginServer.kt:HttpRequest.Companion$private fun readLine: String?</ID>
+    <ID>ReturnCount:LoginServer.kt:LoginServer$private fun handleLogin</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$override fun dispatchKeyEvent: Boolean</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun currentSession: WatchSession?</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun installSeekProvider</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun moveThumbnail</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun onPlaybackKey: Boolean</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun saveProgress</ID>
+    <ID>ReturnCount:PlayerActivity.kt:PlayerActivity$private fun updateNextUp</ID>
+    <ID>ReturnCount:ResumePlanner.kt:ResumePlanner$fun plan: ResumePlan?</ID>
+    <ID>ReturnCount:RezkaActivity.kt:RezkaActivity$override fun dispatchKeyEvent: Boolean</ID>
+    <ID>ReturnCount:RezkaClient.kt:RezkaClient$fun login: LoginResult</ID>
+    <ID>ReturnCount:Settings.kt:QualityPicker$fun pick: Quality?</ID>
+    <ID>ReturnCount:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$override fun getThumbnail</ID>
+    <ID>ReturnCount:TitleMarks.kt:TitleMarks$fun progress: Int?</ID>
+    <ID>ReturnCount:UrlPolicy.kt:UrlPolicy$fun allowNavigation: Boolean</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:LoginCode.kt:LoginCode.Companion$/** Статичная страница из `docs/login/` репозитория на GitHub Pages; в форке — свой адрес. */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Вышли из плеера сами (Назад) — продолжать не предлагаем */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Запустится ли видео само после загрузки потока (после пробуждения телевизора — нет, ждём OK) */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Идёт смена серии/озвучки: позиция плеера ещё от старого видео, сохранять её нельзя */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Когда экран погас при открытом плеере (elapsedRealtime), 0 — не гас */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** С какой позиции просили начать текущий запуск — для «Повторить», если поток не загрузился */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Сколько осталось до автозапуска следующей серии; тикает только во время воспроизведения, -1 — без отсчёта */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Ссылки на поток живут несколько часов: после долгой паузы один раз запрашиваем свежие */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Что последним успешно отправили на сайт — по этому видно, смотрели ли дальше на другом устройстве */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity$/** Экран не виден (Home, настройки): догрузившийся поток не должен заиграть сам */</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:PlayerActivity.kt:PlayerActivity.Companion$// Раз в минуту: «Досмотреть» на сайте и на других устройствах не отстаёт</ID>
+    <ID>StatementWrapping:CardAdapter.kt:CardAdapter$;</ID>
+    <ID>StatementWrapping:CardAdapter.kt:CardAdapter$handler(card); true</ID>
+    <ID>StatementWrapping:DetailsActivity.kt:DetailsActivity$;</ID>
+    <ID>StatementWrapping:DetailsActivity.kt:DetailsActivity$details?.let { watched.toggle(it.id) }; updateButtons()</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity$;</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ if (!down) choicePanel.hide(); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ if (!down) dismissNextUp(); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ if (!down) episodesPanel.hide(); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ if (!down) retry(); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ if (!down) switchEpisode(forward = true); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ switchEpisode(forward = false); return true }</ID>
+    <ID>StatementWrapping:PlayerActivity.kt:PlayerActivity${ switchEpisode(forward = true); return true }</ID>
+    <ID>SwallowedException:ListsAssets.kt:ListsAssets$e: FileNotFoundException</ID>
+    <ID>SwallowedException:Loader.kt:Loader$e: NotLoggedInException</ID>
+    <ID>SwallowedException:LoginCode.kt:FormData$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:LoginServer.kt:LoginServer$e: IOException</ID>
+    <ID>SwallowedException:UrlPolicy.kt:UrlPolicy$e: URISyntaxException</ID>
+    <ID>TooGenericExceptionCaught:ListsAssets.kt:ListsAssets$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Loader.kt:Loader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ThumbnailSeekProvider.kt:ThumbnailSeekProvider$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:WatchSession.kt:SessionStore$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Watched.kt:WatchedStore$e: Exception</ID>
+    <ID>TooManyFunctions:DetailsActivity.kt:DetailsActivity : Activity</ID>
+    <ID>TooManyFunctions:HomePage.kt:HomePage</ID>
+    <ID>TooManyFunctions:OscarPage.kt:OscarPage</ID>
+    <ID>TooManyFunctions:PlayerActivity.kt:PlayerActivity : FragmentActivity</ID>
+    <ID>TooManyFunctions:RezkaClient.kt:RezkaClient</ID>
+    <ID>TooManyFunctions:RezkaParser.kt:RezkaParser</ID>
+    <ID>TooManyFunctions:TopPage.kt:TopPage</ID>
+    <ID>TrailingCommaOnDeclarationSite:LoginCryptoTest.kt:LoginCryptoTest$(crypto: LoginCrypto = tvCrypto(), phoneKey: String = fixture.getString("p"), iv: String = fixture.getString("iv"), c: String = fixture.getString("c"), token: String = fixture.getString("token"))</ID>
+    <ID>TrailingCommaOnDeclarationSite:Model.kt:Category</ID>
+    <ID>Wrapping:ListsAssets.kt:ListsAssets$Thread(it, "lists")</ID>
+    <ID>Wrapping:ListsAssets.kt:ListsAssets$oscars = it</ID>
+    <ID>Wrapping:ListsTest.kt:ListsTest$it == "2"</ID>
+    <ID>Wrapping:LoginCryptoTest.kt:LoginCryptoTest$(</ID>
+    <ID>Wrapping:LoginServer.kt:LoginServer$handle(it)</ID>
+    <ID>Wrapping:LoginServer.kt:LoginServer$runCatching { handle(it) }.onFailure { e -&gt; Log.w(TAG, "login request failed: ${e.javaClass.simpleName}") }</ID>
+    <ID>Wrapping:OscarPage.kt:OscarPage$(</ID>
+    <ID>Wrapping:OscarPage.kt:OscarPage$(n, caption = when { n.won -&gt; activity.getString(R.string.winner) !n.onRezka -&gt; activity.getString(R.string.not_on_rezka) else -&gt; null }, winner = n.won)</ID>
+    <ID>Wrapping:PageCache.kt:CacheJson$(</ID>
+    <ID>Wrapping:PageCache.kt:CacheJson$("translators", JSONArray(d.translators.map { JSONObject().put("id", it.id).put("name", it.name).put("camrip", it.camrip).put("ads", it.ads).put("director", it.director) }))</ID>
+    <ID>Wrapping:PageCache.kt:CacheJson$JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode)</ID>
+    <ID>Wrapping:PageCache.kt:PageCache$Entry(CacheJson.page(json), time)</ID>
+    <ID>Wrapping:PlayerActivity.kt:PlayerActivity$(</ID>
+    <ID>Wrapping:PlayerActivity.kt:PlayerActivity.PlayerListener$it.type == C.TRACK_TYPE_TEXT &amp;&amp; it.isSelected &amp;&amp; it.mediaTrackGroup.getFormat(0).label == wanted.label</ID>
+    <ID>Wrapping:PosterAdapter.kt:PosterAdapter$it === MARKS</ID>
+    <ID>Wrapping:Qr.kt:LanAddress$(</ID>
+    <ID>Wrapping:SettingsActivity.kt:SettingsActivity.SettingsFragment$(</ID>
+    <ID>Wrapping:TopPage.kt:TopPage$marks.isWatched(it.id)</ID>
+    <ID>Wrapping:WatchSession.kt:WatchSession$JSONObject().put("t", it.translatorId).put("s", it.season).put("e", it.episode)</ID>
+  </CurrentIssues>
+</SmellBaseline>
