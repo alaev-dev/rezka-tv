@@ -1,4 +1,3 @@
-import re
 import subprocess
 import sys
 from fnmatch import fnmatch
@@ -7,7 +6,6 @@ from typing import NamedTuple
 MAX_LINES = 200
 MAX_FILES = 10
 EXEMPT = ("app/src/test/resources/*", "quality/*-baseline.xml")
-BRACED_RENAME = re.compile(r"\{[^{}]* => ([^{}]*)\}")
 
 
 class Change(NamedTuple):
@@ -15,20 +13,20 @@ class Change(NamedTuple):
     lines: int
 
 
-def renamed_target(path: str) -> str:
-    if "{" in path:
-        return BRACED_RENAME.sub(r"\1", path).replace("//", "/")
-    return path.split(" => ")[-1]
-
-
 def parse_numstat(text: str) -> list:
-    return [parse_row(row) for row in text.splitlines() if row.strip()]
+    fields = iter(text.split("\0"))
+    return [parse_record(record, fields) for record in fields if record]
 
 
-def parse_row(row: str) -> Change:
-    added, deleted, path = row.split("\t", 2)
+def parse_record(record: str, fields) -> Change:
+    added, deleted, path = record.split("\t", 2)
     lines = 0 if added == "-" else int(added) + int(deleted)
-    return Change(renamed_target(path), lines)
+    return Change(path or renamed_target(fields), lines)
+
+
+def renamed_target(fields) -> str:
+    next(fields)
+    return next(fields)
 
 
 def counted(changes: list) -> list:
@@ -47,7 +45,7 @@ def violations(changes: list) -> list:
 
 
 def numstat_since(base: str) -> str:
-    command = ["git", "diff", "--numstat", "-M", f"{base}...HEAD"]
+    command = ["git", "diff", "--numstat", "-z", "-M", f"{base}...HEAD"]
     return subprocess.run(command, check=True, capture_output=True, text=True).stdout
 
 
