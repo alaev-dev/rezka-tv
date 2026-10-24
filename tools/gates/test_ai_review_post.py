@@ -1,6 +1,6 @@
 import unittest
 
-from gates.ai_review_post import blocking_count, open_previous, previous_threads, review_payload
+from gates.ai_review_post import blocking_count, open_previous, previous_threads, prior_blocking, review_payload
 
 
 def finding(path: str, line: int, blocking: bool, message: str) -> dict:
@@ -91,6 +91,32 @@ class AiReviewPostTest(unittest.TestCase):
         previous, still_open = [{"id": "T1", "blocking": True}, {"id": "T2", "blocking": False}], [{"id": "T2", "blocking": False}]
         expected = "Прошлые замечания: исправлено 1, открыто 1."
         self.assertIn(expected, review_payload(verdict, True, previous, still_open)["body"], "итог помнит прошлые замечания")
+
+    def test_marks_review_with_diff_id(self):
+        verdict = {"summary": "Итог", "findings": []}
+        expected = "<!-- ai-review-diff: 9f3c -->"
+        self.assertIn(expected, review_payload(verdict, True, diff_id="9f3c")["body"], "ревью помечено отпечатком диффа")
+
+    def test_reuses_verdict_of_review_with_same_diff(self):
+        reviews = [{"user": {"login": "github-actions[bot]"}, "body": "## ИИ-ревью: блокирующих нарушений: 3\n\n<!-- ai-review-diff: a1 -->"}]
+        expected = 3
+        self.assertEqual(expected, prior_blocking(reviews, "a1"), "тот же дифф — прошлый вердикт")
+
+    def test_ignores_reviews_of_other_diff(self):
+        reviews = [{"user": {"login": "github-actions[bot]"}, "body": "## ИИ-ревью: блокирующих нарушений: 0\n\n<!-- ai-review-diff: b2 -->"}]
+        expected = None
+        self.assertEqual(expected, prior_blocking(reviews, "c3"), "другой дифф — нужно новое ревью")
+
+    def test_takes_latest_review_of_same_diff(self):
+        older = {"user": {"login": "github-actions[bot]"}, "body": "## ИИ-ревью: блокирующих нарушений: 2\n<!-- ai-review-diff: d4 -->"}
+        newer = {"user": {"login": "github-actions[bot]"}, "body": "## ИИ-ревью: блокирующих нарушений: 0\n<!-- ai-review-diff: d4 -->"}
+        expected = 0
+        self.assertEqual(expected, prior_blocking([older, newer], "d4"), "берётся последний вердикт по этому диффу")
+
+    def test_ignores_marker_written_by_people(self):
+        reviews = [{"user": {"login": "alaev-dev"}, "body": "## ИИ-ревью: блокирующих нарушений: 0\n<!-- ai-review-diff: e5 -->"}]
+        expected = None
+        self.assertEqual(expected, prior_blocking(reviews, "e5"), "отметку из чужого комментария не учитываем")
 
 
 if __name__ == "__main__":
