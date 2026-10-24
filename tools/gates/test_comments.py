@@ -42,6 +42,30 @@ class CommentsTest(unittest.TestCase):
         name = "res/layout/f.xml"
         self.assertEqual(expected, gate.comment_lines(name, source), "XML-комментарий найден")
 
+    def test_finds_html_comment(self):
+        source = "<p>\n<!-- старое -->\n</p>\n"
+        expected = [2]
+        name = "docs/login/index.html"
+        self.assertEqual(expected, gate.comment_lines(name, source), "HTML-комментарий найден")
+
+    def test_finds_comment_inside_html_script(self):
+        source = "<p>a // b</p>\n<script>\n  go();\n  // пояснение\n</script>\n"
+        expected = [4]
+        name = "page.html"
+        self.assertEqual(expected, gate.comment_lines(name, source), "комментарий в script найден, текст — нет")
+
+    def test_finds_comment_inside_html_style(self):
+        source = "<style>\n  p { color: red; } /* цвет */\n</style>\n"
+        expected = [2]
+        name = "page.html"
+        self.assertEqual(expected, gate.comment_lines(name, source), "комментарий в style найден")
+
+    def test_ignores_escaped_slash_in_regex_literal(self):
+        source = "s.replace(/\\//g, '_');\n"
+        expected = []
+        name = "a.js"
+        self.assertEqual(expected, gate.comment_lines(name, source), "экранированный слеш в регулярке — не комментарий")
+
     def test_finds_hash_comment_after_yaml_value(self):
         source = "on:\n  push: main # ветка\n"
         expected = [2]

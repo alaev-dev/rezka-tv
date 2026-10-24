@@ -8,6 +8,7 @@ from pathlib import Path
 
 LEDGER = "quality/comments-baseline.txt"
 HASH = re.compile(r"(^|\s)#")
+EMBEDDED = re.compile(r"<(script|style)\b[^>]*>(.*?)</\1>", re.DOTALL | re.IGNORECASE)
 QUOTED = re.compile(r"\"(\\.|[^\"\\])*\"|'[^']*'")
 
 
@@ -30,6 +31,8 @@ def c_like_comments(text: str) -> list:
             end = block_end(text, i + 3, '"""')
         elif text[i] in "\"'`":
             end = string_end(text, i, text[i])
+        elif text[i] == "\\":
+            end = min(i + 2, len(text))
         elif text.startswith("//", i):
             found.append(line)
             end = block_end(text, i, "\n") - 1
@@ -45,6 +48,15 @@ def c_like_comments(text: str) -> list:
 
 def xml_comments(text: str) -> list:
     return [n for n, row in enumerate(text.splitlines(), 1) if "<!--" in row]
+
+
+def html_comments(text: str) -> list:
+    embedded = [
+        text.count("\n", 0, block.start(2)) + n
+        for block in EMBEDDED.finditer(text)
+        for n in c_like_comments(block.group(2))
+    ]
+    return sorted(set(xml_comments(text) + embedded))
 
 
 def hash_comments(text: str) -> list:
@@ -83,6 +95,7 @@ SCANNERS = {
     ".mjs": c_like_comments,
     ".js": c_like_comments,
     ".xml": xml_comments,
+    ".html": html_comments,
     ".py": python_comments,
     ".yml": hash_comments,
     ".yaml": hash_comments,
