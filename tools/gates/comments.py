@@ -121,9 +121,14 @@ def parse_ledger(text: str) -> set:
 
 
 def violations(found: dict, ledger: set, changed: set) -> list:
-    fresh = [(p, n, "комментарий запрещён: удалите его") for p, lines in found.items() if p not in ledger for n in lines]
-    touched = [(p, lines[0], "файл правится: удалите в нём все комментарии и уберите его из журнала")
-               for p, lines in found.items() if p in ledger and p in changed]
+    fresh = [
+        (p, n, "комментарий запрещён: удалите его") for p, lines in found.items() if p not in ledger for n in lines
+    ]
+    touched = [
+        (p, lines[0], "файл правится: удалите в нём все комментарии и уберите его из журнала")
+        for p, lines in found.items()
+        if p in ledger and p in changed
+    ]
     stale = [(p, 1, f"комментариев нет: уберите файл из {LEDGER}") for p in sorted(ledger) if p not in found]
     return sorted(fresh + touched) + stale
 

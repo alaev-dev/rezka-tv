@@ -8,7 +8,6 @@ def changes(count: int, lines: int, folder: str = "app/src/main") -> list:
 
 
 class PrSizeTest(unittest.TestCase):
-
     def test_accepts_change_at_line_limit(self):
         self.assertEqual([], violations(changes(2, 100)), "200 строк — ещё в пределе")
 
@@ -44,7 +43,7 @@ class PrSizeTest(unittest.TestCase):
         self.assertEqual("app/core/Parser.kt", parsed[0].path, "переименование засчитывается по новому пути")
 
     def test_reads_record_after_rename(self):
-        parsed = parse_numstat("0\t0\t\0Old.kt\0New.kt\0" "2\t5\tNext.kt\0")
+        parsed = parse_numstat("0\t0\t\0Old.kt\0New.kt\x002\t5\tNext.kt\0")
         self.assertEqual(Change("Next.kt", 7), parsed[1], "запись после переименования читается целиком")
 
     def test_counts_file_whose_name_only_looks_like_rename(self):

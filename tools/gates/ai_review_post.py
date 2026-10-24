@@ -26,7 +26,13 @@ def previous_threads(response: dict) -> list:
 
 def thread_summary(node: dict) -> dict:
     body = node["comments"]["nodes"][0]["body"]
-    return {"id": node["id"], "path": node["path"], "line": node["line"], "blocking": body.startswith(BLOCKING), "body": body}
+    return {
+        "id": node["id"],
+        "path": node["path"],
+        "line": node["line"],
+        "blocking": body.startswith(BLOCKING),
+        "body": body,
+    }
 
 
 def open_previous(previous: list, verdict: dict) -> list:

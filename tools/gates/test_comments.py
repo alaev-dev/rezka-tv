@@ -6,9 +6,8 @@ from gates import comments as gate
 
 
 class CommentsTest(unittest.TestCase):
-
     def test_finds_line_comment_in_kotlin(self):
-        source = 'val ёж = 7\n// пояснение\n'
+        source = "val ёж = 7\n// пояснение\n"
         expected = [2]
         name = "A.kt"
         self.assertEqual(expected, gate.comment_lines(name, source), "строчный комментарий Kotlin найден")
@@ -38,7 +37,7 @@ class CommentsTest(unittest.TestCase):
         self.assertEqual(expected, gate.comment_lines(name, source), "номер строки учитывает многострочную строку")
 
     def test_finds_xml_comment(self):
-        source = '<a>\n  <!-- старое -->\n</a>\n'
+        source = "<a>\n  <!-- старое -->\n</a>\n"
         expected = [2]
         name = "res/layout/f.xml"
         self.assertEqual(expected, gate.comment_lines(name, source), "XML-комментарий найден")
@@ -107,7 +106,9 @@ class CommentsTest(unittest.TestCase):
         source = "const page = 'https://rezka.test/'\n"
         name = "F.js"
         expected = []
-        self.assertEqual(expected, gate.comment_lines(name, source), "слеши в строке в одинарных кавычках — не комментарий")
+        self.assertEqual(
+            expected, gate.comment_lines(name, source), "слеши в строке в одинарных кавычках — не комментарий"
+        )
 
     def test_ignores_slashes_inside_template_literal(self):
         source = "const u = `https://${host}/`\n"
@@ -168,7 +169,9 @@ class CommentsTest(unittest.TestCase):
         found = {"app/M.kt": [8]}
         ledger = {"app/M.kt"}
         expected = [("app/M.kt", 8, "файл правится: удалите в нём все комментарии и уберите его из журнала")]
-        self.assertEqual(expected, gate.violations(found, ledger, ledger), "правка файла требует убрать в нём комментарии")
+        self.assertEqual(
+            expected, gate.violations(found, ledger, ledger), "правка файла требует убрать в нём комментарии"
+        )
 
     def test_reports_clean_file_left_in_ledger(self):
         ledger = {"app/N.kt"}
