@@ -9,18 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import dev.alaev.rezkatv.R
 
-/** Постеры в ряду или сетке. Фокус увеличивает карточку и сообщает наружу. */
 class CardAdapter(
     private val onFocus: (Card) -> Unit = {},
     private val onLongClick: ((Card) -> Unit)? = null,
-    /** Доля просмотра 0..100 для полоски под постером, null — без полоски */
     private val progressOf: (Card) -> Int? = { null },
     private val onClick: (Card) -> Unit,
 ) : RecyclerView.Adapter<CardAdapter.Holder>() {
 
     private val cards = mutableListOf<Card>()
 
-    /** Вызывается, когда до конца списка осталось несколько карточек — пора грузить следующую страницу. */
     var onNearEnd: (() -> Unit)? = null
 
     val items: List<Card> get() = cards
@@ -31,7 +28,6 @@ class CardAdapter(
         notifyItemRangeInserted(start, more.size)
     }
 
-    /** Новый список; если ничего не поменялось — ничего не перерисовываем. */
     fun replace(all: List<Card>): Boolean {
         if (all == cards) return false
         cards.clear()
@@ -61,7 +57,6 @@ class CardAdapter(
         val card = cards[position]
         holder.itemView.tag = card
         Images.poster(holder.poster, card.poster)
-        // «2 сезон 7 серия (Озвучка)» → «2 сезон 7 серия»
         val badge = card.badge?.substringBefore(" (")
         holder.badge.text = badge
         holder.badge.visibility = if (badge.isNullOrEmpty()) View.GONE else View.VISIBLE

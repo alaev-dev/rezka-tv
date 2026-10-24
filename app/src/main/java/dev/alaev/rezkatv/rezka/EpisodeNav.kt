@@ -1,6 +1,5 @@
 package dev.alaev.rezkatv.rezka
 
-/** Соседние серии в порядке сайта: через границу сезона, null на краях. */
 object EpisodeNav {
 
     fun next(episodes: List<Episode>, season: Int, episode: Int): Episode? {

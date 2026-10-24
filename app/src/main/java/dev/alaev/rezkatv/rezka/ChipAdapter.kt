@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import dev.alaev.rezkatv.R
 
-/** Текстовые пункты: строки панелей, клавиши поиска. Выбранный подсвечивается через activated. */
 class ChipAdapter(
     private val labels: List<String>,
     private var activated: Int = -1,

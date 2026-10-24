@@ -1,14 +1,4 @@
-app/src/main/java/dev/alaev/rezkatv/rezka/CardAdapter.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/ChipAdapter.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/EpisodeNav.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListLogic.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListsAssets.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/ListsData.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/OpenTitle.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/OscarPage.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/PosterAdapter.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/lists/TitleMarks.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/lists/TopPage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCode.kt

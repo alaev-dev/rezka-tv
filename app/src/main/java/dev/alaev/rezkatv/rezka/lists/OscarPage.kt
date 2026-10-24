@@ -19,11 +19,6 @@ import dev.alaev.rezkatv.R
 import dev.alaev.rezkatv.rezka.RezkaClient
 import dev.alaev.rezkatv.rezka.pinFocusToStart
 
-/**
- * «Оскар»: церемонии от новых к старым с прогрессом «3 из 10», номинанты выбранной (победитель первым).
- * Прогресс считает только фильмы, которые есть на rezka: остальные нельзя посмотреть здесь,
- * они показаны серыми и посчитаны отдельно («ещё 12 нет на rezka»).
- */
 class OscarPage(
     private val activity: Activity,
     private val client: RezkaClient,
@@ -46,7 +41,6 @@ class OscarPage(
     private var loadJob: Job? = null
     private var focusOnLoad = false
     private var category = OscarCategory.PICTURE
-    /** Церемонии, где есть выбранная категория */
     private var ceremonies: List<Ceremony> = emptyList()
     private var selected = 0
     private var nominees: List<Nominee> = emptyList()
@@ -61,8 +55,6 @@ class OscarPage(
         grid.horizontalSpacing = spacing + spacing / 2
         grid.verticalSpacing = spacing + spacing / 2
         grid.adapter = adapter
-        // Вверх с первого ряда номинантов — всегда на выбранный год: поиск фокуса по геометрии
-        // иногда перескакивает ряд лет и попадает на категории
         grid.setOnKeyInterceptListener { e ->
             val up = e.keyCode == KeyEvent.KEYCODE_DPAD_UP && e.action == KeyEvent.ACTION_DOWN
             up && grid.selectedPosition < COLUMNS && years.requestFocus()
@@ -82,7 +74,6 @@ class OscarPage(
             val all = ListsAssets.oscars(activity).await()
             oscars = all
             loaded = true
-            // Категорий без номинантов в данных нет — их чипы убираем
             for (i in 0 until categoryChips.childCount) categoryChips.getChildAt(i).let {
                 it.visibility = if (all != null && (it.tag as OscarCategory) in all.categories) View.VISIBLE else View.GONE
             }
@@ -93,7 +84,6 @@ class OscarPage(
             } else {
                 selectCategory(if (category in all.categories) category else all.categories.first())
             }
-            // Фокус ждал на категориях — переводим на номинантов; если пользователь ушёл в меню, не трогаем
             if (focusOnLoad && page.hasFocus()) focus()
             focusOnLoad = false
         }
@@ -105,19 +95,16 @@ class OscarPage(
     }
 
     fun focus() {
-        // Список ещё разбирается: фокус перейдёт на номинантов, когда они появятся
         if (!loaded) focusOnLoad = true
         if (adapter.itemCount > 0) grid.requestFocus() else categoryChips.findViewWithTag<View>(category)?.requestFocus()
     }
 
-    /** Back: из глубины сетки — наверх, иначе — в меню. */
     fun onBack(): Boolean {
         if (!grid.hasFocus() || grid.selectedPosition < COLUMNS) return false
         grid.setSelectedPositionSmooth(0)
         return true
     }
 
-    /** Вернулись со страницы тайтла или из плеера: отметки и прогресс могли измениться. */
     fun refresh() {
         if (!loaded) return
         marks.refresh()
@@ -142,13 +129,11 @@ class OscarPage(
 
     private fun selectCategory(c: OscarCategory) {
         val all = oscars ?: return
-        // Отложенный выбор года относится к прежнему списку церемоний
         selectJob?.cancel()
         val current = ceremonies.getOrNull(selected)?.number
         category = c
         for (i in 0 until categoryChips.childCount) categoryChips.getChildAt(i).let { it.isActivated = it.tag == c }
         ceremonies = all.ceremonies.filter { c in it.nominees }
-        // Та же церемония, если в ней есть эта категория, иначе — самая новая
         selected = ceremonies.indexOfFirst { it.number == current }.coerceAtLeast(0)
         yearAdapter.notifyDataSetChanged()
         years.selectedPosition = selected
@@ -235,7 +220,6 @@ class OscarPage(
             holder.text.setOnFocusChangeListener { _, focused ->
                 val position = holder.bindingAdapterPosition
                 if (!focused || position == RecyclerView.NO_POSITION) return@setOnFocusChangeListener
-                // Номинанты меняются, когда пользователь остановился на году: пролёт по ряду не грузит постеры зря
                 selectJob?.cancel()
                 selectJob = scope.launch {
                     delay(SELECT_DELAY_MS)
@@ -256,7 +240,6 @@ class OscarPage(
                 else -> activity.getString(R.string.oscar_year, c.year, p.watched, p.total)
             }
             holder.text.isActivated = position == selected
-            // Вверх с любого года — на выбранную категорию, а не на ближайшую по горизонтали
             holder.text.nextFocusUpId = categoryChips.findViewWithTag<View>(category)?.id ?: View.NO_ID
         }
 
