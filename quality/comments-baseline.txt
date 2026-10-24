@@ -9,5 +9,4 @@ app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/WatchedStoreTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt
-app/src/test/java/dev/alaev/rezkatv/session/ResumePlannerTest.kt
 docs/login/index.html
