@@ -67,3 +67,9 @@ class DiffRulesTest(unittest.TestCase):
         before, after = {code: "val a = 1\n", test: "val b = 1\n"}, {code: "val a = 2\n", test: "val  b = 1\n"}
         expected = [f"код меняется без тестов: {code}"]
         self.assertEqual(expected, gate.untested_change(before, after), "пробелы в тесте не считаются тестом")
+
+    def test_reports_tests_lost_in_moved_file(self):
+        old, new = "app/src/test/a/ATest.kt", "app/src/test/b/ATest.kt"
+        before, after = {old: "@Test fun a()\n@Test fun b()\n"}, {new: "@Test fun a()\n"}
+        expected = ["тестов стало меньше: было 2, стало 1; тесты не удаляют, а исправляют"]
+        self.assertEqual(expected, gate.lost_tests(before, after), "перенос файла не прячет потерю тестов")

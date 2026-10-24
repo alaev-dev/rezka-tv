@@ -41,7 +41,7 @@ def contents(ref: str, paths: list) -> dict:
 
 def main(base: str) -> int:
     since = git("merge-base", base, "HEAD").strip()
-    changed = git("diff", "--name-only", since, "HEAD").splitlines()
+    changed = git("diff", "--name-only", "--no-renames", since, "HEAD").splitlines()
     before, after = contents(since, changed), contents("HEAD", changed)
     problems = lost_tests(before, after) + untested_change(before, after)
     print("\n".join(f"::error title=Тесты в PR::{problem}" for problem in problems))
