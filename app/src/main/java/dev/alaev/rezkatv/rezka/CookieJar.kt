@@ -6,11 +6,6 @@ import android.webkit.CookieManager
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-/**
- * Свои cookies сайта: чтобы родные экраны и плеер не поднимали движок WebView (секунды и десятки МБ),
- * держим копию в SharedPreferences. WebView остаётся только для входа и режима «Сайт»:
- * перед ним копия выгружается в CookieManager, после — забирается обратно.
- */
 class CookieJar(context: Context) {
 
     private val prefs = context.getSharedPreferences("cookies", Context.MODE_PRIVATE)
@@ -24,7 +19,7 @@ class CookieJar(context: Context) {
 
     fun has(name: String) = synchronized(lock) { prefs.contains(name) }
 
-    fun update(setCookieHeaders: List<String>) = synchronized(lock) {
+    fun update(setCookieHeaders: List<String>): Unit = synchronized(lock) {
         if (setCookieHeaders.isEmpty()) return
         val editor = prefs.edit()
         setCookieHeaders.mapNotNull { Cookies.parseSetCookie(it, System.currentTimeMillis()) }.forEach {
@@ -35,7 +30,6 @@ class CookieJar(context: Context) {
 
     fun clear() = synchronized(lock) { prefs.edit().clear().apply() }
 
-    /** Новая сессия после входа: прежние cookies (в том числе чужого аккаунта) не нужны. */
     fun replaceWith(setCookieHeaders: List<String>) = synchronized(lock) {
         val editor = prefs.edit().clear()
         setCookieHeaders.mapNotNull { Cookies.parseSetCookie(it, System.currentTimeMillis()) }
@@ -44,8 +38,7 @@ class CookieJar(context: Context) {
         editor.apply()
     }
 
-    /** Только с главного потока: CookieManager поднимает WebView. */
-    fun importFromWebView(baseUrl: String) = synchronized(lock) {
+    fun importFromWebView(baseUrl: String): Unit = synchronized(lock) {
         val cookies = Cookies.parseHeader(CookieManager.getInstance().getCookie(baseUrl))
         if (cookies.isEmpty()) return
         val editor = prefs.edit().clear()
@@ -53,10 +46,6 @@ class CookieJar(context: Context) {
         editor.apply()
     }
 
-    /**
-     * Пишем только то, что отличается: сайт ставит cookies на весь домен (.rezka.fi),
-     * и копия без Domain стала бы второй, «теневой» cookie с тем же именем.
-     */
     fun exportToWebView(baseUrl: String) = synchronized(lock) {
         val manager = CookieManager.getInstance()
         val current = Cookies.parseHeader(manager.getCookie(baseUrl))
@@ -74,12 +63,10 @@ class CookieJar(context: Context) {
     }
 }
 
-/** Разбор заголовков Cookie / Set-Cookie. */
 object Cookies {
 
     data class SetCookie(val name: String, val value: String, val expired: Boolean)
 
-    /** «a=1; b=2» → {a=1, b=2} */
     fun parseHeader(header: String?): Map<String, String> =
         header.orEmpty().split(';').mapNotNull { part ->
             val name = part.substringBefore('=', "").trim()
@@ -103,7 +90,6 @@ object Cookies {
         return SetCookie(name, value, expired)
     }
 
-    // Дату пишут и как «Thu, 19 Nov 1981 08:52:00 GMT», и как «Thu, 19-Nov-1981 08:52:00 GMT»
     private val DATE_PARTS = Regex("""(\d{1,2})[ -](\w{3})[ -](\d{4})""")
 
     private fun parseDate(text: String): Long? = runCatching {

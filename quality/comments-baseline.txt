@@ -7,7 +7,6 @@ app/src/main/java/dev/alaev/rezkatv/UrlPolicy.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/BrowseActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/CardAdapter.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/ChipAdapter.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/CookieJar.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/EpisodeNav.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/GridPage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/Grids.kt
@@ -39,7 +38,6 @@ app/src/main/java/dev/alaev/rezkatv/rezka/lists/TopPage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginActivity.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCode.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCrypto.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginResult.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginServer.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/PhonePage.kt
 app/src/main/java/dev/alaev/rezkatv/rezka/login/Qr.kt

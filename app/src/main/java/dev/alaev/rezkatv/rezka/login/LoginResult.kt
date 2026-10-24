@@ -2,7 +2,6 @@ package dev.alaev.rezkatv.rezka.login
 
 import org.json.JSONObject
 
-/** Ответ /ajax/login/: {"success":true} или {"success":false,"message":"…" | {"поле":"…"}}. */
 data class LoginResult(val success: Boolean, val message: String) {
 
     companion object {
@@ -15,6 +14,7 @@ data class LoginResult(val success: Boolean, val message: String) {
             val raw = when (val message = obj.opt("message")) {
                 is JSONObject -> message.keys().asSequence().map { message.optString(it) }.joinToString("\n")
                 is String -> message
+                null -> ""
                 else -> ""
             }
             val text = raw.replace(TAGS, " ").replace(Regex("\\s+"), " ").trim()
