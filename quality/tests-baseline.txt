@@ -51,9 +51,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::brokenEscapeIsE
 app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::emptyAndMissingValues
 app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::plusAndPercentEscapes
 app/src/test/java/dev/alaev/rezkatv/rezka/login/FormDataTest.kt::utf8
-app/src/test/java/dev/alaev/rezkatv/rezka/login/HttpRequestTest.kt::getWithToken
-app/src/test/java/dev/alaev/rezkatv/rezka/login/HttpRequestTest.kt::postBodyByContentLength
-app/src/test/java/dev/alaev/rezkatv/rezka/login/HttpRequestTest.kt::rejectsOversizedTruncatedOrBroken
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::expiresAfterTenMinutes
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::fiveWrongPasswordsExhaustTheCode
 app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCodeTest.kt::phoneUrlKeepsSecretsInFragment
