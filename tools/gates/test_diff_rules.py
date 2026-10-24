@@ -21,6 +21,12 @@ class DiffRulesTest(unittest.TestCase):
         expected = []
         self.assertEqual(expected, gate.lost_tests(before, after), "перевод теста не уменьшает их число")
 
+    def test_accepts_renamed_test(self):
+        path = "app/src/test/A.kt"
+        before, after = {path: "@Test fun a()\n"}, {path: "@Test fun formatsTime()\n"}
+        expected = []
+        self.assertEqual(expected, gate.lost_tests(before, after), "переименование теста не потеря")
+
     def test_reports_removed_test(self):
         path = "app/src/test/A.kt"
         before, after = {path: "@Test fun a()\n@Test fun b()\n"}, {path: "@Test fun a()\n"}
