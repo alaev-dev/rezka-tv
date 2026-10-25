@@ -18,7 +18,8 @@
 
 ## Сборка и проверка
 - `./gradlew verify` — все быстрые проверки одной командой, как в CI.
-- `./gradlew testDebugUnitTest` — юнит-тесты (JUnit 4, `app/src/test`, фикстуры в `app/src/test/resources`).
+- `./gradlew testDebugUnitTest` — юнит-тесты (JUnit 5 + Hamcrest, старые — JUnit 4 через Vintage до перевода; `app/src/test`,
+  фикстуры в `app/src/test/resources`). Seed случайных данных печатается в лог, повтор — `-Pseed=…`.
 - `./gradlew assembleRelease` — `app/build/outputs/apk/release/app-release.apk`.
 - `python3 -m unittest discover -s tools` — тесты `tools`.
 - JDK 17, Android SDK platform 36. `local.properties` (sdk.dir) — свой на каждой машине, не в git.

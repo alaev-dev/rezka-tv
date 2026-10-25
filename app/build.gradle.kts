@@ -1,6 +1,9 @@
 import com.android.build.api.variant.DeviceTestBuilder
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
+import kotlin.random.Random
+
+val testSeed: String = providers.gradleProperty("seed").getOrElse(Random.nextLong().toString())
 
 val keystoreProps = Properties().apply {
     rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use { load(it) }
@@ -53,6 +56,11 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.all { test ->
+            test.useJUnitPlatform()
+            test.systemProperty("rezka.seed", testSeed)
+            test.doFirst { logger.lifecycle("Тесты с seed=$testSeed, повтор: ./gradlew test -Pseed=$testSeed") }
+        }
     }
 
     lint {
@@ -97,6 +105,11 @@ dependencies {
     implementation("com.google.zxing:core:3.5.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     detektPlugins("dev.detekt:detekt-rules-ktlint-wrapper:2.0.0-alpha.6")
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.hamcrest:hamcrest:3.0")
     testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.json:json:20251224")
 }
