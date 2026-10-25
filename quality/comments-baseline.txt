@@ -1,9 +1,3 @@
-app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginActivity.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCode.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginCrypto.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/LoginServer.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/PhonePage.kt
-app/src/main/java/dev/alaev/rezkatv/rezka/login/Qr.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/WatchedStoreTest.kt
