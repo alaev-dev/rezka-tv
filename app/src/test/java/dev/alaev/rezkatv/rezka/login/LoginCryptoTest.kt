@@ -3,6 +3,7 @@ package dev.alaev.rezkatv.rezka.login
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
 import org.json.JSONObject
@@ -107,6 +108,13 @@ class LoginCryptoTest {
         val bad = LoginCrypto.unb64(fixture().getString("p")).also { it[64] = (it[64] + 1).toByte() }
         val phoneKey = LoginCrypto.b64(bad)
         assertThat("точка не на кривой P-256 (атака неверной кривой)", decrypt(phoneKey = phoneKey), nullValue())
+    }
+
+    @Test
+    fun refusesToDecodePointOffTheCurve() {
+        val bad = LoginCrypto.unb64(fixture().getString("p")).also { it[64] = (it[64] + 1).toByte() }
+        val error = runCatching { LoginCrypto.decodePoint(bad) }.exceptionOrNull()
+        assertThat("своя проверка кривой, а не надежда на JCE", error, instanceOf(IllegalArgumentException::class.java))
     }
 
     @Test
