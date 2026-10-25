@@ -34,6 +34,14 @@ def replying(text: str, sent: list):
     return reply
 
 
+def replies(texts: list, chats: list):
+    def reply(key: str, body: dict) -> dict:
+        chats.append(body["messages"])
+        return {"choices": [{"message": {"content": texts[len(chats) - 1]}}]}
+
+    return reply
+
+
 def failing(key: str, body: dict) -> dict:
     raise TimeoutError("нет ответа")
 
@@ -182,6 +190,36 @@ class AiReviewRequestTest(unittest.TestCase):
             run(str(Path(folder, "verdict.json")), inputs(folder), replying(answer(), sent), env())
         expected = [("k", "deepseek-flash", (True, True, True))]
         self.assertEqual(expected, sent, "ключ и модель из окружения, правила, контекст и прошлые — на своих местах")
+
+    def test_retries_after_broken_json(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replies(['{"summary": "обрыв', answer(summary="второй")], []), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))["summary"]
+        expected = "второй"
+        self.assertEqual(expected, actual, "битый JSON модели — повтор, а не падение ревью")
+
+    def test_shows_model_its_own_error_on_retry(self):
+        chats = []
+        with tempfile.TemporaryDirectory() as folder:
+            run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], chats), env())
+        retry = chats[1][-2:]
+        expected = ("assistant", "user", True)
+        actual = (retry[0]["role"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
+        self.assertEqual(expected, actual, "модель видит свой ответ и что в нём не так")
+
+    def test_gives_up_after_three_attempts(self):
+        chats = []
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            message = ""
+            try:
+                run(str(out), inputs(folder), replies(["{"] * 4, chats), env())
+            except ValueError as error:
+                message = str(error)
+            outcome = (len(chats), out.exists(), message)
+        expected = (3, False, "нет ответа по схеме за 3 попытки")
+        self.assertEqual(expected, outcome, "три неудачи подряд — ревью падает, файла нет")
 
 
 if __name__ == "__main__":

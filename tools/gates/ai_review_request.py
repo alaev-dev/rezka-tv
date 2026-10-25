@@ -14,6 +14,7 @@ ANSWER = (
 FIELDS = {"summary": str, "findings": list, "previous": list}
 FINDING = {"path": str, "line": int, "blocking": bool, "message": str}
 PREVIOUS = {"id": str, "fixed": bool}
+ATTEMPTS = 3
 INPUTS = (".ai-review-rules.md", ".ai-review-pr.md", ".ai-review-previous.json")
 
 
@@ -61,6 +62,25 @@ def write_verdict(answer: str, out: str = "") -> None:
         print(text)
 
 
+def correction(answer: str, error: Exception) -> list:
+    retry = f"Ответ не принят: {error}. Пришли исправленный ответ целиком, одним JSON-объектом по той же схеме."
+    return [{"role": "assistant", "content": answer}, {"role": "user", "content": retry}]
+
+
+def reviewed(call, key: str, model: str, chat: list) -> str:
+    for attempt in range(1, ATTEMPTS + 1):
+        response = call(key, payload(model, chat))
+        print(f"попытка {attempt}, токены: {json.dumps(response.get('usage', {}))}", file=sys.stderr)
+        answer = response["choices"][0]["message"]["content"]
+        try:
+            verdict(answer)
+            return answer
+        except ValueError as error:
+            print(f"::warning title=ИИ-ревью::попытка {attempt}: {error}"[:1000])
+            chat = [*chat, *correction(answer, error)]
+    raise ValueError(f"нет ответа по схеме за {ATTEMPTS} попытки")
+
+
 def output_path(argv: list) -> str:
     return argv[1] if len(argv) > 1 else ""
 
@@ -69,9 +89,8 @@ def run(out: str, inputs: tuple = INPUTS, call=ask, env=os.environ) -> int:
     if out:
         Path(out).unlink(missing_ok=True)
     rules, context, previous = (Path(p).read_text(encoding="utf-8") for p in inputs)
-    response = call(env["DEEPSEEK_API_KEY"], payload(env["MODEL"], messages(rules, context, previous)))
-    print(f"токены: {json.dumps(response.get('usage', {}))}", file=sys.stderr)
-    write_verdict(response["choices"][0]["message"]["content"], out)
+    chat = messages(rules, context, previous)
+    write_verdict(reviewed(call, env["DEEPSEEK_API_KEY"], env["MODEL"], chat), out)
     return 0
 
 
