@@ -101,6 +101,12 @@ class DiffRulesTest(unittest.TestCase):
         expected = [f"код меняется без тестов: {path}"]
         self.assertEqual(expected, gate.untested_change(before, after), "// внутри строки — не комментарий")
 
+    def test_accepts_removed_comment_at_end_of_file(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "val a = 1\n// конец"}, {path: "val a = 1\n"}
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "комментарий без перевода строки в конце")
+
     def test_reads_only_code_and_tests(self):
         paths = ["gradle/wrapper/gradle-wrapper.jar", "docs/a.jpg", "app/src/main/java/A.kt", "tools/test_a.py"]
         expected = ["app/src/main/java/A.kt", "tools/test_a.py"]

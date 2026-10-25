@@ -34,7 +34,8 @@ def c_like_spans(text: str) -> list:
         elif text[i] == "\\":
             end = min(i + 2, len(text))
         elif text.startswith("//", i):
-            end = block_end(text, i, "\n") - 1
+            newline = text.find("\n", i)
+            end = len(text) if newline < 0 else newline
             found.append((i, end))
         elif text.startswith("/*", i):
             end = block_end(text, i + 2, "*/")
