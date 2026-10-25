@@ -4,7 +4,11 @@ import sys
 from pathlib import Path
 
 DOCS = ("CLAUDE.md", "docs/quality-roadmap.md")
-DEFINITION = re.compile(r"^[+-](?![+-]).*?\b(?:fun|def|class|object|interface)\s+(?:`)?([A-Za-z_]\w*)", re.MULTILINE)
+DEFINITION = re.compile(
+    r"^[+-](?![+-]).*?\b(?:fun\s+interface|fun|def|class|object|interface)\s+(?:<[^>]*>\s*)?"
+    r"(?:[A-Za-z_][\w.]*(?:<[^>]*>)?\??\.)?`?([A-Za-z_]\w*)",
+    re.MULTILINE,
+)
 KOTLIN_TEST = re.compile(r"^app/src/test/java/(.+)Test\.kt$")
 PYTHON_TEST = re.compile(r"^(tools/(?:.+/)?)test_([^/]+\.py)$")
 MAX_LINES = 600

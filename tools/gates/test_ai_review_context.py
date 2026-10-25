@@ -69,6 +69,24 @@ class AiReviewContextTest(unittest.TestCase):
         actual = tested_source(path)
         self.assertEqual(expected, actual, "у обычного кода нет пары")
 
+    def test_takes_name_of_extension_function(self):
+        diff = "+fun Activity.resume(session: WatchSession) {\n+fun List<Card>?.firstFree(): Card?\n"
+        expected = ["firstFree", "resume"]
+        actual = changed_names(diff)
+        self.assertEqual(expected, actual, "у расширения имя — после точки, а не тип-получатель")
+
+    def test_takes_name_of_generic_function(self):
+        diff = "+    suspend fun <T> load(block: () -> T): T\n+private inline fun <T> timed(name: String)\n"
+        expected = ["load", "timed"]
+        actual = changed_names(diff)
+        self.assertEqual(expected, actual, "параметр типа перед именем не мешает")
+
+    def test_takes_name_of_fun_interface(self):
+        diff = "+fun interface Listener {\n"
+        expected = ["Listener"]
+        actual = changed_names(diff)
+        self.assertEqual(expected, actual, "fun interface — имя интерфейса, а не слово interface")
+
 
 if __name__ == "__main__":
     unittest.main()
