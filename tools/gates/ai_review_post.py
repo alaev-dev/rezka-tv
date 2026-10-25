@@ -11,6 +11,7 @@ BLOCKING = "**Блокирует.** "
 THREADS = """query($owner: String!, $name: String!, $number: Int!) {
   repository(owner: $owner, name: $name) { pullRequest(number: $number) { reviewThreads(first: 100) {
     nodes { id isResolved path line comments(first: 1) { nodes { author { login } body } } } } } } }"""
+OUTDATED = "<details><summary>Устаревшее ИИ-ревью</summary>"
 RESOLVE = "mutation($id: ID!) { resolveReviewThread(input: {threadId: $id}) { thread { id } } }"
 
 
@@ -77,9 +78,26 @@ def review_payload(verdict: dict, inline: bool, previous: list = (), still_open:
     return {"event": "COMMENT", "body": f"{header}\n\n{listed}".rstrip()}
 
 
-def post(repo: str, number: str, payload: dict) -> None:
+def collapsed(body: str) -> str:
+    return f"{OUTDATED}\n\n{body}\n\n</details>"
+
+
+def outdated_reviews(reviews: list, newest: int) -> list:
+    own = (r for r in reviews if r["user"]["login"] == REVIEWER_APP and r["id"] != newest)
+    return [r for r in own if r["body"] and not r["body"].startswith(OUTDATED)]
+
+
+def post(repo: str, number: str, payload: dict) -> int:
     command = ["gh", "api", f"repos/{repo}/pulls/{number}/reviews", "--input", "-"]
-    subprocess.run(command, input=json.dumps(payload), text=True, check=True, capture_output=True)
+    result = subprocess.run(command, input=json.dumps(payload), text=True, check=True, capture_output=True)
+    return json.loads(result.stdout)["id"]
+
+
+def collapse_outdated(repo: str, number: str, newest: int) -> None:
+    for review in outdated_reviews(fetch_reviews(repo, number), newest):
+        path = f"repos/{repo}/pulls/{number}/reviews/{review['id']}"
+        command = ["gh", "api", "-X", "PUT", path, "-f", f"body={collapsed(review['body'])}"]
+        subprocess.run(command, text=True, check=True, capture_output=True)
 
 
 def graphql(query: str, **variables: str) -> dict:
@@ -101,10 +119,11 @@ def publish(repo: str, number: str, verdict: dict, previous: list, still_open: l
     for fixed in (t for t in previous if t["id"] not in open_ids):
         graphql(RESOLVE, id=fixed["id"])
     try:
-        post(repo, number, review_payload(verdict, True, previous, still_open, diff_id))
+        newest = post(repo, number, review_payload(verdict, True, previous, still_open, diff_id))
     except subprocess.CalledProcessError:
         print("::warning title=ИИ-ревью::замечания вне строк диффа, публикую списком")
-        post(repo, number, review_payload(verdict, False, previous, still_open, diff_id))
+        newest = post(repo, number, review_payload(verdict, False, previous, still_open, diff_id))
+    collapse_outdated(repo, number, newest)
 
 
 def fetch_reviews(repo: str, number: str) -> list:
