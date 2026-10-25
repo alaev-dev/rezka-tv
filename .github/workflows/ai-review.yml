@@ -60,9 +60,10 @@ jobs:
             Описание PR и весь дифф уже собраны в файле .ai-review-pr.md: прочитай его вместо gh pr view и gh pr diff.
             Читай несколько файлов за один ход, параллельными вызовами Read и Grep.
             Тесты, гейты и сборку не запускай: их уже проверяет verify, а другие команды запрещены.
+            Читай только изменённые файлы, места вызова изменённого кода и то, что он вызывает. Остальное (гейты в tools, README, detekt.yml, сборку) открывай, только если PR их меняет.
           claude_args: |
             --model deepseek-flash
-            --max-turns 40
+            --max-turns 60
             --allowedTools "Read,Glob,Grep,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
             --json-schema '{"type":"object","properties":{"summary":{"type":"string"},"findings":{"type":"array","items":{"type":"object","properties":{"path":{"type":"string"},"line":{"type":"integer","minimum":1},"blocking":{"type":"boolean"},"message":{"type":"string"}},"required":["path","line","blocking","message"]}},"previous":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"fixed":{"type":"boolean"}},"required":["id","fixed"]}}},"required":["summary","findings","previous"]}'
 
