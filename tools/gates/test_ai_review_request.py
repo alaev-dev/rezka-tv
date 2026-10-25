@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from gates.ai_review_request import messages, payload, verdict, write_verdict
+from gates.ai_review_request import messages, output_path, payload, run, verdict, write_verdict
 
 
 def answer(**fields) -> str:
@@ -15,6 +15,25 @@ def answer(**fields) -> str:
 
 def finding(line) -> dict:
     return {"path": "A.kt", "line": line, "blocking": True, "message": "ошибка"}
+
+
+def inputs(folder: str) -> tuple:
+    paths = tuple(str(Path(folder, name)) for name in ("rules.md", "pr.md", "previous.json"))
+    for path in paths:
+        Path(path).write_text("[]", encoding="utf-8")
+    return paths
+
+
+def replying(text: str):
+    return lambda key, body: {"choices": [{"message": {"content": text}}], "usage": {}}
+
+
+def failing(key: str, body: dict) -> dict:
+    raise TimeoutError("нет ответа")
+
+
+def env() -> dict:
+    return {"DEEPSEEK_API_KEY": "k", "MODEL": "deepseek-flash"}
 
 
 class AiReviewRequestTest(unittest.TestCase):
@@ -112,15 +131,6 @@ class AiReviewRequestTest(unittest.TestCase):
         expected = json.loads(text)
         self.assertEqual(expected, actual, "в файл попадает ровно проверенный вердикт")
 
-    def test_writes_nothing_for_broken_answer(self):
-        with tempfile.TemporaryDirectory() as folder:
-            out = Path(folder, "verdict.json")
-            out.write_text(answer(), encoding="utf-8")
-            with contextlib.suppress(ValueError):
-                write_verdict(answer(previous=["T1"]), str(out))
-            exists = out.exists()
-        self.assertFalse(exists, "ответ не по схеме убирает и старый вердикт прошлого запуска")
-
     def test_prints_verdict_without_file(self):
         text = answer()
         printed = io.StringIO()
@@ -129,6 +139,28 @@ class AiReviewRequestTest(unittest.TestCase):
         expected = json.loads(text)
         actual = json.loads(printed.getvalue())
         self.assertEqual(expected, actual, "без файла вердикт печатается, как раньше")
+
+    def test_takes_output_file_from_first_argument(self):
+        expected = ("verdict.json", "")
+        actual = (output_path(["review.py", "verdict.json"]), output_path(["review.py"]))
+        self.assertEqual(expected, actual, "файл — первый аргумент, без него — печать")
+
+    def test_delivers_reply_to_output_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replying(answer()), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))
+        expected = json.loads(answer())
+        self.assertEqual(expected, actual, "ответ модели доходит до файла вердикта")
+
+    def test_removes_stale_verdict_when_request_fails(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            out.write_text(answer(), encoding="utf-8")
+            with contextlib.suppress(TimeoutError):
+                run(str(out), inputs(folder), failing, env())
+            exists = out.exists()
+        self.assertFalse(exists, "упавший запрос не оставляет вердикт прошлого запуска")
 
 
 if __name__ == "__main__":

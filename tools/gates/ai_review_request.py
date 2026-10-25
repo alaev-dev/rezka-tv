@@ -54,8 +54,6 @@ def ask(key: str, body: dict) -> dict:
 
 
 def write_verdict(answer: str, out: str = "") -> None:
-    if out:
-        Path(out).unlink(missing_ok=True)
     text = json.dumps(verdict(answer), ensure_ascii=False)
     if out:
         Path(out).write_text(text, encoding="utf-8")
@@ -63,13 +61,19 @@ def write_verdict(answer: str, out: str = "") -> None:
         print(text)
 
 
-def main(out: str) -> int:
-    rules, context, previous = (Path(p).read_text(encoding="utf-8") for p in INPUTS)
-    response = ask(os.environ["DEEPSEEK_API_KEY"], payload(os.environ["MODEL"], messages(rules, context, previous)))
+def output_path(argv: list) -> str:
+    return argv[1] if len(argv) > 1 else ""
+
+
+def run(out: str, inputs: tuple = INPUTS, call=ask, env=os.environ) -> int:
+    if out:
+        Path(out).unlink(missing_ok=True)
+    rules, context, previous = (Path(p).read_text(encoding="utf-8") for p in inputs)
+    response = call(env["DEEPSEEK_API_KEY"], payload(env["MODEL"], messages(rules, context, previous)))
     print(f"токены: {json.dumps(response.get('usage', {}))}", file=sys.stderr)
     write_verdict(response["choices"][0]["message"]["content"], out)
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else ""))
+    sys.exit(run(output_path(sys.argv)))
