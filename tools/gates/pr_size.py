@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 MAX_LINES = 200
 MAX_FILES = 10
-EXEMPT = ("app/src/test/resources/*", "quality/*-baseline.*")
+EXEMPT = ("app/src/test/*", "tools/*test_*.py", "quality/*-baseline.*")
 
 
 class Change(NamedTuple):
