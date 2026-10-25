@@ -15,8 +15,8 @@ class PhonePageTest {
     }
 
     @Test
-    fun servesScriptWithoutLineComments() {
-        val comments = PhonePage.HTML.lines().filter { it.trimStart().startsWith("//") }
-        assertThat("скрипт страницы без комментариев", comments, empty())
+    fun servesScriptWithoutComments() {
+        val comments = Regex("(?<!:)//|/\\*").findAll(PhonePage.HTML).map { it.value }.toList()
+        assertThat("скрипт без // и /* */, в том числе после кода", comments, empty())
     }
 }
