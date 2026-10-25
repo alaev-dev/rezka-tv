@@ -1,48 +1,65 @@
+import re
 import subprocess
 import sys
 from pathlib import Path
 
-ALWAYS_DENIED = ("WebFetch", "WebSearch")
-GUARDED = (
-    "tools/",
-    ".github/",
-    "gradle/",
-    "README.md",
-    "THIRD_PARTY.md",
-    "detekt.yml",
-    "build.gradle.kts",
-    "app/build.gradle.kts",
-    "settings.gradle.kts",
-)
+DOCS = ("CLAUDE.md", "docs/quality-roadmap.md")
+DEFINITION = re.compile(r"^[+-](?![+-]).*?\b(?:fun|def|class|object|interface)\s+(?:`)?([A-Za-z_]\w*)", re.MULTILINE)
+KOTLIN_TEST = re.compile(r"^app/src/test/java/(.+)Test\.kt$")
+PYTHON_TEST = re.compile(r"^(tools/(?:.+/)?)test_([^/]+\.py)$")
 MAX_LINES = 600
+MAX_CALLS = 20
 FENCE = "`````"
 
 
-def touched(guarded: str, changed: list) -> bool:
-    return any(p.startswith(guarded) for p in changed) if guarded.endswith("/") else guarded in changed
+def changed_names(diff: str) -> list:
+    return sorted(set(DEFINITION.findall(diff)))
 
 
-def deny_rules(changed: list) -> list:
-    guarded = [g for g in GUARDED if not touched(g, changed)]
-    return [*ALWAYS_DENIED, *(f"Read(./{g}**)" if g.endswith("/") else f"Read(./{g})" for g in guarded)]
+def call_lines(grep: str, changed: list) -> list:
+    rows = [line for line in grep.splitlines() if line.split(":", 1)[0] not in changed]
+    return rows[:MAX_CALLS]
+
+
+def tested_source(path: str) -> str:
+    kotlin, python = KOTLIN_TEST.match(path), PYTHON_TEST.match(path)
+    if kotlin:
+        return f"app/src/main/java/{kotlin.group(1)}.kt"
+    return f"{python.group(1)}{python.group(2)}" if python else ""
+
+
+def calls_section(calls: dict) -> str:
+    blocks = [f"### {name}\n\n{FENCE}\n" + "\n".join(rows) + f"\n{FENCE}\n" for name, rows in calls.items() if rows]
+    return "\n".join(blocks) or "Мест вызова вне изменённых файлов нет.\n"
 
 
 def file_section(path: str, text: str) -> str:
     size = len(text.splitlines())
     if size > MAX_LINES:
-        return f"### {path}\n\n{size} строк, целиком не приложен: читай нужные места сам.\n"
-    return f"### {path}\n\n{FENCE}\n{text.rstrip()}\n{FENCE}\n"
+        return f"### {path}\n\n{size} строк, целиком не приложен: смотри дифф.\n"
+    numbered = "\n".join(f"{n:>5}  {row}" for n, row in enumerate(text.splitlines(), 1))
+    return f"### {path} (номер строки слева)\n\n{FENCE}\n{numbered}\n{FENCE}\n"
 
 
-def context(description: str, diff: str, files: dict) -> str:
+def context(description: str, diff: str, files: dict, calls: dict) -> str:
     sections = "\n".join(file_section(path, text) for path, text in files.items())
-    return (
-        f"{description.rstrip()}\n\n{FENCE}diff\n{diff.rstrip()}\n{FENCE}\n\n## Изменённые файлы целиком\n\n{sections}"
+    return "\n\n".join(
+        [
+            f"# Описание PR\n\n{description.rstrip()}",
+            f"# Дифф\n\n{FENCE}diff\n{diff.rstrip()}\n{FENCE}",
+            f"# Изменённые файлы и код под тестом целиком\n\n{sections}",
+            f"# Места вызова изменённых определений\n\n{calls_section(calls)}",
+        ]
     )
 
 
 def git(*args: str) -> str:
     return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+
+
+def grep_word(name: str) -> str:
+    command = ["git", "grep", "-n", "-I", "-w", name, "--", ".", ":(exclude)quality"]
+    return subprocess.run(command, check=False, capture_output=True, text=True).stdout
 
 
 def text_files(numstat: str) -> list:
@@ -51,13 +68,15 @@ def text_files(numstat: str) -> list:
 
 
 def main(base: str, description_path: str) -> int:
-    changed = git("diff", "--name-only", "--no-renames", f"{base}...HEAD").splitlines()
+    diff = git("diff", f"{base}...HEAD")
     numstat = git("diff", "--numstat", "--no-renames", f"{base}...HEAD")
-    present = [path for path in text_files(numstat) if Path(path).is_file()]
-    files = {path: Path(path).read_text(encoding="utf-8") for path in present}
+    changed = text_files(numstat)
+    sources = [tested_source(path) for path in changed]
+    present = [path for path in [*DOCS, *changed, *sources] if path and Path(path).is_file()]
+    files = {path: Path(path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
+    calls = {name: call_lines(grep_word(name), list(files)) for name in changed_names(diff)}
     description = Path(description_path).read_text(encoding="utf-8")
-    Path(".ai-review-pr.md").write_text(context(description, git("diff", f"{base}...HEAD"), files), encoding="utf-8")
-    print(",".join(deny_rules(changed)))
+    Path(".ai-review-pr.md").write_text(context(description, diff, files, calls), encoding="utf-8")
     return 0
 
 
