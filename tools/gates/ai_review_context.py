@@ -97,13 +97,13 @@ def context(description: str, diff: str, files: dict, calls: dict, extras: tuple
     )
 
 
-def git(*args: str) -> str:
-    return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+def git(repo: str, *args: str) -> str:
+    return subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True).stdout
 
 
-def grep_word(name: str) -> str:
+def grep_word(repo: str, name: str) -> str:
     command = ["git", "grep", "-n", "-I", "-w", name, "--", ".", ":(exclude)quality"]
-    return subprocess.run(command, check=False, capture_output=True, text=True).stdout
+    return subprocess.run(command, cwd=repo, check=False, capture_output=True, text=True).stdout
 
 
 def text_files(numstat: str) -> list:
@@ -111,30 +111,30 @@ def text_files(numstat: str) -> list:
     return [path for added, _, path in rows if added != "-"]
 
 
-def callee_snippets(diff: str, files: dict) -> str:
-    found = (first_definition(grep_word(n), n, set(files)) for n in called_names(diff, changed_names(diff)))
-    blocks = [snippet(path, Path(path).read_text(encoding="utf-8"), line) for path, line in filter(None, found)]
+def callee_snippets(repo: str, diff: str, files: dict) -> str:
+    found = (first_definition(grep_word(repo, n), n, set(files)) for n in called_names(diff, changed_names(diff)))
+    blocks = [snippet(path, Path(repo, path).read_text(encoding="utf-8"), line) for path, line in filter(None, found)]
     return "\n".join(blocks) or "Вызываемых определений вне приложенных файлов нет.\n"
 
 
-def history(base: str, paths: list) -> dict:
-    return {p: git("log", f"-{HISTORY}", "--format=%h %ad %s", "--date=short", base, "--", p) for p in paths}
+def history(repo: str, base: str, paths: list) -> dict:
+    return {p: git(repo, "log", f"-{HISTORY}", "--format=%h %ad %s", "--date=short", base, "--", p) for p in paths}
 
 
-def main(base: str, description_path: str) -> int:
-    diff = git("diff", f"{base}...HEAD")
-    numstat = git("diff", "--numstat", "--no-renames", f"{base}...HEAD")
+def main(base: str, description_path: str, repo: str = ".") -> int:
+    diff = git(repo, "diff", f"{base}...HEAD")
+    numstat = git(repo, "diff", "--numstat", "--no-renames", f"{base}...HEAD")
     changed = text_files(numstat)
     related = [f(path) for path in changed for f in (tested_source, test_for)]
-    present = [path for path in [*DOCS, *changed, *related] if path and Path(path).is_file()]
-    files = {path: Path(path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
-    calls = {name: call_lines(grep_word(name), list(files)) for name in changed_names(diff)}
+    present = [path for path in [*DOCS, *changed, *related] if path and Path(repo, path).is_file()]
+    files = {path: Path(repo, path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
+    calls = {name: call_lines(grep_word(repo, name), list(files)) for name in changed_names(diff)}
     extras = (
-        f"# Вызываемое изменённым кодом\n\n{callee_snippets(diff, files)}",
-        f"# История изменённых файлов\n\n{history_section(history(base, changed))}",
+        f"# Вызываемое изменённым кодом\n\n{callee_snippets(repo, diff, files)}",
+        f"# История изменённых файлов\n\n{history_section(history(repo, base, changed))}",
     )
     description = Path(description_path).read_text(encoding="utf-8")
-    Path(".ai-review-pr.md").write_text(context(description, diff, files, calls, extras), encoding="utf-8")
+    Path(repo, ".ai-review-pr.md").write_text(context(description, diff, files, calls, extras), encoding="utf-8")
     return 0
 
 

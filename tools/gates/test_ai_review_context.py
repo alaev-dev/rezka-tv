@@ -1,4 +1,7 @@
+import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 
 from gates.ai_review_context import (
     call_lines,
@@ -8,11 +11,37 @@ from gates.ai_review_context import (
     file_section,
     first_definition,
     history_section,
+    main,
     snippet,
     test_for,
     tested_source,
     text_files,
 )
+
+
+def write(repo: str, path: str, text: str) -> None:
+    Path(repo, path).parent.mkdir(parents=True, exist_ok=True)
+    Path(repo, path).write_text(text, encoding="utf-8")
+
+
+def commit(repo: str, message: str) -> None:
+    subprocess.run(["git", "-C", repo, "add", "-A"], check=True)
+    command = ["git", "-C", repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message]
+    subprocess.run(command, check=True)
+
+
+def reviewed_repo(repo: str) -> str:
+    code, test = "app/src/main/java/a/Foo.kt", "app/src/test/java/a/FooTest.kt"
+    subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
+    write(repo, code, "fun foo() = 1\n")
+    write(repo, test, "class FooTest\n")
+    write(repo, "app/src/main/java/a/Bar.kt", "fun helper(x: Int) = x\n")
+    commit(repo, "Код: первая версия foo")
+    write(repo, code, "fun foo() = helper(missing(1))\n")
+    commit(repo, "Код: foo через helper")
+    write(repo, "description.md", "# PR\n")
+    main("main~1", str(Path(repo, "description.md")), repo)
+    return Path(repo, ".ai-review-pr.md").read_text(encoding="utf-8")
 
 
 class AiReviewContextTest(unittest.TestCase):
@@ -146,6 +175,20 @@ class AiReviewContextTest(unittest.TestCase):
         expected = (True, False)
         actual = ("1c9e980" in history_section(logs), "New.kt" in history_section(logs))
         self.assertEqual(expected, actual, "история есть у старых файлов, новые пропускаются")
+
+    def test_collects_test_callees_and_history_into_one_file(self):
+        with tempfile.TemporaryDirectory() as repo:
+            page = reviewed_repo(repo)
+        expected = (True, True, True, True)
+        actual = (
+            "### app/src/test/java/a/FooTest.kt" in page,
+            "### app/src/main/java/a/Bar.kt:1" in page,
+            "Код: первая версия foo" in page,
+            "missing" not in page.split("# Вызываемое изменённым кодом")[1].split("# История")[0],
+        )
+        self.assertEqual(
+            expected, actual, "тест, вызываемое и история попадают в контекст, неизвестный вызов не роняет"
+        )
 
 
 if __name__ == "__main__":
