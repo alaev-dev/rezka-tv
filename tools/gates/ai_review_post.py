@@ -82,6 +82,18 @@ def collapsed(body: str) -> str:
     return f"{OUTDATED}\n\n{body}\n\n</details>"
 
 
+def own_report(reviews: list):
+    own = [r for r in reviews if r["user"]["login"] == REVIEWER_APP and VERDICT_COUNT.search(r["body"])]
+    reports = [r for r in own if not r["body"].startswith(OUTDATED)]
+    return reports[-1] if reports else None
+
+
+def report_body(verdict: dict, previous: list, still_open: list, diff_id: str, unplaced: list) -> str:
+    header = review_payload(verdict, True, previous, still_open, diff_id)["body"]
+    listed = "\n".join(listed_finding(f) for f in unplaced)
+    return f"{header}\n\n{listed}".rstrip()
+
+
 def outdated_reviews(reviews: list, newest: int) -> list:
     own = (r for r in reviews if r["user"]["login"] == REVIEWER_APP and r["id"] != newest)
     return [r for r in own if r["body"] and not r["body"].startswith(OUTDATED)]
@@ -93,11 +105,37 @@ def post(repo: str, number: str, payload: dict) -> int:
     return json.loads(result.stdout)["id"]
 
 
-def collapse_outdated(repo: str, number: str, newest: int) -> None:
-    for review in outdated_reviews(fetch_reviews(repo, number), newest):
-        path = f"repos/{repo}/pulls/{number}/reviews/{review['id']}"
-        command = ["gh", "api", "-X", "PUT", path, "-f", f"body={collapsed(review['body'])}"]
-        subprocess.run(command, text=True, check=True, capture_output=True)
+def post_line(repo: str, number: str, commit: str, finding: dict) -> bool:
+    command = ["gh", "api", f"repos/{repo}/pulls/{number}/comments", "--input", "-"]
+    payload = json.dumps({**inline_comment(finding), "commit_id": commit})
+    return subprocess.run(command, check=False, input=payload, text=True, capture_output=True).returncode == 0
+
+
+def edit_review(repo: str, number: str, review_id: int, body: str) -> None:
+    command = ["gh", "api", "-X", "PUT", f"repos/{repo}/pulls/{number}/reviews/{review_id}", "-f", f"body={body}"]
+    subprocess.run(command, text=True, check=True, capture_output=True)
+
+
+def head_commit(repo: str, number: str) -> str:
+    command = ["gh", "api", f"repos/{repo}/pulls/{number}", "--jq", ".head.sha"]
+    return subprocess.run(command, text=True, check=True, capture_output=True).stdout.strip()
+
+
+def first_report(repo: str, number: str, verdict: dict, previous: list, still_open: list, diff_id: str) -> int:
+    try:
+        return post(repo, number, review_payload(verdict, True, previous, still_open, diff_id))
+    except subprocess.CalledProcessError:
+        print("::warning title=ИИ-ревью::замечания вне строк диффа, публикую списком")
+        return post(repo, number, review_payload(verdict, False, previous, still_open, diff_id))
+
+
+def update_report(
+    repo: str, number: str, report: dict, verdict: dict, previous: list, still_open: list, diff_id: str
+) -> int:
+    commit = head_commit(repo, number)
+    unplaced = [f for f in verdict["findings"] if not post_line(repo, number, commit, f)]
+    edit_review(repo, number, report["id"], report_body(verdict, previous, still_open, diff_id, unplaced))
+    return report["id"]
 
 
 def graphql(query: str, **variables: str) -> dict:
@@ -118,12 +156,14 @@ def publish(repo: str, number: str, verdict: dict, previous: list, still_open: l
     open_ids = {t["id"] for t in still_open}
     for fixed in (t for t in previous if t["id"] not in open_ids):
         graphql(RESOLVE, id=fixed["id"])
-    try:
-        newest = post(repo, number, review_payload(verdict, True, previous, still_open, diff_id))
-    except subprocess.CalledProcessError:
-        print("::warning title=ИИ-ревью::замечания вне строк диффа, публикую списком")
-        newest = post(repo, number, review_payload(verdict, False, previous, still_open, diff_id))
-    collapse_outdated(repo, number, newest)
+    reviews = fetch_reviews(repo, number)
+    report = own_report(reviews)
+    if report is None:
+        current = first_report(repo, number, verdict, previous, still_open, diff_id)
+    else:
+        current = update_report(repo, number, report, verdict, previous, still_open, diff_id)
+    for old in outdated_reviews(reviews, current):
+        edit_review(repo, number, old["id"], collapsed(old["body"]))
 
 
 def fetch_reviews(repo: str, number: str) -> list:
