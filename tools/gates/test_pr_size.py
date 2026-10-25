@@ -21,6 +21,22 @@ class PrSizeTest(unittest.TestCase):
         resources = changes(20, 500, "app/src/test/resources/rezka")
         self.assertEqual([], violations(resources), "фикстуры не входят в размер PR")
 
+    def test_ignores_kotlin_tests(self):
+        tests = changes(3, 150, "app/src/test/java/dev/alaev/rezkatv")
+        expected = []
+        self.assertEqual(expected, violations(tests), "тесты Kotlin не входят в размер PR: хорошие тесты не делят PR")
+
+    def test_ignores_python_tests(self):
+        tests = [Change("tools/gates/test_pr_size.py", 300), Change("tools/test_build_lists.py", 300)]
+        expected = []
+        self.assertEqual(expected, violations(tests), "тесты tools не входят в размер PR")
+
+    def test_counts_python_code_next_to_tests(self):
+        code = [Change("tools/gates/pr_size.py", 201)]
+        expected = 1
+        actual = len(violations(code))
+        self.assertEqual(expected, actual, "код рядом с тестами по-прежнему считается")
+
     def test_ignores_quality_baselines(self):
         baseline = [Change("quality/lint-baseline.xml", 900)]
         self.assertEqual([], violations(baseline), "журнал долга не входит в размер PR")
