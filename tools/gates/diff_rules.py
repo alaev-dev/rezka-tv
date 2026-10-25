@@ -36,22 +36,26 @@ def relevant(paths: list) -> list:
     return [path for path in paths if CODE.match(path) or TESTS.match(path)]
 
 
-def git(*args: str) -> str:
-    return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+def git(repo: str, *args: str) -> str:
+    return subprocess.run(["git", "-C", repo, *args], check=True, capture_output=True, text=True).stdout
 
 
-def contents(ref: str, paths: list) -> dict:
-    tracked = set(git("ls-tree", "-r", "--name-only", ref).splitlines())
-    return {path: git("show", f"{ref}:{path}") for path in paths if path in tracked}
+def contents(repo: str, ref: str, paths: list) -> dict:
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", ref).splitlines())
+    return {path: git(repo, "show", f"{ref}:{path}") for path in paths if path in tracked}
+
+
+def problems(base: str, repo: str = ".") -> list:
+    since = git(repo, "merge-base", base, "HEAD").strip()
+    changed = relevant(git(repo, "diff", "--name-only", "--no-renames", since, "HEAD").splitlines())
+    before, after = contents(repo, since, changed), contents(repo, "HEAD", changed)
+    return lost_tests(before, after) + untested_change(before, after)
 
 
 def main(base: str) -> int:
-    since = git("merge-base", base, "HEAD").strip()
-    changed = relevant(git("diff", "--name-only", "--no-renames", since, "HEAD").splitlines())
-    before, after = contents(since, changed), contents("HEAD", changed)
-    problems = lost_tests(before, after) + untested_change(before, after)
-    print("\n".join(f"::error title=Тесты в PR::{problem}" for problem in problems))
-    return 1 if problems else 0
+    found = problems(base)
+    print("\n".join(f"::error title=Тесты в PR::{problem}" for problem in found))
+    return 1 if found else 0
 
 
 if __name__ == "__main__":
