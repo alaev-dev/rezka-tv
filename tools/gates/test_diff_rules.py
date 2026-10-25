@@ -73,3 +73,35 @@ class DiffRulesTest(unittest.TestCase):
         before, after = {old: "@Test fun a()\n@Test fun b()\n"}, {new: "@Test fun a()\n"}
         expected = ["тестов стало меньше: было 2, стало 1; тесты не удаляют, а исправляют"]
         self.assertEqual(expected, gate.lost_tests(before, after), "перенос файла не прячет потерю тестов")
+
+    def test_accepts_removed_kdoc_without_tests(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "/**\n * Описание.\n */\nval a = 1 // пояснение\n"}, {path: "val a = 1\n"}
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "удаление комментариев не меняет поведение")
+
+    def test_accepts_removed_python_comment_and_docstring(self):
+        path = "tools/gates/a.py"
+        before, after = (
+            {path: 'def a():\n    """Описание."""\n    return 1  # да\n'},
+            {path: "def a():\n    return 1\n"},
+        )
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "докстринг и комментарий — не поведение")
+
+    def test_reports_code_changed_next_to_removed_comment(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "val a = 1 // пояснение\n"}, {path: "val a = 2\n"}
+        expected = [f"код меняется без тестов: {path}"]
+        self.assertEqual(expected, gate.untested_change(before, after), "рядом с комментарием поменялся код")
+
+    def test_keeps_comment_markers_inside_strings(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: 'val u = "http://a"\n'}, {path: 'val u = "http:"\n'}
+        expected = [f"код меняется без тестов: {path}"]
+        self.assertEqual(expected, gate.untested_change(before, after), "// внутри строки — не комментарий")
+
+    def test_reads_only_code_and_tests(self):
+        paths = ["gradle/wrapper/gradle-wrapper.jar", "docs/a.jpg", "app/src/main/java/A.kt", "tools/test_a.py"]
+        expected = ["app/src/main/java/A.kt", "tools/test_a.py"]
+        self.assertEqual(expected, gate.relevant(paths), "двоичные файлы и ресурсы гейт не читает")
