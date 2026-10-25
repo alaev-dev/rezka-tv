@@ -5,8 +5,10 @@ from gates.ai_review_post import (
     collapsed,
     open_previous,
     outdated_reviews,
+    own_report,
     previous_threads,
     prior_blocking,
+    report_body,
     review_payload,
 )
 
@@ -180,6 +182,28 @@ class AiReviewPostTest(unittest.TestCase):
         expected = 2
         actual = prior_blocking(reviews, "f6")
         self.assertEqual(expected, actual, "свёрнутый отчёт хранит вердикт")
+
+    def test_updates_latest_own_report(self):
+        bot, head = "github-actions[bot]", "## ИИ-ревью: блокирующих нарушений: 0"
+        reviews = [review(1, bot, head), review(2, bot, ""), review(3, bot, head), review(4, "alaev-dev", head)]
+        expected = 3
+        actual = own_report(reviews)["id"]
+        self.assertEqual(expected, actual, "правится последний отчёт ревьюера, а не замечания и не люди")
+
+    def test_skips_collapsed_reports(self):
+        bot = "github-actions[bot]"
+        reviews = [review(1, bot, collapsed("## ИИ-ревью: блокирующих нарушений: 1"))]
+        expected = None
+        actual = own_report(reviews)
+        self.assertEqual(expected, actual, "свёрнутый отчёт не оживает")
+
+    def test_counts_all_findings_but_lists_only_unplaced(self):
+        placed, unplaced = finding("a.kt", 3, True, "под строкой"), finding("b.kt", 9, False, "вне диффа")
+        verdict = {"summary": "итог", "findings": [placed, unplaced], "previous": []}
+        body = report_body(verdict, [], [], "", [unplaced])
+        expected = ("блокирующих нарушений: 1", False, True)
+        actual = (body.split("\n")[0][-24:], "под строкой" in body, "вне диффа" in body)
+        self.assertEqual(expected, actual, "в отчёте — все блокировки и только замечания без строки")
 
 
 if __name__ == "__main__":
