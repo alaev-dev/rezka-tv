@@ -18,14 +18,20 @@ def finding(line) -> dict:
 
 
 def inputs(folder: str) -> tuple:
-    paths = tuple(str(Path(folder, name)) for name in ("rules.md", "pr.md", "previous.json"))
-    for path in paths:
-        Path(path).write_text("[]", encoding="utf-8")
-    return paths
+    texts = {"rules.md": "# Правила", "pr.md": "# Дифф", "previous.json": '[{"id": "T1"}]'}
+    for name, text in texts.items():
+        Path(folder, name).write_text(text, encoding="utf-8")
+    return tuple(str(Path(folder, name)) for name in texts)
 
 
-def replying(text: str):
-    return lambda key, body: {"choices": [{"message": {"content": text}}], "usage": {}}
+def replying(text: str, sent: list):
+    def reply(key: str, body: dict) -> dict:
+        system, user = (m["content"] for m in body["messages"])
+        layout = (system.startswith("# Правила"), user.startswith("# Дифф"), '"T1"' in user)
+        sent.append((key, body["model"], layout))
+        return {"choices": [{"message": {"content": text}}], "usage": {}}
+
+    return reply
 
 
 def failing(key: str, body: dict) -> dict:
@@ -148,7 +154,7 @@ class AiReviewRequestTest(unittest.TestCase):
     def test_delivers_reply_to_output_file(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder, "verdict.json")
-            run(str(out), inputs(folder), replying(answer()), env())
+            run(str(out), inputs(folder), replying(answer(), []), env())
             actual = json.loads(out.read_text(encoding="utf-8"))
         expected = json.loads(answer())
         self.assertEqual(expected, actual, "ответ модели доходит до файла вердикта")
@@ -161,6 +167,21 @@ class AiReviewRequestTest(unittest.TestCase):
                 run(str(out), inputs(folder), failing, env())
             exists = out.exists()
         self.assertFalse(exists, "упавший запрос не оставляет вердикт прошлого запуска")
+
+    def test_writes_no_file_for_broken_answer(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            with contextlib.suppress(ValueError):
+                write_verdict(answer(findings=[finding(0)]), str(out))
+            exists = out.exists()
+        self.assertFalse(exists, "ответ не по схеме не попадает в файл публикации")
+
+    def test_sends_inputs_key_and_model_to_their_places(self):
+        sent = []
+        with tempfile.TemporaryDirectory() as folder:
+            run(str(Path(folder, "verdict.json")), inputs(folder), replying(answer(), sent), env())
+        expected = [("k", "deepseek-flash", (True, True, True))]
+        self.assertEqual(expected, sent, "ключ и модель из окружения, правила, контекст и прошлые — на своих местах")
 
 
 if __name__ == "__main__":
