@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from gates.ai_review_request import messages, output_path, payload, run, verdict, write_verdict
+from gates.ai_review_request import message_text, messages, output_path, payload, run, verdict, write_verdict
 
 
 def answer(**fields) -> str:
@@ -30,6 +30,14 @@ def replying(text: str, sent: list):
         layout = (system.startswith("# Правила"), user.startswith("# Дифф"), '"T1"' in user)
         sent.append((key, body["model"], layout))
         return {"choices": [{"message": {"content": text}}], "usage": {}}
+
+    return reply
+
+
+def replies(texts: list, chats: list):
+    def reply(key: str, body: dict) -> dict:
+        chats.append(body["messages"])
+        return {"choices": [{"message": {"content": texts[len(chats) - 1]}}], "usage": {"total_tokens": len(chats)}}
 
     return reply
 
@@ -182,6 +190,74 @@ class AiReviewRequestTest(unittest.TestCase):
             run(str(Path(folder, "verdict.json")), inputs(folder), replying(answer(), sent), env())
         expected = [("k", "deepseek-flash", (True, True, True))]
         self.assertEqual(expected, sent, "ключ и модель из окружения, правила, контекст и прошлые — на своих местах")
+
+    def test_retries_after_broken_json(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replies(['{"summary": "обрыв', answer(summary="второй")], []), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))["summary"]
+        expected = "второй"
+        self.assertEqual(expected, actual, "битый JSON модели — повтор, а не падение ревью")
+
+    def test_shows_model_its_own_error_on_retry(self):
+        chats = []
+        with tempfile.TemporaryDirectory() as folder:
+            run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], chats), env())
+        first, retry = chats[1][:2], chats[1][2:]
+        expected = (chats[0], "assistant", answer(previous=["T1"]), "user", True)
+        actual = (first, retry[0]["role"], retry[0]["content"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
+        self.assertEqual(
+            expected, actual, "повтор продолжает тот же разговор: правила и контекст, ответ модели и что в нём не так"
+        )
+
+    def test_gives_up_after_three_attempts(self):
+        chats = []
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            message = ""
+            try:
+                run(str(out), inputs(folder), replies(["{"] * 4, chats), env())
+            except ValueError as error:
+                message = str(error)
+            outcome = (len(chats), out.exists(), message)
+        expected = (3, False, "нет ответа по схеме за 3 попытки")
+        self.assertEqual(expected, outcome, "три неудачи подряд — ревью падает, файла нет")
+
+    def test_warns_about_rejected_attempt_in_log(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stderr(printed):
+            run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], []), env())
+        expected = "::warning title=ИИ-ревью::попытка 1: ответ не по схеме: прошлое T1"
+        self.assertIn(expected, printed.getvalue(), "в логе видно, какая попытка отклонена и почему")
+
+    def test_logs_tokens_of_each_attempt(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stderr(printed):
+            run(str(Path(folder, "v.json")), inputs(folder), replies(["{", answer()], []), env())
+        expected = 'попытка 2, токены: {"total_tokens": 2}'
+        self.assertIn(expected, printed.getvalue(), "расход токенов виден по каждой попытке")
+
+    def test_treats_empty_api_reply_as_failed_attempt(self):
+        replies_ = [{"choices": []}, {"choices": [{"message": {"content": None}}]}, {}, {"choices": [{}]}]
+        expected = ["", "", "", ""]
+        actual = [message_text(reply) for reply in replies_]
+        self.assertEqual(expected, actual, "пустой ответ API — пустой текст, он уйдёт на повтор, а не уронит ревью")
+
+    def test_keeps_verdict_stream_clean_of_warnings(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(printed):
+            run("", inputs(folder), replies(["{", answer()], []), env())
+        expected = json.loads(answer())
+        actual = json.loads(printed.getvalue())
+        self.assertEqual(expected, actual, "без файла в stdout только вердикт, предупреждения — в stderr")
+
+    def test_retries_after_reply_without_content(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replies([None, answer(summary="после пустого")], []), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))["summary"]
+        expected = "после пустого"
+        self.assertEqual(expected, actual, "ответ API без текста — повтор, а не падение ревью")
 
 
 if __name__ == "__main__":

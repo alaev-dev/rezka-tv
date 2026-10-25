@@ -1,6 +1,40 @@
+import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 
-from gates.ai_review_context import call_lines, changed_names, context, file_section, tested_source, text_files
+from gates.ai_review_context import (
+    call_lines,
+    changed_names,
+    context,
+    file_section,
+    history_section,
+    main,
+    test_for,
+    tested_source,
+    text_files,
+)
+from gates.test_diff_rules import commit_all
+
+
+def write(repo: str, path: str, text: str) -> None:
+    Path(repo, path).parent.mkdir(parents=True, exist_ok=True)
+    Path(repo, path).write_text(text, encoding="utf-8")
+
+
+def reviewed_repo(repo: str) -> str:
+    code = "app/src/main/java/a/Foo.kt"
+    subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
+    write(repo, "app/src/test/java/a/FooTest.kt", "class FooTest\n")
+    write(repo, "app/src/main/java/a/Caller.kt", "val x = foo()\n")
+    for n in range(1, 8):
+        write(repo, code, f"fun foo() = {n}\n")
+        commit_all(repo, f"Код: версия {n}")
+    write(repo, code, "fun foo() = 99\n")
+    commit_all(repo, "PR: foo возвращает 99")
+    write(repo, "description.md", "# PR\n")
+    main("main~1", "description.md", repo)
+    return Path(repo, ".ai-review-pr.md").read_text(encoding="utf-8")
 
 
 class AiReviewContextTest(unittest.TestCase):
@@ -86,6 +120,44 @@ class AiReviewContextTest(unittest.TestCase):
         expected = ["Listener"]
         actual = changed_names(diff)
         self.assertEqual(expected, actual, "fun interface — имя интерфейса, а не слово interface")
+
+    def test_attaches_kotlin_test_of_changed_code(self):
+        expected = "app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt"
+        actual = test_for("app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt")
+        self.assertEqual(expected, actual, "к изменённому коду прикладывается его тест")
+
+    def test_attaches_python_test_of_changed_gate(self):
+        expected = "tools/gates/test_comments.py"
+        actual = test_for("tools/gates/comments.py")
+        self.assertEqual(expected, actual, "к гейту прикладывается его тест")
+
+    def test_finds_no_test_for_test(self):
+        expected = ""
+        actual = test_for("tools/gates/test_comments.py")
+        self.assertEqual(expected, actual, "у теста своего теста нет")
+
+    def test_reports_history_of_files(self):
+        logs = {"A.kt": "1c9e980 2026-10-25 Гейты: двоичные файлы\n", "New.kt": ""}
+        expected = (True, False)
+        actual = ("1c9e980" in history_section(logs), "New.kt" in history_section(logs))
+        self.assertEqual(expected, actual, "история есть у старых файлов, новые пропускаются")
+
+    def test_collects_test_history_and_calls_of_reviewed_repo(self):
+        with tempfile.TemporaryDirectory() as repo:
+            page = reviewed_repo(repo)
+        expected = (True, True, False, False, True)
+        actual = tuple(m in page for m in ("a/FooTest.kt (", "версия 3", "версия 2", "PR: foo", "a/Caller.kt:1:"))
+        self.assertEqual(expected, actual, "тест кода, 5 коммитов базы без коммитов PR и вызовы из этого репозитория")
+
+    def test_explains_missing_history_of_new_files(self):
+        expected = "Истории нет: файлы новые.\n"
+        actual = history_section({"New.kt": ""})
+        self.assertEqual(expected, actual, "у новых файлов раздел истории объясняет, почему он пуст")
+
+    def test_names_attached_tests_in_files_heading(self):
+        page = context("описание", "+a", {}, {})
+        expected = "# Изменённые файлы, код под тестом и тесты изменённого кода целиком"
+        self.assertIn(expected, page, "заголовок говорит, что приложены и тесты изменённого кода")
 
 
 if __name__ == "__main__":
