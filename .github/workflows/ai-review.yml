@@ -35,7 +35,7 @@ jobs:
         run: |
           git show "$BASE:.github/ai-review.md" > .ai-review-rules.md
           git show "$BASE:tools/gates/ai_review_post.py" > "$RUNNER_TEMP/ai_review_post.py"
-          diff_id=$(git diff "$BASE...HEAD" | git patch-id --stable | cut -d' ' -f1)
+          diff_id=$(git diff "$BASE...HEAD" -- . ':(exclude)quality/*-baseline.*' | git patch-id --stable | cut -d' ' -f1)
           prior=$(DIFF_ID="$diff_id" python3 "$RUNNER_TEMP/ai_review_post.py" prior)
           echo "diff_id=$diff_id" >> "$GITHUB_OUTPUT"
           echo "prior=$prior" >> "$GITHUB_OUTPUT"
