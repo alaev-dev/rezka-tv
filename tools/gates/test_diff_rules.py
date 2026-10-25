@@ -1,6 +1,25 @@
+import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 
 from gates import diff_rules as gate
+
+
+def commit_all(repo: str, message: str) -> None:
+    subprocess.run(["git", "-C", repo, "add", "-A"], check=True)
+    command = ["git", "-C", repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message]
+    subprocess.run(command, check=True)
+
+
+def repo_with_changed_binary(repo: str) -> None:
+    subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
+    jar = Path(repo, "gradle/wrapper/gradle-wrapper.jar")
+    jar.parent.mkdir(parents=True)
+    jar.write_bytes(bytes([0xFF, 0xFE, 0x00]))
+    commit_all(repo, "база")
+    jar.write_bytes(bytes([0xFF, 0x00, 0xFE]))
+    commit_all(repo, "обновление")
 
 
 class DiffRulesTest(unittest.TestCase):
@@ -73,3 +92,48 @@ class DiffRulesTest(unittest.TestCase):
         before, after = {old: "@Test fun a()\n@Test fun b()\n"}, {new: "@Test fun a()\n"}
         expected = ["тестов стало меньше: было 2, стало 1; тесты не удаляют, а исправляют"]
         self.assertEqual(expected, gate.lost_tests(before, after), "перенос файла не прячет потерю тестов")
+
+    def test_accepts_removed_kdoc_without_tests(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "/**\n * Описание.\n */\nval a = 1 // пояснение\n"}, {path: "val a = 1\n"}
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "удаление комментариев не меняет поведение")
+
+    def test_accepts_removed_python_comment_and_docstring(self):
+        path = "tools/gates/a.py"
+        before, after = (
+            {path: 'def a():\n    """Описание."""\n    return 1  # да\n'},
+            {path: "def a():\n    return 1\n"},
+        )
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "докстринг и комментарий — не поведение")
+
+    def test_reports_code_changed_next_to_removed_comment(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "val a = 1 // пояснение\n"}, {path: "val a = 2 // пояснение\n"}
+        expected = [f"код меняется без тестов: {path}"]
+        self.assertEqual(expected, gate.untested_change(before, after), "рядом с комментарием поменялся код")
+
+    def test_keeps_comment_markers_inside_strings(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: 'val u = "http://a"\n'}, {path: 'val u = "http://b"\n'}
+        expected = [f"код меняется без тестов: {path}"]
+        self.assertEqual(expected, gate.untested_change(before, after), "// внутри строки — не комментарий")
+
+    def test_accepts_removed_comment_at_end_of_file(self):
+        path = "app/src/main/java/A.kt"
+        before, after = {path: "val a = 1\n// конец"}, {path: "val a = 1\n"}
+        expected = []
+        self.assertEqual(expected, gate.untested_change(before, after), "комментарий без перевода строки в конце")
+
+    def test_passes_pr_with_only_binary_change(self):
+        with tempfile.TemporaryDirectory() as repo:
+            repo_with_changed_binary(repo)
+            expected = []
+            actual = gate.problems("main~1", repo)
+        self.assertEqual(expected, actual, "обновление gradle-wrapper.jar не роняет гейт")
+
+    def test_reads_only_code_and_tests(self):
+        paths = ["gradle/wrapper/gradle-wrapper.jar", "docs/a.jpg", "app/src/main/java/A.kt", "tools/test_a.py"]
+        expected = ["app/src/main/java/A.kt", "tools/test_a.py"]
+        self.assertEqual(expected, gate.relevant(paths), "двоичные файлы и ресурсы гейт не читает")
