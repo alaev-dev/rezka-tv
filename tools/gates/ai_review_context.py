@@ -11,17 +11,8 @@ DEFINITION = re.compile(
 )
 KOTLIN_TEST = re.compile(r"^app/src/test/java/(.+)Test\.kt$")
 PYTHON_TEST = re.compile(r"^(tools/(?:.+/)?)test_([^/]+\.py)$")
-CALL = re.compile(r"\b([a-z_]\w*)\s*\(")
-COMMON_WORDS = (
-    "if for while when return catch fun def super this print println require check error listOf mapOf setOf "
-    "emptyList len str int isinstance range sorted enumerate assertThat assertEqual"
-)
-COMMON = frozenset(re.findall(r"\w+", COMMON_WORDS))
 MAX_LINES = 600
 MAX_CALLS = 20
-MAX_CALLEES = 15
-SNIPPET = 20
-MAX_DEFINITIONS = 3
 HISTORY = 5
 FENCE = "`````"
 
@@ -47,27 +38,6 @@ def test_for(path: str) -> str:
         return f"app/src/test/java/{path.removeprefix('app/src/main/java/').removesuffix('.kt')}Test.kt"
     tools = re.match(r"^(tools/(?:.+/)?)(?!test_)([^/]+\.py)$", path)
     return f"{tools.group(1)}test_{tools.group(2)}" if tools else ""
-
-
-def called_names(diff: str, defined: list) -> list:
-    added = "\n".join(row for row in diff.splitlines() if row.startswith("+") and not row.startswith("+++"))
-    return sorted(set(CALL.findall(added)) - COMMON - set(defined))[:MAX_CALLEES]
-
-
-def definitions(grep: str, name: str, skip: set) -> list:
-    definition = re.compile(rf"\b(?:fun|def)\s+(?:<[^>]*>\s*)?(?:[A-Za-z_][\w.]*(?:<[^>]*>)?\??\.)?{re.escape(name)}\b")
-    rows = (row.split(":", 2) for row in grep.splitlines() if row.count(":") >= 2)
-    return [(path, int(line)) for path, line, code in rows if path not in skip and definition.search(code)]
-
-
-def ambiguity(name: str, found: list) -> str:
-    return f"`{name}` объявлено в {len(found)} местах, какое вызывается — неизвестно.\n" if len(found) > 1 else ""
-
-
-def snippet(path: str, text: str, line: int) -> str:
-    rows = text.splitlines()[line - 1 : line - 1 + SNIPPET]
-    numbered = "\n".join(f"{n:>5}  {row}" for n, row in enumerate(rows, line))
-    return f"### {path}:{line}\n\n{FENCE}\n{numbered}\n{FENCE}\n"
 
 
 def history_section(logs: dict) -> str:
@@ -115,16 +85,6 @@ def text_files(numstat: str) -> list:
     return [path for added, _, path in rows if added != "-"]
 
 
-def callee_snippets(repo: str, diff: str, files: dict) -> str:
-    blocks = []
-    for name in called_names(diff, changed_names(diff)):
-        found = definitions(grep_word(repo, name), name, set(files))
-        read = [(path, Path(repo, path).read_text(encoding="utf-8"), line) for path, line in found[:MAX_DEFINITIONS]]
-        shown = [snippet(*place) for place in read]
-        blocks += [ambiguity(name, found) + "\n".join(shown)] if shown else []
-    return "\n".join(blocks) or "Вызываемых определений вне приложенных файлов нет.\n"
-
-
 def history(repo: str, base: str, paths: list) -> dict:
     return {p: git(repo, "log", f"-{HISTORY}", "--format=%h %ad %s", "--date=short", base, "--", p) for p in paths}
 
@@ -137,11 +97,8 @@ def main(base: str, description_path: str, repo: str = ".") -> int:
     present = [path for path in [*DOCS, *changed, *related] if path and Path(repo, path).is_file()]
     files = {path: Path(repo, path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
     calls = {name: call_lines(grep_word(repo, name), list(files)) for name in changed_names(diff)}
-    extras = (
-        f"# Вызываемое изменённым кодом\n\n{callee_snippets(repo, diff, files)}",
-        f"# История изменённых файлов\n\n{history_section(history(repo, base, changed))}",
-    )
-    description = Path(description_path).read_text(encoding="utf-8")
+    extras = (f"# История изменённых файлов\n\n{history_section(history(repo, base, changed))}",)
+    description = Path(repo, description_path).read_text(encoding="utf-8")
     Path(repo, ".ai-review-pr.md").write_text(context(description, diff, files, calls, extras), encoding="utf-8")
     return 0
 

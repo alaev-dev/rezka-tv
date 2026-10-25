@@ -4,16 +4,12 @@ import unittest
 from pathlib import Path
 
 from gates.ai_review_context import (
-    ambiguity,
     call_lines,
-    called_names,
     changed_names,
     context,
-    definitions,
     file_section,
     history_section,
     main,
-    snippet,
     test_for,
     tested_source,
     text_files,
@@ -31,13 +27,11 @@ def reviewed_repo(repo: str) -> str:
     subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
     write(repo, code, "fun foo() = 1\n")
     write(repo, test, "class FooTest\n")
-    write(repo, "app/src/main/java/a/Bar.kt", "fun helper(x: Int) = x\n")
-    write(repo, "app/src/main/java/b/Baz.kt", "fun helper(y: String) = y\n")
     commit_all(repo, "Код: первая версия foo")
-    write(repo, code, "fun foo() = helper(missing(1))\n")
-    commit_all(repo, "Код: foo через helper")
+    write(repo, code, "fun foo() = 2\n")
+    commit_all(repo, "Код: foo возвращает 2")
     write(repo, "description.md", "# PR\n")
-    main("main~1", str(Path(repo, "description.md")), repo)
+    main("main~1", "description.md", repo)
     return Path(repo, ".ai-review-pr.md").read_text(encoding="utf-8")
 
 
@@ -140,57 +134,18 @@ class AiReviewContextTest(unittest.TestCase):
         actual = test_for("tools/gates/test_comments.py")
         self.assertEqual(expected, actual, "у теста своего теста нет")
 
-    def test_takes_called_names_from_added_lines_only(self):
-        diff = "+    val p = decodePoint(raw)\n+    if (ok) require(x)\n-    old(raw)\n+fun seal(a: Int) = pack(a)\n"
-        expected = ["decodePoint", "pack"]
-        actual = called_names(diff, ["seal"])
-        self.assertEqual(expected, actual, "вызовы из добавленных строк, без служебных слов и своих определений")
-
-    def test_finds_definition_not_usage(self):
-        grep = "A.kt:3:    decodePoint(raw)\nB.kt:9:    fun decodePoint(raw: ByteArray): ECPoint {\n"
-        expected = [("B.kt", 9)]
-        actual = definitions(grep, "decodePoint", set())
-        self.assertEqual(expected, actual, "берётся объявление, а не вызов")
-
-    def test_skips_definition_in_attached_file(self):
-        grep = "B.kt:9:    fun decodePoint(raw: ByteArray)\n"
-        expected = []
-        actual = definitions(grep, "decodePoint", {"B.kt"})
-        self.assertEqual(expected, actual, "приложенный файл не дублируется")
-
-    def test_numbers_snippet_from_definition_line(self):
-        text = "a\nb\nfun f() = 1\nc\n"
-        expected = "    3  fun f() = 1"
-        actual = snippet("B.kt", text, 3)
-        self.assertIn(expected, actual, "фрагмент начинается с объявления и хранит номера строк")
-
     def test_reports_history_of_files(self):
         logs = {"A.kt": "1c9e980 2026-10-25 Гейты: двоичные файлы\n", "New.kt": ""}
         expected = (True, False)
         actual = ("1c9e980" in history_section(logs), "New.kt" in history_section(logs))
         self.assertEqual(expected, actual, "история есть у старых файлов, новые пропускаются")
 
-    def test_collects_test_callees_and_history_into_one_file(self):
+    def test_collects_test_and_history_into_one_file(self):
         with tempfile.TemporaryDirectory() as repo:
             page = reviewed_repo(repo)
-        expected = (True, True, True)
-        actual = (
-            "### app/src/test/java/a/FooTest.kt" in page,
-            "### app/src/main/java/a/Bar.kt:1" in page and "### app/src/main/java/b/Baz.kt:1" in page,
-            "Код: первая версия foo" in page,
-        )
-        self.assertEqual(expected, actual, "тест, все объявления вызываемого и история попадают в контекст")
-
-    def test_marks_name_declared_in_several_places(self):
-        found = [("PageCache.kt", 9), ("WatchSession.kt", 3), ("LoginServer.kt", 40), ("Watched.kt", 7)]
-        expected = "`write` объявлено в 4 местах"
-        actual = ambiguity("write", found)
-        self.assertIn(expected, actual, "неоднозначное имя помечено, чтобы не принять чужую функцию за вызываемую")
-
-    def test_keeps_single_declaration_unmarked(self):
-        expected = ""
-        actual = ambiguity("decodePoint", [("LoginCrypto.kt", 61)])
-        self.assertEqual(expected, actual, "единственное объявление не требует оговорки")
+        expected = (True, True)
+        actual = ("### app/src/test/java/a/FooTest.kt" in page, "Код: первая версия foo" in page)
+        self.assertEqual(expected, actual, "тест изменённого кода и история попадают в контекст")
 
 
 if __name__ == "__main__":
