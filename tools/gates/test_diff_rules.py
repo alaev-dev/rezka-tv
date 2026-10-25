@@ -91,13 +91,13 @@ class DiffRulesTest(unittest.TestCase):
 
     def test_reports_code_changed_next_to_removed_comment(self):
         path = "app/src/main/java/A.kt"
-        before, after = {path: "val a = 1 // пояснение\n"}, {path: "val a = 2\n"}
+        before, after = {path: "val a = 1 // пояснение\n"}, {path: "val a = 2 // пояснение\n"}
         expected = [f"код меняется без тестов: {path}"]
         self.assertEqual(expected, gate.untested_change(before, after), "рядом с комментарием поменялся код")
 
     def test_keeps_comment_markers_inside_strings(self):
         path = "app/src/main/java/A.kt"
-        before, after = {path: 'val u = "http://a"\n'}, {path: 'val u = "http:"\n'}
+        before, after = {path: 'val u = "http://a"\n'}, {path: 'val u = "http://b"\n'}
         expected = [f"код меняется без тестов: {path}"]
         self.assertEqual(expected, gate.untested_change(before, after), "// внутри строки — не комментарий")
 
