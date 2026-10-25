@@ -21,6 +21,7 @@ MAX_LINES = 600
 MAX_CALLS = 20
 MAX_CALLEES = 15
 SNIPPET = 20
+MAX_DEFINITIONS = 3
 HISTORY = 5
 FENCE = "`````"
 
@@ -53,11 +54,14 @@ def called_names(diff: str, defined: list) -> list:
     return sorted(set(CALL.findall(added)) - COMMON - set(defined))[:MAX_CALLEES]
 
 
-def first_definition(grep: str, name: str, skip: set):
+def definitions(grep: str, name: str, skip: set) -> list:
     definition = re.compile(rf"\b(?:fun|def)\s+(?:<[^>]*>\s*)?(?:[A-Za-z_][\w.]*(?:<[^>]*>)?\??\.)?{re.escape(name)}\b")
     rows = (row.split(":", 2) for row in grep.splitlines() if row.count(":") >= 2)
-    found = next(((path, int(line)) for path, line, code in rows if path not in skip and definition.search(code)), None)
-    return found
+    return [(path, int(line)) for path, line, code in rows if path not in skip and definition.search(code)]
+
+
+def ambiguity(name: str, found: list) -> str:
+    return f"`{name}` объявлено в {len(found)} местах, какое вызывается — неизвестно.\n" if len(found) > 1 else ""
 
 
 def snippet(path: str, text: str, line: int) -> str:
@@ -112,8 +116,12 @@ def text_files(numstat: str) -> list:
 
 
 def callee_snippets(repo: str, diff: str, files: dict) -> str:
-    found = (first_definition(grep_word(repo, n), n, set(files)) for n in called_names(diff, changed_names(diff)))
-    blocks = [snippet(path, Path(repo, path).read_text(encoding="utf-8"), line) for path, line in filter(None, found)]
+    blocks = []
+    for name in called_names(diff, changed_names(diff)):
+        found = definitions(grep_word(repo, name), name, set(files))
+        read = [(path, Path(repo, path).read_text(encoding="utf-8"), line) for path, line in found[:MAX_DEFINITIONS]]
+        shown = [snippet(*place) for place in read]
+        blocks += [ambiguity(name, found) + "\n".join(shown)] if shown else []
     return "\n".join(blocks) or "Вызываемых определений вне приложенных файлов нет.\n"
 
 

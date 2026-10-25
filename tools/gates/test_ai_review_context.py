@@ -4,12 +4,13 @@ import unittest
 from pathlib import Path
 
 from gates.ai_review_context import (
+    ambiguity,
     call_lines,
     called_names,
     changed_names,
     context,
+    definitions,
     file_section,
-    first_definition,
     history_section,
     main,
     snippet,
@@ -17,17 +18,12 @@ from gates.ai_review_context import (
     tested_source,
     text_files,
 )
+from gates.test_diff_rules import commit_all
 
 
 def write(repo: str, path: str, text: str) -> None:
     Path(repo, path).parent.mkdir(parents=True, exist_ok=True)
     Path(repo, path).write_text(text, encoding="utf-8")
-
-
-def commit(repo: str, message: str) -> None:
-    subprocess.run(["git", "-C", repo, "add", "-A"], check=True)
-    command = ["git", "-C", repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message]
-    subprocess.run(command, check=True)
 
 
 def reviewed_repo(repo: str) -> str:
@@ -36,9 +32,10 @@ def reviewed_repo(repo: str) -> str:
     write(repo, code, "fun foo() = 1\n")
     write(repo, test, "class FooTest\n")
     write(repo, "app/src/main/java/a/Bar.kt", "fun helper(x: Int) = x\n")
-    commit(repo, "Код: первая версия foo")
+    write(repo, "app/src/main/java/b/Baz.kt", "fun helper(y: String) = y\n")
+    commit_all(repo, "Код: первая версия foo")
     write(repo, code, "fun foo() = helper(missing(1))\n")
-    commit(repo, "Код: foo через helper")
+    commit_all(repo, "Код: foo через helper")
     write(repo, "description.md", "# PR\n")
     main("main~1", str(Path(repo, "description.md")), repo)
     return Path(repo, ".ai-review-pr.md").read_text(encoding="utf-8")
@@ -129,21 +126,18 @@ class AiReviewContextTest(unittest.TestCase):
         self.assertEqual(expected, actual, "fun interface — имя интерфейса, а не слово interface")
 
     def test_attaches_kotlin_test_of_changed_code(self):
-        path = "app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt"
         expected = "app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt"
-        actual = test_for(path)
+        actual = test_for("app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt")
         self.assertEqual(expected, actual, "к изменённому коду прикладывается его тест")
 
     def test_attaches_python_test_of_changed_gate(self):
-        path = "tools/gates/comments.py"
         expected = "tools/gates/test_comments.py"
-        actual = test_for(path)
+        actual = test_for("tools/gates/comments.py")
         self.assertEqual(expected, actual, "к гейту прикладывается его тест")
 
     def test_finds_no_test_for_test(self):
-        path = "tools/gates/test_comments.py"
         expected = ""
-        actual = test_for(path)
+        actual = test_for("tools/gates/test_comments.py")
         self.assertEqual(expected, actual, "у теста своего теста нет")
 
     def test_takes_called_names_from_added_lines_only(self):
@@ -154,14 +148,14 @@ class AiReviewContextTest(unittest.TestCase):
 
     def test_finds_definition_not_usage(self):
         grep = "A.kt:3:    decodePoint(raw)\nB.kt:9:    fun decodePoint(raw: ByteArray): ECPoint {\n"
-        expected = ("B.kt", 9)
-        actual = first_definition(grep, "decodePoint", set())
+        expected = [("B.kt", 9)]
+        actual = definitions(grep, "decodePoint", set())
         self.assertEqual(expected, actual, "берётся объявление, а не вызов")
 
     def test_skips_definition_in_attached_file(self):
         grep = "B.kt:9:    fun decodePoint(raw: ByteArray)\n"
-        expected = None
-        actual = first_definition(grep, "decodePoint", {"B.kt"})
+        expected = []
+        actual = definitions(grep, "decodePoint", {"B.kt"})
         self.assertEqual(expected, actual, "приложенный файл не дублируется")
 
     def test_numbers_snippet_from_definition_line(self):
@@ -179,16 +173,24 @@ class AiReviewContextTest(unittest.TestCase):
     def test_collects_test_callees_and_history_into_one_file(self):
         with tempfile.TemporaryDirectory() as repo:
             page = reviewed_repo(repo)
-        expected = (True, True, True, True)
+        expected = (True, True, True)
         actual = (
             "### app/src/test/java/a/FooTest.kt" in page,
-            "### app/src/main/java/a/Bar.kt:1" in page,
+            "### app/src/main/java/a/Bar.kt:1" in page and "### app/src/main/java/b/Baz.kt:1" in page,
             "Код: первая версия foo" in page,
-            "missing" not in page.split("# Вызываемое изменённым кодом")[1].split("# История")[0],
         )
-        self.assertEqual(
-            expected, actual, "тест, вызываемое и история попадают в контекст, неизвестный вызов не роняет"
-        )
+        self.assertEqual(expected, actual, "тест, все объявления вызываемого и история попадают в контекст")
+
+    def test_marks_name_declared_in_several_places(self):
+        found = [("PageCache.kt", 9), ("WatchSession.kt", 3), ("LoginServer.kt", 40), ("Watched.kt", 7)]
+        expected = "`write` объявлено в 4 местах"
+        actual = ambiguity("write", found)
+        self.assertIn(expected, actual, "неоднозначное имя помечено, чтобы не принять чужую функцию за вызываемую")
+
+    def test_keeps_single_declaration_unmarked(self):
+        expected = ""
+        actual = ambiguity("decodePoint", [("LoginCrypto.kt", 61)])
+        self.assertEqual(expected, actual, "единственное объявление не требует оговорки")
 
 
 if __name__ == "__main__":
