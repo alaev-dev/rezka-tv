@@ -51,10 +51,9 @@ jobs:
           BASE: origin/${{ github.base_ref }}
         run: |
           git show "$BASE:tools/gates/ai_review_request.py" > "$RUNNER_TEMP/ai_review_request.py"
-          python3 "$RUNNER_TEMP/ai_review_request.py" > "$RUNNER_TEMP/verdict.json"
-          jq -s -e 'length == 1 and (.[0] | type) == "object"' "$RUNNER_TEMP/verdict.json" > /dev/null
+          python3 "$RUNNER_TEMP/ai_review_request.py" "$RUNNER_TEMP/verdict.json"
           delimiter="VERDICT_$(openssl rand -hex 8)"
-          { echo "structured_output<<$delimiter"; jq -s -c '.[0]' "$RUNNER_TEMP/verdict.json"; echo "$delimiter"; } >> "$GITHUB_OUTPUT"
+          { echo "structured_output<<$delimiter"; cat "$RUNNER_TEMP/verdict.json"; echo; echo "$delimiter"; } >> "$GITHUB_OUTPUT"
 
   ai-review:
     needs: ai-review-agent
