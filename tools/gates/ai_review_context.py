@@ -13,6 +13,7 @@ KOTLIN_TEST = re.compile(r"^app/src/test/java/(.+)Test\.kt$")
 PYTHON_TEST = re.compile(r"^(tools/(?:.+/)?)test_([^/]+\.py)$")
 MAX_LINES = 600
 MAX_CALLS = 20
+HISTORY = 5
 FENCE = "`````"
 
 
@@ -32,6 +33,18 @@ def tested_source(path: str) -> str:
     return f"{python.group(1)}{python.group(2)}" if python else ""
 
 
+def test_for(path: str) -> str:
+    if path.startswith("app/src/main/java/") and path.endswith(".kt"):
+        return f"app/src/test/java/{path.removeprefix('app/src/main/java/').removesuffix('.kt')}Test.kt"
+    tools = re.match(r"^(tools/(?:.+/)?)(?!test_)([^/]+\.py)$", path)
+    return f"{tools.group(1)}test_{tools.group(2)}" if tools else ""
+
+
+def history_section(logs: dict) -> str:
+    blocks = [f"### {path}\n\n{FENCE}\n{log.rstrip()}\n{FENCE}\n" for path, log in logs.items() if log.strip()]
+    return "\n".join(blocks) or "Истории нет: файлы новые.\n"
+
+
 def calls_section(calls: dict) -> str:
     blocks = [f"### {name}\n\n{FENCE}\n" + "\n".join(rows) + f"\n{FENCE}\n" for name, rows in calls.items() if rows]
     return "\n".join(blocks) or "Мест вызова вне изменённых файлов нет.\n"
@@ -45,25 +58,26 @@ def file_section(path: str, text: str) -> str:
     return f"### {path} (номер строки слева)\n\n{FENCE}\n{numbered}\n{FENCE}\n"
 
 
-def context(description: str, diff: str, files: dict, calls: dict) -> str:
+def context(description: str, diff: str, files: dict, calls: dict, extras: tuple = ()) -> str:
     sections = "\n".join(file_section(path, text) for path, text in files.items())
     return "\n\n".join(
         [
             f"# Описание PR\n\n{description.rstrip()}",
             f"# Дифф\n\n{FENCE}diff\n{diff.rstrip()}\n{FENCE}",
-            f"# Изменённые файлы и код под тестом целиком\n\n{sections}",
+            f"# Изменённые файлы, код под тестом и тесты изменённого кода целиком\n\n{sections}",
             f"# Места вызова изменённых определений\n\n{calls_section(calls)}",
+            *extras,
         ]
     )
 
 
-def git(*args: str) -> str:
-    return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+def git(repo: str, *args: str) -> str:
+    return subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True).stdout
 
 
-def grep_word(name: str) -> str:
+def grep_word(repo: str, name: str) -> str:
     command = ["git", "grep", "-n", "-I", "-w", name, "--", ".", ":(exclude)quality"]
-    return subprocess.run(command, check=False, capture_output=True, text=True).stdout
+    return subprocess.run(command, cwd=repo, check=False, capture_output=True, text=True).stdout
 
 
 def text_files(numstat: str) -> list:
@@ -71,16 +85,21 @@ def text_files(numstat: str) -> list:
     return [path for added, _, path in rows if added != "-"]
 
 
-def main(base: str, description_path: str) -> int:
-    diff = git("diff", f"{base}...HEAD")
-    numstat = git("diff", "--numstat", "--no-renames", f"{base}...HEAD")
+def history(repo: str, base: str, paths: list) -> dict:
+    return {p: git(repo, "log", f"-{HISTORY}", "--format=%h %ad %s", "--date=short", base, "--", p) for p in paths}
+
+
+def main(base: str, description_path: str, repo: str = ".") -> int:
+    diff = git(repo, "diff", f"{base}...HEAD")
+    numstat = git(repo, "diff", "--numstat", "--no-renames", f"{base}...HEAD")
     changed = text_files(numstat)
-    sources = [tested_source(path) for path in changed]
-    present = [path for path in [*DOCS, *changed, *sources] if path and Path(path).is_file()]
-    files = {path: Path(path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
-    calls = {name: call_lines(grep_word(name), list(files)) for name in changed_names(diff)}
-    description = Path(description_path).read_text(encoding="utf-8")
-    Path(".ai-review-pr.md").write_text(context(description, diff, files, calls), encoding="utf-8")
+    related = [f(path) for path in changed for f in (tested_source, test_for)]
+    present = [path for path in [*DOCS, *changed, *related] if path and Path(repo, path).is_file()]
+    files = {path: Path(repo, path).read_text(encoding="utf-8") for path in dict.fromkeys(present)}
+    calls = {name: call_lines(grep_word(repo, name), list(files)) for name in changed_names(diff)}
+    extras = (f"# История изменённых файлов\n\n{history_section(history(repo, base, changed))}",)
+    description = Path(repo, description_path).read_text(encoding="utf-8")
+    Path(repo, ".ai-review-pr.md").write_text(context(description, diff, files, calls, extras), encoding="utf-8")
     return 0
 
 

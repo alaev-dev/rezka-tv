@@ -21,3 +21,4 @@ keystore.properties
 
 app/src/main/assets/lists/top.json
 __pycache__/
+.ai-review-*
