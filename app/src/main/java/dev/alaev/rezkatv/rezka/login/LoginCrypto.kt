@@ -16,20 +16,10 @@ import javax.crypto.KeyAgreement
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-/**
- * Шифрование email и пароля между HTTPS-страницей входа (GitHub Pages) и телевизором.
- *
- * Телевизор на каждый QR-код создаёт одноразовую пару ключей P-256 и кладёт открытый ключ во фрагмент ссылки
- * (на GitHub он не уходит). Страница создаёт свою пару, по ECDH получает общий секрет, ключ AES —
- * SHA-256(секрет ‖ [LABEL]), и шифрует {"email","password"} в AES-GCM, токен кода — дополнительные данные.
- * В истории браузера остаются только открытые ключи и шифротекст; закрытый ключ живёт в памяти, пока жив код.
- */
 class LoginCrypto(private val keys: KeyPair = newKeyPair()) {
 
-    /** Открытый ключ телевизора: несжатая точка (65 байт) в base64url — как `exportKey("raw")` в WebCrypto. */
     val publicKey: String = b64(encodePoint((keys.public as ECPublicKey).w))
 
-    /** null — данные битые, чужие или подделаны. */
     fun decrypt(phoneKey: String, iv: String, ciphertext: String, token: String): Credentials? = runCatching {
         val params = (keys.public as ECPublicKey).params
         val point = decodePoint(unb64(phoneKey))
@@ -55,7 +45,6 @@ class LoginCrypto(private val keys: KeyPair = newKeyPair()) {
         private const val TAG_BITS = 128
         private const val SIZE = 32
 
-        // P-256: y² = x³ − 3x + b (mod p)
         private val P = BigInteger("ffffffff00000001000000000000000000000000ffffffffffffffffffffffff", 16)
         private val B = BigInteger("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b", 16)
 
@@ -64,7 +53,6 @@ class LoginCrypto(private val keys: KeyPair = newKeyPair()) {
 
         fun encodePoint(w: ECPoint): ByteArray = byteArrayOf(4) + unsigned(w.affineX) + unsigned(w.affineY)
 
-        /** Только несжатая точка на кривой P-256: чужую точку не подсунуть (атака неверной кривой). */
         fun decodePoint(raw: ByteArray): ECPoint {
             require(raw.size == 1 + 2 * SIZE && raw[0] == 4.toByte()) { "bad point" }
             val x = BigInteger(1, raw.copyOfRange(1, 1 + SIZE))

@@ -15,11 +15,6 @@ import dev.alaev.rezkatv.R
 import dev.alaev.rezkatv.rezka.RezkaClient
 import dev.alaev.rezkatv.rezka.openSite
 
-/**
- * «Вход в rezka»: QR-код ведёт телефон на HTTPS-страницу входа, где менеджер паролей подставляет пароль;
- * она шифрует его ключом телевизора и передаёт на страницу, которую отдаёт сам телевизор, а входит телевизор.
- * Без интернета на телефоне — ссылка на страницу телевизора под QR-кодом. Запасной путь — сайт в WebView.
- */
 class LoginActivity : Activity() {
 
     private val scope = MainScope()
@@ -56,7 +51,6 @@ class LoginActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        // Вернулись со входа на сайте: cookies уже забраны, экран, откуда пришли, перезагрузит данные
         if (siteOpened) finish()
     }
 
@@ -89,8 +83,6 @@ class LoginActivity : Activity() {
             }
             val host = address.hostAddress.orEmpty()
             val bitmap = Qr.bitmap(code.phoneUrl(host, port), resources.getDimensionPixelSize(R.dimen.login_qr_size))
-            // Иначе ImageView масштабирует код из плотности системы по умолчанию в плотность экрана —
-            // на TCL (213 dpi) модули становятся нецелыми и плотный код не читается
             bitmap.density = resources.displayMetrics.densityDpi
             qr.setImageBitmap(bitmap)
             qrCard.visibility = View.VISIBLE
@@ -100,7 +92,6 @@ class LoginActivity : Activity() {
         }
     }
 
-    /** Устаревший код не должен попасть в камеру телефона. */
     private fun hideCode() {
         qrCard.visibility = View.INVISIBLE
         url.text = ""

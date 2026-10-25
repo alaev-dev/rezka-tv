@@ -1,6 +1,5 @@
 package dev.alaev.rezkatv.rezka.login
 
-/** Страница входа для телефона: без внешних ресурсов, тёмная, с янтарным акцентом как у приложения. */
 object PhonePage {
 
     val HTML = """
@@ -53,7 +52,6 @@ object PhonePage {
   </form>
   <div id="status" role="status"></div>
   <button id="back" type="button" onclick="history.back()">Ввести ещё раз</button>
-  <!-- Эту страницу открывают по ссылке под QR-кодом, без интернета; на http:// менеджеры паролей часто молчат -->
   <p class="tip">Пароль не подставляется? Отсканируйте QR-код на телевизоре: та страница открывается по HTTPS,
     и менеджер паролей предложит пароль от rezka.</p>
 </main>
@@ -86,8 +84,6 @@ object PhonePage {
     e.preventDefault();
     send({ email: document.getElementById('email').value.trim(), password: pass.value }, function () {});
   };
-  // Пришли с HTTPS-страницы входа: email и пароль зашифрованы ключом телевизора и лежат во фрагменте.
-  // Фрагмент сразу убираем из адреса; при ошибке — назад, к форме с менеджером паролей.
   var sealed = new URLSearchParams(location.hash.slice(1));
   if (sealed.get('c')) {
     history.replaceState(null, '', location.pathname + location.search);
