@@ -1,6 +1,18 @@
 import unittest
 
-from gates.ai_review_context import call_lines, changed_names, context, file_section, tested_source, text_files
+from gates.ai_review_context import (
+    call_lines,
+    called_names,
+    changed_names,
+    context,
+    file_section,
+    first_definition,
+    history_section,
+    snippet,
+    test_for,
+    tested_source,
+    text_files,
+)
 
 
 class AiReviewContextTest(unittest.TestCase):
@@ -86,6 +98,54 @@ class AiReviewContextTest(unittest.TestCase):
         expected = ["Listener"]
         actual = changed_names(diff)
         self.assertEqual(expected, actual, "fun interface — имя интерфейса, а не слово interface")
+
+    def test_attaches_kotlin_test_of_changed_code(self):
+        path = "app/src/main/java/dev/alaev/rezkatv/rezka/Settings.kt"
+        expected = "app/src/test/java/dev/alaev/rezkatv/rezka/SettingsTest.kt"
+        actual = test_for(path)
+        self.assertEqual(expected, actual, "к изменённому коду прикладывается его тест")
+
+    def test_attaches_python_test_of_changed_gate(self):
+        path = "tools/gates/comments.py"
+        expected = "tools/gates/test_comments.py"
+        actual = test_for(path)
+        self.assertEqual(expected, actual, "к гейту прикладывается его тест")
+
+    def test_finds_no_test_for_test(self):
+        path = "tools/gates/test_comments.py"
+        expected = ""
+        actual = test_for(path)
+        self.assertEqual(expected, actual, "у теста своего теста нет")
+
+    def test_takes_called_names_from_added_lines_only(self):
+        diff = "+    val p = decodePoint(raw)\n+    if (ok) require(x)\n-    old(raw)\n+fun seal(a: Int) = pack(a)\n"
+        expected = ["decodePoint", "pack"]
+        actual = called_names(diff, ["seal"])
+        self.assertEqual(expected, actual, "вызовы из добавленных строк, без служебных слов и своих определений")
+
+    def test_finds_definition_not_usage(self):
+        grep = "A.kt:3:    decodePoint(raw)\nB.kt:9:    fun decodePoint(raw: ByteArray): ECPoint {\n"
+        expected = ("B.kt", 9)
+        actual = first_definition(grep, "decodePoint", set())
+        self.assertEqual(expected, actual, "берётся объявление, а не вызов")
+
+    def test_skips_definition_in_attached_file(self):
+        grep = "B.kt:9:    fun decodePoint(raw: ByteArray)\n"
+        expected = None
+        actual = first_definition(grep, "decodePoint", {"B.kt"})
+        self.assertEqual(expected, actual, "приложенный файл не дублируется")
+
+    def test_numbers_snippet_from_definition_line(self):
+        text = "a\nb\nfun f() = 1\nc\n"
+        expected = "    3  fun f() = 1"
+        actual = snippet("B.kt", text, 3)
+        self.assertIn(expected, actual, "фрагмент начинается с объявления и хранит номера строк")
+
+    def test_reports_history_of_files(self):
+        logs = {"A.kt": "1c9e980 2026-10-25 Гейты: двоичные файлы\n", "New.kt": ""}
+        expected = (True, False)
+        actual = ("1c9e980" in history_section(logs), "New.kt" in history_section(logs))
+        self.assertEqual(expected, actual, "история есть у старых файлов, новые пропускаются")
 
 
 if __name__ == "__main__":
