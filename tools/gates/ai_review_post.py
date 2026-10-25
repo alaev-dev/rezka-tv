@@ -108,7 +108,13 @@ def post(repo: str, number: str, payload: dict) -> int:
 def post_line(repo: str, number: str, commit: str, finding: dict) -> bool:
     command = ["gh", "api", f"repos/{repo}/pulls/{number}/comments", "--input", "-"]
     payload = json.dumps({**inline_comment(finding), "commit_id": commit})
-    return subprocess.run(command, check=False, input=payload, text=True, capture_output=True).returncode == 0
+    result = subprocess.run(command, check=False, input=payload, text=True, capture_output=True)
+    if result.returncode:
+        where = f"{finding['path']}:{finding['line']}"
+        print(
+            f"::warning title=ИИ-ревью::замечание к {where} не встало под строку, оно в отчёте: {result.stderr.strip()}"
+        )
+    return result.returncode == 0
 
 
 def edit_review(repo: str, number: str, review_id: int, body: str) -> None:
