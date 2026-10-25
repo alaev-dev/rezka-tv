@@ -37,7 +37,7 @@ def replying(text: str, sent: list):
 def replies(texts: list, chats: list):
     def reply(key: str, body: dict) -> dict:
         chats.append(body["messages"])
-        return {"choices": [{"message": {"content": texts[len(chats) - 1]}}]}
+        return {"choices": [{"message": {"content": texts[len(chats) - 1]}}], "usage": {"total_tokens": len(chats)}}
 
     return reply
 
@@ -204,8 +204,8 @@ class AiReviewRequestTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], chats), env())
         retry = chats[1][-2:]
-        expected = ("assistant", "user", True)
-        actual = (retry[0]["role"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
+        expected = ("assistant", answer(previous=["T1"]), "user", True)
+        actual = (retry[0]["role"], retry[0]["content"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
         self.assertEqual(expected, actual, "модель видит свой ответ и что в нём не так")
 
     def test_gives_up_after_three_attempts(self):
@@ -220,6 +220,20 @@ class AiReviewRequestTest(unittest.TestCase):
             outcome = (len(chats), out.exists(), message)
         expected = (3, False, "нет ответа по схеме за 3 попытки")
         self.assertEqual(expected, outcome, "три неудачи подряд — ревью падает, файла нет")
+
+    def test_warns_about_rejected_attempt_in_log(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(printed):
+            run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], []), env())
+        expected = "::warning title=ИИ-ревью::попытка 1: ответ не по схеме: прошлое T1"
+        self.assertIn(expected, printed.getvalue(), "в логе видно, какая попытка отклонена и почему")
+
+    def test_logs_tokens_of_each_attempt(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stderr(printed):
+            run(str(Path(folder, "v.json")), inputs(folder), replies(["{", answer()], []), env())
+        expected = 'попытка 2, токены: {"total_tokens": 2}'
+        self.assertIn(expected, printed.getvalue(), "расход токенов виден по каждой попытке")
 
 
 if __name__ == "__main__":

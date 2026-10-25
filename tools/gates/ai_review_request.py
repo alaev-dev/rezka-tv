@@ -76,7 +76,7 @@ def reviewed(call, key: str, model: str, chat: list) -> str:
             verdict(answer)
             return answer
         except ValueError as error:
-            print(f"::warning title=ИИ-ревью::попытка {attempt}: {error}"[:1000])
+            print(f"::warning title=ИИ-ревью::попытка {attempt}: {error}")
             chat = [*chat, *correction(answer, error)]
     raise ValueError(f"нет ответа по схеме за {ATTEMPTS} попытки")
 
