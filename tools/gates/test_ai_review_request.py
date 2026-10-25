@@ -1,7 +1,11 @@
+import contextlib
+import io
 import json
+import tempfile
 import unittest
+from pathlib import Path
 
-from gates.ai_review_request import messages, payload, verdict
+from gates.ai_review_request import messages, output_path, payload, run, verdict, write_verdict
 
 
 def answer(**fields) -> str:
@@ -11,6 +15,31 @@ def answer(**fields) -> str:
 
 def finding(line) -> dict:
     return {"path": "A.kt", "line": line, "blocking": True, "message": "ошибка"}
+
+
+def inputs(folder: str) -> tuple:
+    texts = {"rules.md": "# Правила", "pr.md": "# Дифф", "previous.json": '[{"id": "T1"}]'}
+    for name, text in texts.items():
+        Path(folder, name).write_text(text, encoding="utf-8")
+    return tuple(str(Path(folder, name)) for name in texts)
+
+
+def replying(text: str, sent: list):
+    def reply(key: str, body: dict) -> dict:
+        system, user = (m["content"] for m in body["messages"])
+        layout = (system.startswith("# Правила"), user.startswith("# Дифф"), '"T1"' in user)
+        sent.append((key, body["model"], layout))
+        return {"choices": [{"message": {"content": text}}], "usage": {}}
+
+    return reply
+
+
+def failing(key: str, body: dict) -> dict:
+    raise TimeoutError("нет ответа")
+
+
+def env() -> dict:
+    return {"DEEPSEEK_API_KEY": "k", "MODEL": "deepseek-flash"}
 
 
 class AiReviewRequestTest(unittest.TestCase):
@@ -98,6 +127,61 @@ class AiReviewRequestTest(unittest.TestCase):
         except ValueError as raised:
             error = raised
         self.assertIsInstance(error, ValueError, "строка вместо прошлого замечания — ошибка схемы")
+
+    def test_writes_checked_verdict_to_file(self):
+        text = answer(findings=[finding(3)])
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            write_verdict(text, str(out))
+            actual = json.loads(out.read_text(encoding="utf-8"))
+        expected = json.loads(text)
+        self.assertEqual(expected, actual, "в файл попадает ровно проверенный вердикт")
+
+    def test_prints_verdict_without_file(self):
+        text = answer()
+        printed = io.StringIO()
+        with contextlib.redirect_stdout(printed):
+            write_verdict(text)
+        expected = json.loads(text)
+        actual = json.loads(printed.getvalue())
+        self.assertEqual(expected, actual, "без файла вердикт печатается, как раньше")
+
+    def test_takes_output_file_from_first_argument(self):
+        expected = ("verdict.json", "")
+        actual = (output_path(["review.py", "verdict.json"]), output_path(["review.py"]))
+        self.assertEqual(expected, actual, "файл — первый аргумент, без него — печать")
+
+    def test_delivers_reply_to_output_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replying(answer(), []), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))
+        expected = json.loads(answer())
+        self.assertEqual(expected, actual, "ответ модели доходит до файла вердикта")
+
+    def test_removes_stale_verdict_when_request_fails(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            out.write_text(answer(), encoding="utf-8")
+            with contextlib.suppress(TimeoutError):
+                run(str(out), inputs(folder), failing, env())
+            exists = out.exists()
+        self.assertFalse(exists, "упавший запрос не оставляет вердикт прошлого запуска")
+
+    def test_writes_no_file_for_broken_answer(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            with contextlib.suppress(ValueError):
+                write_verdict(answer(findings=[finding(0)]), str(out))
+            exists = out.exists()
+        self.assertFalse(exists, "ответ не по схеме не попадает в файл публикации")
+
+    def test_sends_inputs_key_and_model_to_their_places(self):
+        sent = []
+        with tempfile.TemporaryDirectory() as folder:
+            run(str(Path(folder, "verdict.json")), inputs(folder), replying(answer(), sent), env())
+        expected = [("k", "deepseek-flash", (True, True, True))]
+        self.assertEqual(expected, sent, "ключ и модель из окружения, правила, контекст и прошлые — на своих местах")
 
 
 if __name__ == "__main__":
