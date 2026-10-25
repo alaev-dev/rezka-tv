@@ -27,7 +27,7 @@ def payload(model: str, chat: list) -> dict:
 
 
 def shaped(item: dict, shape: dict) -> bool:
-    return all(isinstance(item.get(key), kind) for key, kind in shape.items())
+    return isinstance(item, dict) and all(isinstance(item.get(key), kind) for key, kind in shape.items())
 
 
 def schema_problems(data: dict) -> list:

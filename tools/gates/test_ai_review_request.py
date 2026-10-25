@@ -81,6 +81,24 @@ class AiReviewRequestTest(unittest.TestCase):
         expected = "'line': '56'"
         self.assertIn(expected, message, "в логе видно, что именно не так")
 
+    def test_rejects_null_finding(self):
+        text = answer(findings=[None])
+        error = None
+        try:
+            verdict(text)
+        except ValueError as raised:
+            error = raised
+        self.assertIsInstance(error, ValueError, "null вместо замечания — ошибка схемы, а не падение")
+
+    def test_rejects_previous_given_as_string(self):
+        text = answer(previous=["T1"])
+        error = None
+        try:
+            verdict(text)
+        except ValueError as raised:
+            error = raised
+        self.assertIsInstance(error, ValueError, "строка вместо прошлого замечания — ошибка схемы")
+
 
 if __name__ == "__main__":
     unittest.main()
