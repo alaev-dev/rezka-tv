@@ -203,10 +203,12 @@ class AiReviewRequestTest(unittest.TestCase):
         chats = []
         with tempfile.TemporaryDirectory() as folder:
             run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], chats), env())
-        retry = chats[1][-2:]
-        expected = ("assistant", answer(previous=["T1"]), "user", True)
-        actual = (retry[0]["role"], retry[0]["content"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
-        self.assertEqual(expected, actual, "модель видит свой ответ и что в нём не так")
+        first, retry = chats[1][:2], chats[1][2:]
+        expected = (chats[0], "assistant", answer(previous=["T1"]), "user", True)
+        actual = (first, retry[0]["role"], retry[0]["content"], retry[1]["role"], "прошлое T1" in retry[1]["content"])
+        self.assertEqual(
+            expected, actual, "повтор продолжает тот же разговор: правила и контекст, ответ модели и что в нём не так"
+        )
 
     def test_gives_up_after_three_attempts(self):
         chats = []
