@@ -1,4 +1,5 @@
 import contextlib
+import io
 import json
 import tempfile
 import unittest
@@ -114,10 +115,20 @@ class AiReviewRequestTest(unittest.TestCase):
     def test_writes_nothing_for_broken_answer(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder, "verdict.json")
+            out.write_text(answer(), encoding="utf-8")
             with contextlib.suppress(ValueError):
                 write_verdict(answer(previous=["T1"]), str(out))
             exists = out.exists()
-        self.assertFalse(exists, "ответ не по схеме не оставляет файла для публикации")
+        self.assertFalse(exists, "ответ не по схеме убирает и старый вердикт прошлого запуска")
+
+    def test_prints_verdict_without_file(self):
+        text = answer()
+        printed = io.StringIO()
+        with contextlib.redirect_stdout(printed):
+            write_verdict(text)
+        expected = json.loads(text)
+        actual = json.loads(printed.getvalue())
+        self.assertEqual(expected, actual, "без файла вердикт печатается, как раньше")
 
 
 if __name__ == "__main__":

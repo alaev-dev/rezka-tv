@@ -53,8 +53,14 @@ def ask(key: str, body: dict) -> dict:
         return json.loads(response.read())
 
 
-def write_verdict(answer: str, out: str) -> None:
-    Path(out).write_text(json.dumps(verdict(answer), ensure_ascii=False), encoding="utf-8")
+def write_verdict(answer: str, out: str = "") -> None:
+    if out:
+        Path(out).unlink(missing_ok=True)
+    text = json.dumps(verdict(answer), ensure_ascii=False)
+    if out:
+        Path(out).write_text(text, encoding="utf-8")
+    else:
+        print(text)
 
 
 def main(out: str) -> int:
@@ -66,4 +72,4 @@ def main(out: str) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "/dev/stdout"))
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else ""))
