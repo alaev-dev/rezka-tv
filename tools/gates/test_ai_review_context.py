@@ -23,13 +23,15 @@ def write(repo: str, path: str, text: str) -> None:
 
 
 def reviewed_repo(repo: str) -> str:
-    code, test = "app/src/main/java/a/Foo.kt", "app/src/test/java/a/FooTest.kt"
+    code = "app/src/main/java/a/Foo.kt"
     subprocess.run(["git", "init", "-q", "-b", "main", repo], check=True)
-    write(repo, code, "fun foo() = 1\n")
-    write(repo, test, "class FooTest\n")
-    commit_all(repo, "Код: первая версия foo")
-    write(repo, code, "fun foo() = 2\n")
-    commit_all(repo, "Код: foo возвращает 2")
+    write(repo, "app/src/test/java/a/FooTest.kt", "class FooTest\n")
+    write(repo, "app/src/main/java/a/Caller.kt", "val x = foo()\n")
+    for n in range(1, 8):
+        write(repo, code, f"fun foo() = {n}\n")
+        commit_all(repo, f"Код: версия {n}")
+    write(repo, code, "fun foo() = 99\n")
+    commit_all(repo, "PR: foo возвращает 99")
     write(repo, "description.md", "# PR\n")
     main("main~1", "description.md", repo)
     return Path(repo, ".ai-review-pr.md").read_text(encoding="utf-8")
@@ -140,12 +142,12 @@ class AiReviewContextTest(unittest.TestCase):
         actual = ("1c9e980" in history_section(logs), "New.kt" in history_section(logs))
         self.assertEqual(expected, actual, "история есть у старых файлов, новые пропускаются")
 
-    def test_collects_test_and_history_into_one_file(self):
+    def test_collects_test_history_and_calls_of_reviewed_repo(self):
         with tempfile.TemporaryDirectory() as repo:
             page = reviewed_repo(repo)
-        expected = (True, True)
-        actual = ("### app/src/test/java/a/FooTest.kt" in page, "Код: первая версия foo" in page)
-        self.assertEqual(expected, actual, "тест изменённого кода и история попадают в контекст")
+        expected = (True, True, False, False, True)
+        actual = tuple(m in page for m in ("a/FooTest.kt (", "версия 3", "версия 2", "PR: foo", "a/Caller.kt:1:"))
+        self.assertEqual(expected, actual, "тест кода, 5 коммитов базы без коммитов PR и вызовы из этого репозитория")
 
 
 if __name__ == "__main__":
