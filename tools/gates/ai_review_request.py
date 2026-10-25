@@ -53,13 +53,17 @@ def ask(key: str, body: dict) -> dict:
         return json.loads(response.read())
 
 
-def main() -> int:
+def write_verdict(answer: str, out: str) -> None:
+    Path(out).write_text(json.dumps(verdict(answer), ensure_ascii=False), encoding="utf-8")
+
+
+def main(out: str) -> int:
     rules, context, previous = (Path(p).read_text(encoding="utf-8") for p in INPUTS)
     response = ask(os.environ["DEEPSEEK_API_KEY"], payload(os.environ["MODEL"], messages(rules, context, previous)))
     print(f"токены: {json.dumps(response.get('usage', {}))}", file=sys.stderr)
-    print(json.dumps(verdict(response["choices"][0]["message"]["content"]), ensure_ascii=False))
+    write_verdict(response["choices"][0]["message"]["content"], out)
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "/dev/stdout"))

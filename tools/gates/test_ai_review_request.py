@@ -1,7 +1,10 @@
+import contextlib
 import json
+import tempfile
 import unittest
+from pathlib import Path
 
-from gates.ai_review_request import messages, payload, verdict
+from gates.ai_review_request import messages, payload, verdict, write_verdict
 
 
 def answer(**fields) -> str:
@@ -98,6 +101,23 @@ class AiReviewRequestTest(unittest.TestCase):
         except ValueError as raised:
             error = raised
         self.assertIsInstance(error, ValueError, "строка вместо прошлого замечания — ошибка схемы")
+
+    def test_writes_checked_verdict_to_file(self):
+        text = answer(findings=[finding(3)])
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            write_verdict(text, str(out))
+            actual = json.loads(out.read_text(encoding="utf-8"))
+        expected = json.loads(text)
+        self.assertEqual(expected, actual, "в файл попадает ровно проверенный вердикт")
+
+    def test_writes_nothing_for_broken_answer(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            with contextlib.suppress(ValueError):
+                write_verdict(answer(previous=["T1"]), str(out))
+            exists = out.exists()
+        self.assertFalse(exists, "ответ не по схеме не оставляет файла для публикации")
 
 
 if __name__ == "__main__":
