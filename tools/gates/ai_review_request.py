@@ -67,16 +67,21 @@ def correction(answer: str, error: Exception) -> list:
     return [{"role": "assistant", "content": answer}, {"role": "user", "content": retry}]
 
 
+def message_text(response: dict) -> str:
+    choices = response.get("choices") or [{}]
+    return (choices[0].get("message") or {}).get("content") or ""
+
+
 def reviewed(call, key: str, model: str, chat: list) -> str:
     for attempt in range(1, ATTEMPTS + 1):
         response = call(key, payload(model, chat))
         print(f"попытка {attempt}, токены: {json.dumps(response.get('usage', {}))}", file=sys.stderr)
-        answer = response["choices"][0]["message"]["content"]
+        answer = message_text(response)
         try:
             verdict(answer)
             return answer
         except ValueError as error:
-            print(f"::warning title=ИИ-ревью::попытка {attempt}: {error}")
+            print(f"::warning title=ИИ-ревью::попытка {attempt}: {error}", file=sys.stderr)
             chat = [*chat, *correction(answer, error)]
     raise ValueError(f"нет ответа по схеме за {ATTEMPTS} попытки")
 

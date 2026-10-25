@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from gates.ai_review_request import messages, output_path, payload, run, verdict, write_verdict
+from gates.ai_review_request import message_text, messages, output_path, payload, run, verdict, write_verdict
 
 
 def answer(**fields) -> str:
@@ -225,7 +225,7 @@ class AiReviewRequestTest(unittest.TestCase):
 
     def test_warns_about_rejected_attempt_in_log(self):
         printed = io.StringIO()
-        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(printed):
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stderr(printed):
             run(str(Path(folder, "v.json")), inputs(folder), replies([answer(previous=["T1"]), answer()], []), env())
         expected = "::warning title=ИИ-ревью::попытка 1: ответ не по схеме: прошлое T1"
         self.assertIn(expected, printed.getvalue(), "в логе видно, какая попытка отклонена и почему")
@@ -236,6 +236,28 @@ class AiReviewRequestTest(unittest.TestCase):
             run(str(Path(folder, "v.json")), inputs(folder), replies(["{", answer()], []), env())
         expected = 'попытка 2, токены: {"total_tokens": 2}'
         self.assertIn(expected, printed.getvalue(), "расход токенов виден по каждой попытке")
+
+    def test_treats_empty_api_reply_as_failed_attempt(self):
+        replies_ = [{"choices": []}, {"choices": [{"message": {"content": None}}]}, {}, {"choices": [{}]}]
+        expected = ["", "", "", ""]
+        actual = [message_text(reply) for reply in replies_]
+        self.assertEqual(expected, actual, "пустой ответ API — пустой текст, он уйдёт на повтор, а не уронит ревью")
+
+    def test_keeps_verdict_stream_clean_of_warnings(self):
+        printed = io.StringIO()
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(printed):
+            run("", inputs(folder), replies(["{", answer()], []), env())
+        expected = json.loads(answer())
+        actual = json.loads(printed.getvalue())
+        self.assertEqual(expected, actual, "без файла в stdout только вердикт, предупреждения — в stderr")
+
+    def test_retries_after_reply_without_content(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder, "verdict.json")
+            run(str(out), inputs(folder), replies([None, answer(summary="после пустого")], []), env())
+            actual = json.loads(out.read_text(encoding="utf-8"))["summary"]
+        expected = "после пустого"
+        self.assertEqual(expected, actual, "ответ API без текста — повтор, а не падение ревью")
 
 
 if __name__ == "__main__":
