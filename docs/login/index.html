@@ -7,16 +7,6 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex">
 <title>Вход в rezka на телевизоре</title>
-<!--
-  Страница входа Rezka TV для телефона. Открывается по QR-коду с телевизора: по HTTPS менеджер паролей
-  подставляет сохранённый пароль, а на http://-странице самого телевизора — часто нет.
-
-  Ссылка: …/login/#tv=<IP:порт телевизора>&k=<токен>&pk=<открытый ключ телевизора>. Фрагмент (после «#»)
-  браузер на сервер не отправляет — GitHub не видит ни адреса, ни ключей. Email и пароль страница
-  шифрует (ECDH P-256 → SHA-256(секрет ‖ "rezka-tv login v1") → AES-GCM, токен — дополнительные данные)
-  и переходит на страницу телевизора в локальной сети, передав шифротекст во фрагменте. Расшифровать
-  его может только телевизор (LoginCrypto.kt); на этот сервер и в сеть открытым текстом ничего не уходит.
--->
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -67,7 +57,6 @@
 
   function show(text, cls) { status.textContent = text; status.className = cls || ''; }
 
-  // Только телевизор в домашней сети: страница не должна уводить пароль на произвольный адрес
   var privateHost = /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):\d{2,5}$/;
   var valid = privateHost.test(tv) && /^[0-9a-f]{32}$/.test(key) && /^[A-Za-z0-9_-]{87}$/.test(tvKey);
   if (!valid) {
@@ -120,14 +109,12 @@
     submit.disabled = true;
     show('Шифруем…');
     seal({ email: email.value.trim(), password: pass.value }).then(function (sealed) {
-      // Страница телевизора сама отправит шифротекст и покажет ответ сайта
       location.href = 'http://' + tv + '/?k=' + key + '#' + new URLSearchParams(sealed).toString();
     }).catch(function () {
       submit.disabled = false;
       show('Не удалось зашифровать. Отсканируйте QR-код на телевизоре ещё раз.', 'error');
     });
   };
-  // Вернулись «Назад» после ошибки — кнопка снова доступна
   window.addEventListener('pageshow', function () { submit.disabled = !valid; if (valid) show(''); });
 </script>
 </body>

@@ -28,7 +28,8 @@ val testRules by tasks.registering(Exec::class) {
 }
 
 val diffRules by tasks.registering(Exec::class) {
-    commandLine(python, "tools/gates/diff_rules.py", gateBase)
+    environment("PYTHONPATH", "tools")
+    commandLine(python, "-m", "gates.diff_rules", gateBase)
 }
 
 val toolsTests by tasks.registering(Exec::class) {

@@ -24,8 +24,8 @@ def block_end(text: str, start: int, closing: str) -> int:
     return len(text) if end < 0 else end + len(closing)
 
 
-def c_like_comments(text: str) -> list:
-    found, i, line = [], 0, 1
+def c_like_spans(text: str) -> list:
+    found, i = [], 0
     while i < len(text):
         if text.startswith('"""', i):
             end = block_end(text, i + 3, '"""')
@@ -34,16 +34,25 @@ def c_like_comments(text: str) -> list:
         elif text[i] == "\\":
             end = min(i + 2, len(text))
         elif text.startswith("//", i):
-            found.append(line)
-            end = block_end(text, i, "\n") - 1
+            newline = text.find("\n", i)
+            end = len(text) if newline < 0 else newline
+            found.append((i, end))
         elif text.startswith("/*", i):
-            found.append(line)
             end = block_end(text, i + 2, "*/")
+            found.append((i, end))
         else:
             end = i + 1
-        line += text.count("\n", i, end)
         i = end
     return found
+
+
+def c_like_comments(text: str) -> list:
+    return [text.count("\n", 0, start) + 1 for start, _ in c_like_spans(text)]
+
+
+def without_spans(text: str, spans: list) -> str:
+    starts, ends = [0, *(end for _, end in spans)], [*(start for start, _ in spans), len(text)]
+    return "".join(text[start:end] for start, end in zip(starts, ends))
 
 
 def xml_comments(text: str) -> list:
@@ -81,11 +90,25 @@ def python_comments(text: str) -> list:
     return sorted(found + docstrings)
 
 
-def docstring_lines(text: str) -> list:
+def docstring_nodes(text: str) -> list:
     tree = ast.parse(text)
     scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
     nodes = [tree, *(n for n in ast.walk(tree) if isinstance(n, scopes))]
-    return [n.body[0].lineno for n in nodes if ast.get_docstring(n) is not None]
+    return [n.body[0] for n in nodes if ast.get_docstring(n) is not None]
+
+
+def docstring_lines(text: str) -> list:
+    return [node.lineno for node in docstring_nodes(text)]
+
+
+def python_uncommented(text: str) -> str:
+    rows = text.splitlines(keepends=True)
+    tokens = tokenize.generate_tokens(io.StringIO(text).readline)
+    for token in (t for t in tokens if t.type == tokenize.COMMENT and not is_shebang(t)):
+        row, column = token.start
+        rows[row - 1] = rows[row - 1][:column]
+    docs = {n for node in docstring_nodes(text) for n in range(node.lineno, node.end_lineno + 1)}
+    return "".join(row for n, row in enumerate(rows, 1) if n not in docs)
 
 
 SCANNERS = {
@@ -113,6 +136,12 @@ def scanner_for(path: str):
 def comment_lines(path: str, text: str) -> list:
     scanner = scanner_for(path)
     return scanner(text) if scanner else []
+
+
+def uncommented(path: str, text: str) -> str:
+    if scanner_for(path) is python_comments:
+        return python_uncommented(text)
+    return without_spans(text, c_like_spans(text)) if scanner_for(path) is c_like_comments else text
 
 
 def parsed_lines(path: str) -> list:

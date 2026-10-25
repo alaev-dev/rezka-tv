@@ -1,12 +1,12 @@
 package dev.alaev.rezkatv.rezka.login
 
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.instanceOf
+import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
 import org.json.JSONObject
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.jupiter.api.Test
 import java.security.KeyFactory
 import java.security.KeyPair
@@ -80,25 +80,68 @@ class LoginCryptoTest {
     }
 
     @Test
-    fun garbageIsRejectedNotThrown() {
-        assertNull(decrypt(phoneKey = ""))
-        assertNull(decrypt(phoneKey = "!!!"))
-        assertNull(decrypt(iv = ""))
-        assertNull(decrypt(c = ""))
+    fun rejectsEmptyPhoneKey() {
+        val phoneKey = ""
+        assertThat("пустой ключ телефона — отказ, а не исключение", decrypt(phoneKey = phoneKey), nullValue())
+    }
+
+    @Test
+    fun rejectsPhoneKeyThatIsNotBase64() {
+        val phoneKey = "!!!"
+        assertThat("не base64 — отказ, а не исключение", decrypt(phoneKey = phoneKey), nullValue())
+    }
+
+    @Test
+    fun rejectsEmptyIv() {
+        val iv = ""
+        assertThat("пустой вектор инициализации — отказ", decrypt(iv = iv), nullValue())
+    }
+
+    @Test
+    fun rejectsEmptyCiphertext() {
+        val c = ""
+        assertThat("пустой шифротекст — отказ", decrypt(c = c), nullValue())
+    }
+
+    @Test
+    fun rejectsPhoneKeyOffTheCurve() {
         val bad = LoginCrypto.unb64(fixture().getString("p")).also { it[64] = (it[64] + 1).toByte() }
-        assertNull(decrypt(phoneKey = LoginCrypto.b64(bad)))
+        val phoneKey = LoginCrypto.b64(bad)
+        assertThat("точка не на кривой P-256 (атака неверной кривой)", decrypt(phoneKey = phoneKey), nullValue())
     }
 
     @Test
-    fun publicKeyIsRawUncompressedPoint() {
+    fun refusesToDecodePointOffTheCurve() {
+        val bad = LoginCrypto.unb64(fixture().getString("p")).also { it[64] = (it[64] + 1).toByte() }
+        val error = runCatching { LoginCrypto.decodePoint(bad) }.exceptionOrNull()
+        assertThat("своя проверка кривой, а не надежда на JCE", error, instanceOf(IllegalArgumentException::class.java))
+    }
+
+    @Test
+    fun exportsPublicKeyAsUncompressedPointOf65Bytes() {
+        val expected = 65
         val raw = LoginCrypto.unb64(LoginCrypto().publicKey)
-        assertEquals(65, raw.size)
-        assertEquals(4.toByte(), raw[0])
-        assertEquals(87, LoginCrypto().publicKey.length)
+        assertThat("несжатая точка P-256 — 65 байт, как exportKey(raw)", raw.size, equalTo(expected))
     }
 
     @Test
-    fun passwordIsNotInToString() {
-        assertFalse(LoginCrypto.Credentials("a@b.c", "secret").toString().contains("secret"))
+    fun marksPublicKeyAsUncompressedPoint() {
+        val expected = 4.toByte()
+        val raw = LoginCrypto.unb64(LoginCrypto().publicKey)
+        assertThat("первый байт 0x04 — несжатая точка", raw.first(), equalTo(expected))
+    }
+
+    @Test
+    fun encodesPublicKeyAsBase64UrlOf87Characters() {
+        val expected = 87
+        val key = LoginCrypto().publicKey
+        assertThat("65 байт в base64url без выравнивания — 87 символов", key.length, equalTo(expected))
+    }
+
+    @Test
+    fun hidesPasswordFromToString() {
+        val secret = "secret"
+        val text = LoginCrypto.Credentials("a@b.c", secret).toString()
+        assertThat("пароль не попадает в логи через toString", text, not(containsString(secret)))
     }
 }

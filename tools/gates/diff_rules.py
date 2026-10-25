@@ -2,6 +2,8 @@ import re
 import subprocess
 import sys
 
+from gates import comments
+
 KOTLIN_TEST = re.compile(r"@Test\b")
 PYTHON_TEST = re.compile(r"^\s*def test_", re.MULTILINE)
 CODE = re.compile(r"^(app/src/main/.+\.kt|tools/(?!.*test_)[^/].*\.py)$")
@@ -19,33 +21,41 @@ def lost_tests(before: dict, after: dict) -> list:
     return [] if new >= old else [f"тестов стало меньше: было {old}, стало {new}; тесты не удаляют, а исправляют"]
 
 
-def reformatted_only(before: str, after: str) -> bool:
-    return SPACE.sub("", before) == SPACE.sub("", after)
+def cosmetic_only(path: str, before: str, after: str) -> bool:
+    return SPACE.sub("", comments.uncommented(path, before)) == SPACE.sub("", comments.uncommented(path, after))
 
 
 def untested_change(before: dict, after: dict) -> list:
     changed = sorted(set(before) | set(after))
-    meaningful = [p for p in changed if not reformatted_only(before.get(p, ""), after.get(p, ""))]
+    meaningful = [p for p in changed if not cosmetic_only(p, before.get(p, ""), after.get(p, ""))]
     code, tests = [p for p in meaningful if CODE.match(p)], [p for p in meaningful if TESTS.match(p)]
     return [f"код меняется без тестов: {', '.join(code)}"] if code and not tests else []
 
 
-def git(*args: str) -> str:
-    return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+def relevant(paths: list) -> list:
+    return [path for path in paths if CODE.match(path) or TESTS.match(path)]
 
 
-def contents(ref: str, paths: list) -> dict:
-    tracked = set(git("ls-tree", "-r", "--name-only", ref).splitlines())
-    return {path: git("show", f"{ref}:{path}") for path in paths if path in tracked}
+def git(repo: str, *args: str) -> str:
+    return subprocess.run(["git", "-C", repo, *args], check=True, capture_output=True, text=True).stdout
+
+
+def contents(repo: str, ref: str, paths: list) -> dict:
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", ref).splitlines())
+    return {path: git(repo, "show", f"{ref}:{path}") for path in paths if path in tracked}
+
+
+def problems(base: str, repo: str = ".") -> list:
+    since = git(repo, "merge-base", base, "HEAD").strip()
+    changed = relevant(git(repo, "diff", "--name-only", "--no-renames", since, "HEAD").splitlines())
+    before, after = contents(repo, since, changed), contents(repo, "HEAD", changed)
+    return lost_tests(before, after) + untested_change(before, after)
 
 
 def main(base: str) -> int:
-    since = git("merge-base", base, "HEAD").strip()
-    changed = git("diff", "--name-only", "--no-renames", since, "HEAD").splitlines()
-    before, after = contents(since, changed), contents("HEAD", changed)
-    problems = lost_tests(before, after) + untested_change(before, after)
-    print("\n".join(f"::error title=Тесты в PR::{problem}" for problem in problems))
-    return 1 if problems else 0
+    found = problems(base)
+    print("\n".join(f"::error title=Тесты в PR::{problem}" for problem in found))
+    return 1 if found else 0
 
 
 if __name__ == "__main__":

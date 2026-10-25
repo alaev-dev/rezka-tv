@@ -2,4 +2,3 @@ app/src/test/java/dev/alaev/rezkatv/rezka/RezkaParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/StreamParserTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/WatchedStoreTest.kt
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt
-docs/login/index.html
