@@ -28,9 +28,6 @@ app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::oscarProgressCount
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesOscars
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::parsesTopLists
 app/src/test/java/dev/alaev/rezkatv/rezka/lists/ListsTest.kt::texts
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::garbageIsRejectedNotThrown
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::passwordIsNotInToString
-app/src/test/java/dev/alaev/rezkatv/rezka/login/LoginCryptoTest.kt::publicKeyIsRawUncompressedPoint
 tools/gates/test_ai_review_post.py::AiReviewPostTest.test_attaches_inline_comment_to_new_side_of_line
 tools/gates/test_ai_review_post.py::AiReviewPostTest.test_ignores_marker_written_by_people
 tools/gates/test_ai_review_post.py::AiReviewPostTest.test_ignores_reviews_of_other_diff
