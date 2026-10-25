@@ -149,6 +149,16 @@ class AiReviewContextTest(unittest.TestCase):
         actual = tuple(m in page for m in ("a/FooTest.kt (", "версия 3", "версия 2", "PR: foo", "a/Caller.kt:1:"))
         self.assertEqual(expected, actual, "тест кода, 5 коммитов базы без коммитов PR и вызовы из этого репозитория")
 
+    def test_explains_missing_history_of_new_files(self):
+        expected = "Истории нет: файлы новые.\n"
+        actual = history_section({"New.kt": ""})
+        self.assertEqual(expected, actual, "у новых файлов раздел истории объясняет, почему он пуст")
+
+    def test_names_attached_tests_in_files_heading(self):
+        page = context("описание", "+a", {}, {})
+        expected = "# Изменённые файлы, код под тестом и тесты изменённого кода целиком"
+        self.assertIn(expected, page, "заголовок говорит, что приложены и тесты изменённого кода")
+
 
 if __name__ == "__main__":
     unittest.main()
